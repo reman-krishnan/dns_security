@@ -1,0 +1,2 @@
+.        300 IN NS ns.root.
+ns.root. 300 IN A 172.16.3.10

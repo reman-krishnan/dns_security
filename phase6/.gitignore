@@ -1,0 +1,7 @@
+keys/
+zones/*.signed
+zones/*.unsigned
+configs/trust-anchors.conf
+src/forge
+evidence/*
+!evidence/.gitkeep
