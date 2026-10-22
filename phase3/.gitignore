@@ -1,0 +1,6 @@
+keys/
+zones/*.signed
+zones/*.unsigned
+configs/trust-anchors.conf
+evidence/*
+!evidence/.gitkeep
