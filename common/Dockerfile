@@ -1,29 +1,32 @@
-FROM debian:trixie-slim
-
+# common/Dockerfile
+# One image used by every container in every phase. BIND 9.20, DNS tools
+# (dig/delv/kdig), capture (tshark/tcpdump), iproute2, a C toolchain + libpcap,
+# OpenSSL (Phase 7 PKI), busybox (tiny web server), and the ROLE dispatcher.
+FROM debian:bookworm-slim
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-       bind9 \
-       bind9-utils \
-       bind9-dnsutils \
-       knot-dnsutils \
-       iproute2 \
-       procps \
-       tcpdump \
-       tshark \
-       curl \
-       openssl \
-       ca-certificates \
-       busybox \
-       build-essential \
-       libpcap-dev \
-    && named -v \
-    && named -v | grep -Eq '^BIND 9\.20\.' \
-    && rm -rf /var/lib/apt/lists/*
+RUN set -eux; \
+    echo "deb http://deb.debian.org/debian bookworm-backports main" \
+        > /etc/apt/sources.list.d/backports.list; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+        bind9/bookworm-backports \
+        bind9-utils/bookworm-backports \
+        bind9-dnsutils/bookworm-backports \
+        bind9-host/bookworm-backports \
+        knot-dnsutils dnsutils iproute2 iptables iputils-ping \
+        tcpdump tshark curl ca-certificates openssl \
+        gcc make libpcap-dev libpcap0.8 \
+        procps net-tools busybox python3 vim-tiny less; \
+    rm -rf /var/lib/apt/lists/*
 
-COPY node-start.sh /usr/local/sbin/node-start.sh
+RUN mkdir -p /var/cache/bind /var/log/named /run/named && \
+    chown -R bind:bind /var/cache/bind /var/log/named /run/named
+RUN mkdir -p /opt/attack
 
-RUN chmod 0755 /usr/local/sbin/node-start.sh
-
-ENTRYPOINT ["/usr/local/sbin/node-start.sh"]
+# Bake in the per-role start script as the image entrypoint, so every
+# container role-dispatches on boot (reads $ROLE, installs routes, execs named
+# / busybox httpd / idles). Build context must be the repo root.
+COPY common/node-start.sh /usr/local/bin/node-start.sh
+RUN chmod +x /usr/local/bin/node-start.sh
+ENTRYPOINT ["/usr/local/bin/node-start.sh"]
