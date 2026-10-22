@@ -1,0 +1,27 @@
+
+; <<>> DiG 9.20.30-1~deb13u1-Debian <<>> example.com A +time=3 +tries=1
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 9412
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 1, ADDITIONAL: 2
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: ef3ae1e93088a3b1010000006ad99a5311a257ef62fe426f (good)
+;; QUESTION SECTION:
+;example.com.			IN	A
+
+;; ANSWER SECTION:
+example.com.		300	IN	A	172.16.1.20
+
+;; AUTHORITY SECTION:
+example.com.		300	IN	NS	ns.example.com.
+
+;; ADDITIONAL SECTION:
+ns.example.com.		300	IN	A	172.16.3.30
+
+;; Query time: 4 msec
+;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
+;; WHEN: Thu Oct 22 05:08:35 UTC 2026
+;; MSG SIZE  rcvd: 117
+
