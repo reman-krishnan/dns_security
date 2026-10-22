@@ -1,0 +1,165 @@
+name: cs6008-p4
+
+x-node: &node
+  image: cs6008-dns-lab:local
+  init: true
+  cap_drop:
+    - NET_RAW
+  cap_add:
+    - NET_ADMIN
+  sysctls:
+    net.ipv4.ip_forward: "0"
+    net.ipv4.conf.all.accept_redirects: "0"
+    net.ipv4.conf.default.accept_redirects: "0"
+    net.ipv4.conf.all.send_redirects: "0"
+    net.ipv4.conf.default.send_redirects: "0"
+  volumes:
+    - ./configs:/lab/configs:ro
+    - ./zones:/lab/zones:ro
+
+x-router: &router
+  <<: *node
+  cap_drop: []
+  cap_add:
+    - NET_ADMIN
+    - NET_RAW
+  sysctls:
+    net.ipv4.ip_forward: "1"
+    net.ipv4.conf.all.accept_redirects: "0"
+    net.ipv4.conf.default.accept_redirects: "0"
+    net.ipv4.conf.all.send_redirects: "0"
+    net.ipv4.conf.default.send_redirects: "0"
+
+services:
+  client:
+    <<: *node
+    environment:
+      ROLE: client
+    volumes:
+      - ./configs:/lab/configs:ro
+      - ./evidence:/evidence
+    networks:
+      client-net:
+        ipv4_address: 172.16.1.10
+
+  webserver:
+    <<: *node
+    environment:
+      ROLE: webserver
+    volumes:
+      - ./www:/www:ro
+    networks:
+      client-net:
+        ipv4_address: 172.16.1.20
+
+  rogue-web:
+    <<: *node
+    environment:
+      ROLE: webserver
+    volumes:
+      - ./rogue_www:/www:ro
+    networks:
+      client-net:
+        ipv4_address: 172.16.1.30
+
+  resolver:
+    <<: *node
+    environment:
+      ROLE: resolver
+    networks:
+      resolver-net:
+        ipv4_address: 172.16.2.10
+
+  attacker:
+    <<: *node
+    environment:
+      ROLE: attacker
+    cap_drop: []
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - ./src:/src:ro
+      - ./scripts:/scripts:ro
+      - ./evidence:/evidence
+    networks:
+      resolver-net:
+        ipv4_address: 172.16.2.100
+
+  root-ns:
+    <<: *node
+    environment:
+      ROLE: root-ns
+    networks:
+      auth-net:
+        ipv4_address: 172.16.3.10
+
+  tld-ns:
+    <<: *node
+    environment:
+      ROLE: tld-ns
+    networks:
+      auth-net:
+        ipv4_address: 172.16.3.20
+
+  domain-ns:
+    <<: *node
+    environment:
+      ROLE: domain-ns
+    networks:
+      auth-net:
+        ipv4_address: 172.16.3.30
+
+  edge-router:
+    <<: *router
+    environment:
+      ROLE: edge-router
+    networks:
+      client-net:
+        ipv4_address: 172.16.1.2
+      resolver-net:
+        ipv4_address: 172.16.2.2
+
+  core-router:
+    <<: *router
+    environment:
+      ROLE: core-router
+    volumes:
+      - ./scripts:/scripts:ro
+      - ./evidence:/evidence
+    networks:
+      resolver-net:
+        ipv4_address: 172.16.2.3
+      auth-net:
+        ipv4_address: 172.16.3.3
+
+networks:
+  client-net:
+    driver: bridge
+    internal: true
+    driver_opts:
+      com.docker.network.bridge.enable_ip_masquerade: "false"
+    ipam:
+      config:
+        - subnet: 172.16.1.0/24
+          gateway: 172.16.1.1
+
+  resolver-net:
+    driver: bridge
+    internal: true
+    driver_opts:
+      com.docker.network.bridge.enable_ip_masquerade: "false"
+    ipam:
+      config:
+        - subnet: 172.16.2.0/24
+          gateway: 172.16.2.1
+
+  auth-net:
+    driver: bridge
+    internal: true
+    driver_opts:
+      com.docker.network.bridge.enable_ip_masquerade: "false"
+    ipam:
+      config:
+        - subnet: 172.16.3.0/24
+          gateway: 172.16.3.1
