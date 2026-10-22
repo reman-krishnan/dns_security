@@ -1,0 +1,8 @@
+keys/
+zones/*.signed
+zones/*.unsigned
+configs/trust-anchors.conf
+pki/
+src/mitm
+evidence/*
+!evidence/.gitkeep
