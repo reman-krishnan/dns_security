@@ -1,0 +1,837 @@
+Frame 1: 94 bytes on wire (752 bits), 94 bytes captured (752 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 22, 2026 04:15:34.673423000 UTC
+    UTC Arrival Time: Oct 22, 2026 04:15:34.673423000 UTC
+    Epoch Arrival Time: 1792642534.673423000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000000000 seconds]
+    [Time delta from previous displayed frame: 0.000000000 seconds]
+    [Time since reference or first frame: 0.000000000 seconds]
+    Frame Number: 1
+    Frame Length: 94 bytes (752 bits)
+    Capture Length: 94 bytes (752 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:udp:dns]
+Ethernet II, Src: b6:48:c3:af:be:56 (b6:48:c3:af:be:56), Dst: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
+    Destination: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+    [Stream index: 0]
+Internet Protocol Version 4, Src: 172.16.2.10, Dst: 172.16.3.10
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x00 (DSCP: CS0, ECN: Not-ECT)
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..00 = Explicit Congestion Notification: Not ECN-Capable Transport (0)
+    Total Length: 80
+    Identification: 0x9120 (37152)
+    000. .... = Flags: 0x0
+        0... .... = Reserved bit: Not set
+        .0.. .... = Don't fragment: Not set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: UDP (17)
+    Header Checksum: 0x8c48 [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.16.2.10
+    Destination Address: 172.16.3.10
+    [Stream index: 0]
+User Datagram Protocol, Src Port: 34198, Dst Port: 53
+    Source Port: 34198
+    Destination Port: 53
+    Length: 60
+    Checksum: 0x5d82 [unverified]
+    [Checksum Status: Unverified]
+    [Stream index: 0]
+    [Stream Packet Number: 1]
+    [Timestamps]
+        [Time since first frame: 0.000000000 seconds]
+        [Time since previous frame: 0.000000000 seconds]
+    UDP payload (52 bytes)
+Domain Name System (query)
+    Transaction ID: 0x2493
+    Flags: 0x0010 Standard query
+        0... .... .... .... = Response: Message is a query
+        .000 0... .... .... = Opcode: Standard query (0)
+        .... ..0. .... .... = Truncated: Message is not truncated
+        .... ...0 .... .... = Recursion desired: Don't do query recursively
+        .... .... .0.. .... = Z: reserved (0)
+        .... .... ...1 .... = Non-authenticated data: Acceptable
+    Questions: 1
+    Answer RRs: 0
+    Authority RRs: 0
+    Additional RRs: 1
+    Queries
+        example.com: type A, class IN
+            Name: example.com
+            [Name Length: 11]
+            [Label Count: 2]
+            Type: A (1) (Host Address)
+            Class: IN (0x0001)
+    Additional records
+        <Root>: type OPT
+            Name: <Root>
+            Type: OPT (41) 
+            UDP payload size: 1232
+            Higher bits in extended RCODE: 0x00
+            EDNS0 version: 0
+            Z: 0x8000
+                1... .... .... .... = DO bit: Accepts DNSSEC security RRs
+                .000 0000 0000 0000 = Reserved: 0x0000
+            Data length: 12
+            Option: COOKIE
+                Option Code: COOKIE (10)
+                Option Length: 8
+                Option Data: 9f72125a34abf7a8
+                Client Cookie: 9f72125a34abf7a8
+                Server Cookie: <MISSING>
+
+Frame 2: 82 bytes on wire (656 bits), 82 bytes captured (656 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 22, 2026 04:15:34.673466000 UTC
+    UTC Arrival Time: Oct 22, 2026 04:15:34.673466000 UTC
+    Epoch Arrival Time: 1792642534.673466000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000043000 seconds]
+    [Time delta from previous displayed frame: 0.000043000 seconds]
+    [Time since reference or first frame: 0.000043000 seconds]
+    Frame Number: 2
+    Frame Length: 82 bytes (656 bits)
+    Capture Length: 82 bytes (656 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:udp:dns]
+Ethernet II, Src: b6:48:c3:af:be:56 (b6:48:c3:af:be:56), Dst: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
+    Destination: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+    [Stream index: 0]
+Internet Protocol Version 4, Src: 172.16.2.10, Dst: 172.16.3.10
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x00 (DSCP: CS0, ECN: Not-ECT)
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..00 = Explicit Congestion Notification: Not ECN-Capable Transport (0)
+    Total Length: 68
+    Identification: 0x5d13 (23827)
+    000. .... = Flags: 0x0
+        0... .... = Reserved bit: Not set
+        .0.. .... = Don't fragment: Not set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: UDP (17)
+    Header Checksum: 0xc061 [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.16.2.10
+    Destination Address: 172.16.3.10
+    [Stream index: 0]
+User Datagram Protocol, Src Port: 55598, Dst Port: 53
+    Source Port: 55598
+    Destination Port: 53
+    Length: 48
+    Checksum: 0x5d76 [unverified]
+    [Checksum Status: Unverified]
+    [Stream index: 1]
+    [Stream Packet Number: 1]
+    [Timestamps]
+        [Time since first frame: 0.000000000 seconds]
+        [Time since previous frame: 0.000000000 seconds]
+    UDP payload (40 bytes)
+Domain Name System (query)
+    Transaction ID: 0xa5ba
+    Flags: 0x0000 Standard query
+        0... .... .... .... = Response: Message is a query
+        .000 0... .... .... = Opcode: Standard query (0)
+        .... ..0. .... .... = Truncated: Message is not truncated
+        .... ...0 .... .... = Recursion desired: Don't do query recursively
+        .... .... .0.. .... = Z: reserved (0)
+        .... .... ...0 .... = Non-authenticated data: Unacceptable
+    Questions: 1
+    Answer RRs: 0
+    Authority RRs: 0
+    Additional RRs: 1
+    Queries
+        <Root>: type NS, class IN
+            Name: <Root>
+            [Name Length: 6]
+            [Label Count: 1]
+            Type: NS (2) (authoritative Name Server)
+            Class: IN (0x0001)
+    Additional records
+        <Root>: type OPT
+            Name: <Root>
+            Type: OPT (41) 
+            UDP payload size: 1232
+            Higher bits in extended RCODE: 0x00
+            EDNS0 version: 0
+            Z: 0x8000
+                1... .... .... .... = DO bit: Accepts DNSSEC security RRs
+                .000 0000 0000 0000 = Reserved: 0x0000
+            Data length: 12
+            Option: COOKIE
+                Option Code: COOKIE (10)
+                Option Length: 8
+                Option Data: 9f72125a34abf7a8
+                Client Cookie: 9f72125a34abf7a8
+                Server Cookie: <MISSING>
+
+Frame 3: 143 bytes on wire (1144 bits), 143 bytes captured (1144 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 22, 2026 04:15:34.673506000 UTC
+    UTC Arrival Time: Oct 22, 2026 04:15:34.673506000 UTC
+    Epoch Arrival Time: 1792642534.673506000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000040000 seconds]
+    [Time delta from previous displayed frame: 0.000040000 seconds]
+    [Time since reference or first frame: 0.000083000 seconds]
+    Frame Number: 3
+    Frame Length: 143 bytes (1144 bits)
+    Capture Length: 143 bytes (1144 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:udp:dns]
+Ethernet II, Src: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd), Dst: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
+    Destination: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+    [Stream index: 0]
+Internet Protocol Version 4, Src: 172.16.3.10, Dst: 172.16.2.10
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x00 (DSCP: CS0, ECN: Not-ECT)
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..00 = Explicit Congestion Notification: Not ECN-Capable Transport (0)
+    Total Length: 129
+    Identification: 0xb464 (46180)
+    000. .... = Flags: 0x0
+        0... .... = Reserved bit: Not set
+        .0.. .... = Don't fragment: Not set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: UDP (17)
+    Header Checksum: 0x69d3 [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.16.3.10
+    Destination Address: 172.16.2.10
+    [Stream index: 0]
+User Datagram Protocol, Src Port: 53, Dst Port: 34198
+    Source Port: 53
+    Destination Port: 34198
+    Length: 109
+    Checksum: 0x5db3 [unverified]
+    [Checksum Status: Unverified]
+    [Stream index: 0]
+    [Stream Packet Number: 2]
+    [Timestamps]
+        [Time since first frame: 0.000083000 seconds]
+        [Time since previous frame: 0.000083000 seconds]
+    UDP payload (101 bytes)
+Domain Name System (response)
+    Transaction ID: 0x2493
+    Flags: 0x8010 Standard query response, No error
+        1... .... .... .... = Response: Message is a response
+        .000 0... .... .... = Opcode: Standard query (0)
+        .... .0.. .... .... = Authoritative: Server is not an authority for domain
+        .... ..0. .... .... = Truncated: Message is not truncated
+        .... ...0 .... .... = Recursion desired: Don't do query recursively
+        .... .... 0... .... = Recursion available: Server can't do recursive queries
+        .... .... .0.. .... = Z: reserved (0)
+        .... .... ..0. .... = Answer authenticated: Answer/authority portion was not authenticated by the server
+        .... .... ...1 .... = Non-authenticated data: Acceptable
+        .... .... .... 0000 = Reply code: No error (0)
+    Questions: 1
+    Answer RRs: 0
+    Authority RRs: 1
+    Additional RRs: 2
+    Queries
+        example.com: type A, class IN
+            Name: example.com
+            [Name Length: 11]
+            [Label Count: 2]
+            Type: A (1) (Host Address)
+            Class: IN (0x0001)
+    Authoritative nameservers
+        com: type NS, class IN, ns ns.com
+            Name: com
+            Type: NS (2) (authoritative Name Server)
+            Class: IN (0x0001)
+            Time to live: 300 (5 minutes)
+            Data length: 5
+            Name Server: ns.com
+    Additional records
+        ns.com: type A, class IN, addr 172.16.3.20
+            Name: ns.com
+            Type: A (1) (Host Address)
+            Class: IN (0x0001)
+            Time to live: 300 (5 minutes)
+            Data length: 4
+            Address: 172.16.3.20
+        <Root>: type OPT
+            Name: <Root>
+            Type: OPT (41) 
+            UDP payload size: 1232
+            Higher bits in extended RCODE: 0x00
+            EDNS0 version: 0
+            Z: 0x8000
+                1... .... .... .... = DO bit: Accepts DNSSEC security RRs
+                .000 0000 0000 0000 = Reserved: 0x0000
+            Data length: 28
+            Option: COOKIE
+                Option Code: COOKIE (10)
+                Option Length: 24
+                Option Data: 9f72125a34abf7a8010000006ad98de637508efb6f63ee2f
+                Client Cookie: 9f72125a34abf7a8
+                Server Cookie: 010000006ad98de637508efb6f63ee2f
+    [Request In: 1]
+    [Time: 0.000083000 seconds]
+
+Frame 4: 118 bytes on wire (944 bits), 118 bytes captured (944 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 22, 2026 04:15:34.673530000 UTC
+    UTC Arrival Time: Oct 22, 2026 04:15:34.673530000 UTC
+    Epoch Arrival Time: 1792642534.673530000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000024000 seconds]
+    [Time delta from previous displayed frame: 0.000024000 seconds]
+    [Time since reference or first frame: 0.000107000 seconds]
+    Frame Number: 4
+    Frame Length: 118 bytes (944 bits)
+    Capture Length: 118 bytes (944 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:udp:dns]
+Ethernet II, Src: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd), Dst: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
+    Destination: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+    [Stream index: 0]
+Internet Protocol Version 4, Src: 172.16.3.10, Dst: 172.16.2.10
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x00 (DSCP: CS0, ECN: Not-ECT)
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..00 = Explicit Congestion Notification: Not ECN-Capable Transport (0)
+    Total Length: 104
+    Identification: 0xb465 (46181)
+    000. .... = Flags: 0x0
+        0... .... = Reserved bit: Not set
+        .0.. .... = Don't fragment: Not set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: UDP (17)
+    Header Checksum: 0x69eb [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.16.3.10
+    Destination Address: 172.16.2.10
+    [Stream index: 0]
+User Datagram Protocol, Src Port: 53, Dst Port: 55598
+    Source Port: 53
+    Destination Port: 55598
+    Length: 84
+    Checksum: 0x5d9a [unverified]
+    [Checksum Status: Unverified]
+    [Stream index: 1]
+    [Stream Packet Number: 2]
+    [Timestamps]
+        [Time since first frame: 0.000064000 seconds]
+        [Time since previous frame: 0.000064000 seconds]
+    UDP payload (76 bytes)
+Domain Name System (response)
+    Transaction ID: 0xa5ba
+    Flags: 0x8400 Standard query response, No error
+        1... .... .... .... = Response: Message is a response
+        .000 0... .... .... = Opcode: Standard query (0)
+        .... .1.. .... .... = Authoritative: Server is an authority for domain
+        .... ..0. .... .... = Truncated: Message is not truncated
+        .... ...0 .... .... = Recursion desired: Don't do query recursively
+        .... .... 0... .... = Recursion available: Server can't do recursive queries
+        .... .... .0.. .... = Z: reserved (0)
+        .... .... ..0. .... = Answer authenticated: Answer/authority portion was not authenticated by the server
+        .... .... ...0 .... = Non-authenticated data: Unacceptable
+        .... .... .... 0000 = Reply code: No error (0)
+    Questions: 1
+    Answer RRs: 1
+    Authority RRs: 0
+    Additional RRs: 1
+    Queries
+        <Root>: type NS, class IN
+            Name: <Root>
+            [Name Length: 6]
+            [Label Count: 1]
+            Type: NS (2) (authoritative Name Server)
+            Class: IN (0x0001)
+    Answers
+        <Root>: type NS, class IN, ns ns.root
+            Name: <Root>
+            Type: NS (2) (authoritative Name Server)
+            Class: IN (0x0001)
+            Time to live: 300 (5 minutes)
+            Data length: 9
+            Name Server: ns.root
+    Additional records
+        <Root>: type OPT
+            Name: <Root>
+            Type: OPT (41) 
+            UDP payload size: 1232
+            Higher bits in extended RCODE: 0x00
+            EDNS0 version: 0
+            Z: 0x8000
+                1... .... .... .... = DO bit: Accepts DNSSEC security RRs
+                .000 0000 0000 0000 = Reserved: 0x0000
+            Data length: 28
+            Option: COOKIE
+                Option Code: COOKIE (10)
+                Option Length: 24
+                Option Data: 9f72125a34abf7a8010000006ad98de637508efb6f63ee2f
+                Client Cookie: 9f72125a34abf7a8
+                Server Cookie: 010000006ad98de637508efb6f63ee2f
+    [Request In: 2]
+    [Time: 0.000064000 seconds]
+
+Frame 5: 94 bytes on wire (752 bits), 94 bytes captured (752 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 22, 2026 04:15:34.673560000 UTC
+    UTC Arrival Time: Oct 22, 2026 04:15:34.673560000 UTC
+    Epoch Arrival Time: 1792642534.673560000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000030000 seconds]
+    [Time delta from previous displayed frame: 0.000030000 seconds]
+    [Time since reference or first frame: 0.000137000 seconds]
+    Frame Number: 5
+    Frame Length: 94 bytes (752 bits)
+    Capture Length: 94 bytes (752 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:udp:dns]
+Ethernet II, Src: b6:48:c3:af:be:56 (b6:48:c3:af:be:56), Dst: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
+    Destination: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+    [Stream index: 0]
+Internet Protocol Version 4, Src: 172.16.2.10, Dst: 172.16.3.20
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x00 (DSCP: CS0, ECN: Not-ECT)
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..00 = Explicit Congestion Notification: Not ECN-Capable Transport (0)
+    Total Length: 80
+    Identification: 0x7e5f (32351)
+    000. .... = Flags: 0x0
+        0... .... = Reserved bit: Not set
+        .0.. .... = Don't fragment: Not set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: UDP (17)
+    Header Checksum: 0x9eff [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.16.2.10
+    Destination Address: 172.16.3.20
+    [Stream index: 1]
+User Datagram Protocol, Src Port: 55174, Dst Port: 53
+    Source Port: 55174
+    Destination Port: 53
+    Length: 60
+    Checksum: 0x5d8c [unverified]
+    [Checksum Status: Unverified]
+    [Stream index: 2]
+    [Stream Packet Number: 1]
+    [Timestamps]
+        [Time since first frame: 0.000000000 seconds]
+        [Time since previous frame: 0.000000000 seconds]
+    UDP payload (52 bytes)
+Domain Name System (query)
+    Transaction ID: 0x7140
+    Flags: 0x0010 Standard query
+        0... .... .... .... = Response: Message is a query
+        .000 0... .... .... = Opcode: Standard query (0)
+        .... ..0. .... .... = Truncated: Message is not truncated
+        .... ...0 .... .... = Recursion desired: Don't do query recursively
+        .... .... .0.. .... = Z: reserved (0)
+        .... .... ...1 .... = Non-authenticated data: Acceptable
+    Questions: 1
+    Answer RRs: 0
+    Authority RRs: 0
+    Additional RRs: 1
+    Queries
+        example.com: type A, class IN
+            Name: example.com
+            [Name Length: 11]
+            [Label Count: 2]
+            Type: A (1) (Host Address)
+            Class: IN (0x0001)
+    Additional records
+        <Root>: type OPT
+            Name: <Root>
+            Type: OPT (41) 
+            UDP payload size: 1232
+            Higher bits in extended RCODE: 0x00
+            EDNS0 version: 0
+            Z: 0x8000
+                1... .... .... .... = DO bit: Accepts DNSSEC security RRs
+                .000 0000 0000 0000 = Reserved: 0x0000
+            Data length: 12
+            Option: COOKIE
+                Option Code: COOKIE (10)
+                Option Length: 8
+                Option Data: 78354726412f2e38
+                Client Cookie: 78354726412f2e38
+                Server Cookie: <MISSING>
+
+Frame 6: 143 bytes on wire (1144 bits), 143 bytes captured (1144 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 22, 2026 04:15:34.673618000 UTC
+    UTC Arrival Time: Oct 22, 2026 04:15:34.673618000 UTC
+    Epoch Arrival Time: 1792642534.673618000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000058000 seconds]
+    [Time delta from previous displayed frame: 0.000058000 seconds]
+    [Time since reference or first frame: 0.000195000 seconds]
+    Frame Number: 6
+    Frame Length: 143 bytes (1144 bits)
+    Capture Length: 143 bytes (1144 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:udp:dns]
+Ethernet II, Src: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd), Dst: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
+    Destination: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+    [Stream index: 0]
+Internet Protocol Version 4, Src: 172.16.3.20, Dst: 172.16.2.10
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x00 (DSCP: CS0, ECN: Not-ECT)
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..00 = Explicit Congestion Notification: Not ECN-Capable Transport (0)
+    Total Length: 129
+    Identification: 0x1a0e (6670)
+    000. .... = Flags: 0x0
+        0... .... = Reserved bit: Not set
+        .0.. .... = Don't fragment: Not set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: UDP (17)
+    Header Checksum: 0x0420 [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.16.3.20
+    Destination Address: 172.16.2.10
+    [Stream index: 1]
+User Datagram Protocol, Src Port: 53, Dst Port: 55174
+    Source Port: 53
+    Destination Port: 55174
+    Length: 109
+    Checksum: 0x5dbd [unverified]
+    [Checksum Status: Unverified]
+    [Stream index: 2]
+    [Stream Packet Number: 2]
+    [Timestamps]
+        [Time since first frame: 0.000058000 seconds]
+        [Time since previous frame: 0.000058000 seconds]
+    UDP payload (101 bytes)
+Domain Name System (response)
+    Transaction ID: 0x7140
+    Flags: 0x8010 Standard query response, No error
+        1... .... .... .... = Response: Message is a response
+        .000 0... .... .... = Opcode: Standard query (0)
+        .... .0.. .... .... = Authoritative: Server is not an authority for domain
+        .... ..0. .... .... = Truncated: Message is not truncated
+        .... ...0 .... .... = Recursion desired: Don't do query recursively
+        .... .... 0... .... = Recursion available: Server can't do recursive queries
+        .... .... .0.. .... = Z: reserved (0)
+        .... .... ..0. .... = Answer authenticated: Answer/authority portion was not authenticated by the server
+        .... .... ...1 .... = Non-authenticated data: Acceptable
+        .... .... .... 0000 = Reply code: No error (0)
+    Questions: 1
+    Answer RRs: 0
+    Authority RRs: 1
+    Additional RRs: 2
+    Queries
+        example.com: type A, class IN
+            Name: example.com
+            [Name Length: 11]
+            [Label Count: 2]
+            Type: A (1) (Host Address)
+            Class: IN (0x0001)
+    Authoritative nameservers
+        example.com: type NS, class IN, ns ns.example.com
+            Name: example.com
+            Type: NS (2) (authoritative Name Server)
+            Class: IN (0x0001)
+            Time to live: 300 (5 minutes)
+            Data length: 5
+            Name Server: ns.example.com
+    Additional records
+        ns.example.com: type A, class IN, addr 172.16.3.30
+            Name: ns.example.com
+            Type: A (1) (Host Address)
+            Class: IN (0x0001)
+            Time to live: 300 (5 minutes)
+            Data length: 4
+            Address: 172.16.3.30
+        <Root>: type OPT
+            Name: <Root>
+            Type: OPT (41) 
+            UDP payload size: 1232
+            Higher bits in extended RCODE: 0x00
+            EDNS0 version: 0
+            Z: 0x8000
+                1... .... .... .... = DO bit: Accepts DNSSEC security RRs
+                .000 0000 0000 0000 = Reserved: 0x0000
+            Data length: 28
+            Option: COOKIE
+                Option Code: COOKIE (10)
+                Option Length: 24
+                Option Data: 78354726412f2e38010000006ad98de6f4f3f24f8dc5bf3b
+                Client Cookie: 78354726412f2e38
+                Server Cookie: 010000006ad98de6f4f3f24f8dc5bf3b
+    [Request In: 5]
+    [Time: 0.000058000 seconds]
+
+Frame 7: 94 bytes on wire (752 bits), 94 bytes captured (752 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 22, 2026 04:15:34.673649000 UTC
+    UTC Arrival Time: Oct 22, 2026 04:15:34.673649000 UTC
+    Epoch Arrival Time: 1792642534.673649000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000031000 seconds]
+    [Time delta from previous displayed frame: 0.000031000 seconds]
+    [Time since reference or first frame: 0.000226000 seconds]
+    Frame Number: 7
+    Frame Length: 94 bytes (752 bits)
+    Capture Length: 94 bytes (752 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:udp:dns]
+Ethernet II, Src: b6:48:c3:af:be:56 (b6:48:c3:af:be:56), Dst: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
+    Destination: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+    [Stream index: 0]
+Internet Protocol Version 4, Src: 172.16.2.10, Dst: 172.16.3.30
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x00 (DSCP: CS0, ECN: Not-ECT)
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..00 = Explicit Congestion Notification: Not ECN-Capable Transport (0)
+    Total Length: 80
+    Identification: 0x3e11 (15889)
+    000. .... = Flags: 0x0
+        0... .... = Reserved bit: Not set
+        .0.. .... = Don't fragment: Not set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: UDP (17)
+    Header Checksum: 0xdf43 [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.16.2.10
+    Destination Address: 172.16.3.30
+    [Stream index: 2]
+User Datagram Protocol, Src Port: 49952, Dst Port: 53
+    Source Port: 49952
+    Destination Port: 53
+    Length: 60
+    Checksum: 0x5d96 [unverified]
+    [Checksum Status: Unverified]
+    [Stream index: 3]
+    [Stream Packet Number: 1]
+    [Timestamps]
+        [Time since first frame: 0.000000000 seconds]
+        [Time since previous frame: 0.000000000 seconds]
+    UDP payload (52 bytes)
+Domain Name System (query)
+    Transaction ID: 0xa9a8
+    Flags: 0x0010 Standard query
+        0... .... .... .... = Response: Message is a query
+        .000 0... .... .... = Opcode: Standard query (0)
+        .... ..0. .... .... = Truncated: Message is not truncated
+        .... ...0 .... .... = Recursion desired: Don't do query recursively
+        .... .... .0.. .... = Z: reserved (0)
+        .... .... ...1 .... = Non-authenticated data: Acceptable
+    Questions: 1
+    Answer RRs: 0
+    Authority RRs: 0
+    Additional RRs: 1
+    Queries
+        example.com: type A, class IN
+            Name: example.com
+            [Name Length: 11]
+            [Label Count: 2]
+            Type: A (1) (Host Address)
+            Class: IN (0x0001)
+    Additional records
+        <Root>: type OPT
+            Name: <Root>
+            Type: OPT (41) 
+            UDP payload size: 1232
+            Higher bits in extended RCODE: 0x00
+            EDNS0 version: 0
+            Z: 0x8000
+                1... .... .... .... = DO bit: Accepts DNSSEC security RRs
+                .000 0000 0000 0000 = Reserved: 0x0000
+            Data length: 12
+            Option: COOKIE
+                Option Code: COOKIE (10)
+                Option Length: 8
+                Option Data: e4118550a44b137d
+                Client Cookie: e4118550a44b137d
+                Server Cookie: <MISSING>
+
+Frame 8: 159 bytes on wire (1272 bits), 159 bytes captured (1272 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 22, 2026 04:15:34.673749000 UTC
+    UTC Arrival Time: Oct 22, 2026 04:15:34.673749000 UTC
+    Epoch Arrival Time: 1792642534.673749000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000100000 seconds]
+    [Time delta from previous displayed frame: 0.000100000 seconds]
+    [Time since reference or first frame: 0.000326000 seconds]
+    Frame Number: 8
+    Frame Length: 159 bytes (1272 bits)
+    Capture Length: 159 bytes (1272 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:udp:dns]
+Ethernet II, Src: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd), Dst: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
+    Destination: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+    [Stream index: 0]
+Internet Protocol Version 4, Src: 172.16.3.30, Dst: 172.16.2.10
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x00 (DSCP: CS0, ECN: Not-ECT)
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..00 = Explicit Congestion Notification: Not ECN-Capable Transport (0)
+    Total Length: 145
+    Identification: 0x5f7f (24447)
+    000. .... = Flags: 0x0
+        0... .... = Reserved bit: Not set
+        .0.. .... = Don't fragment: Not set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: UDP (17)
+    Header Checksum: 0xbe94 [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.16.3.30
+    Destination Address: 172.16.2.10
+    [Stream index: 2]
+User Datagram Protocol, Src Port: 53, Dst Port: 49952
+    Source Port: 53
+    Destination Port: 49952
+    Length: 125
+    Checksum: 0x5dd7 [unverified]
+    [Checksum Status: Unverified]
+    [Stream index: 3]
+    [Stream Packet Number: 2]
+    [Timestamps]
+        [Time since first frame: 0.000100000 seconds]
+        [Time since previous frame: 0.000100000 seconds]
+    UDP payload (117 bytes)
+Domain Name System (response)
+    Transaction ID: 0xa9a8
+    Flags: 0x8410 Standard query response, No error
+        1... .... .... .... = Response: Message is a response
+        .000 0... .... .... = Opcode: Standard query (0)
+        .... .1.. .... .... = Authoritative: Server is an authority for domain
+        .... ..0. .... .... = Truncated: Message is not truncated
+        .... ...0 .... .... = Recursion desired: Don't do query recursively
+        .... .... 0... .... = Recursion available: Server can't do recursive queries
+        .... .... .0.. .... = Z: reserved (0)
+        .... .... ..0. .... = Answer authenticated: Answer/authority portion was not authenticated by the server
+        .... .... ...1 .... = Non-authenticated data: Acceptable
+        .... .... .... 0000 = Reply code: No error (0)
+    Questions: 1
+    Answer RRs: 1
+    Authority RRs: 1
+    Additional RRs: 2
+    Queries
+        example.com: type A, class IN
+            Name: example.com
+            [Name Length: 11]
+            [Label Count: 2]
+            Type: A (1) (Host Address)
+            Class: IN (0x0001)
+    Answers
+        example.com: type A, class IN, addr 172.16.1.20
+            Name: example.com
+            Type: A (1) (Host Address)
+            Class: IN (0x0001)
+            Time to live: 300 (5 minutes)
+            Data length: 4
+            Address: 172.16.1.20
+    Authoritative nameservers
+        example.com: type NS, class IN, ns ns.example.com
+            Name: example.com
+            Type: NS (2) (authoritative Name Server)
+            Class: IN (0x0001)
+            Time to live: 300 (5 minutes)
+            Data length: 5
+            Name Server: ns.example.com
+    Additional records
+        ns.example.com: type A, class IN, addr 172.16.3.30
+            Name: ns.example.com
+            Type: A (1) (Host Address)
+            Class: IN (0x0001)
+            Time to live: 300 (5 minutes)
+            Data length: 4
+            Address: 172.16.3.30
+        <Root>: type OPT
+            Name: <Root>
+            Type: OPT (41) 
+            UDP payload size: 1232
+            Higher bits in extended RCODE: 0x00
+            EDNS0 version: 0
+            Z: 0x8000
+                1... .... .... .... = DO bit: Accepts DNSSEC security RRs
+                .000 0000 0000 0000 = Reserved: 0x0000
+            Data length: 28
+            Option: COOKIE
+                Option Code: COOKIE (10)
+                Option Length: 24
+                Option Data: e4118550a44b137d010000006ad98de6a396e75939e9b609
+                Client Cookie: e4118550a44b137d
+                Server Cookie: 010000006ad98de6a396e75939e9b609
+    [Request In: 7]
+    [Time: 0.000100000 seconds]
+

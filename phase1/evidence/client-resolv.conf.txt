@@ -1,0 +1,2 @@
+nameserver 172.16.2.10
+options timeout:2 attempts:1

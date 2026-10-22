@@ -1,0 +1,2 @@
+;; UDP setup with 172.16.3.10#53(172.16.3.10) for example.com failed: network unreachable.
+;; no servers could be reached

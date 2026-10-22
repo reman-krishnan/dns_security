@@ -1,0 +1,9 @@
+frame.number,frame.time_relative,ip.src,ip.dst,udp.srcport,udp.dstport,dns.id,dns.flags.response,dns.qry.name,dns.qry.type,dns.resp.name,dns.a
+"1","0.000000000","172.16.2.10","172.16.3.10","34198","53","0x2493","False","example.com","1","<Root>",
+"2","0.000043000","172.16.2.10","172.16.3.10","55598","53","0xa5ba","False","<Root>","2","<Root>",
+"3","0.000083000","172.16.3.10","172.16.2.10","53","34198","0x2493","True","example.com","1","com,ns.com,<Root>","172.16.3.20"
+"4","0.000107000","172.16.3.10","172.16.2.10","53","55598","0xa5ba","True","<Root>","2","<Root>,<Root>",
+"5","0.000137000","172.16.2.10","172.16.3.20","55174","53","0x7140","False","example.com","1","<Root>",
+"6","0.000195000","172.16.3.20","172.16.2.10","53","55174","0x7140","True","example.com","1","example.com,ns.example.com,<Root>","172.16.3.30"
+"7","0.000226000","172.16.2.10","172.16.3.30","49952","53","0xa9a8","False","example.com","1","<Root>",
+"8","0.000326000","172.16.3.30","172.16.2.10","53","49952","0xa9a8","True","example.com","1","example.com,example.com,ns.example.com,<Root>","172.16.1.20,172.16.3.30"

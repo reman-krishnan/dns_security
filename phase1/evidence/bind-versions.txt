@@ -1,0 +1,12 @@
+
+--- resolver ---
+BIND 9.20.30-1~deb13u1-Debian (Stable Release) <id:>
+
+--- root-ns ---
+BIND 9.20.30-1~deb13u1-Debian (Stable Release) <id:>
+
+--- tld-ns ---
+BIND 9.20.30-1~deb13u1-Debian (Stable Release) <id:>
+
+--- domain-ns ---
+BIND 9.20.30-1~deb13u1-Debian (Stable Release) <id:>

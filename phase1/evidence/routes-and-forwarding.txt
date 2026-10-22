@@ -1,0 +1,82 @@
+
+========== client ==========
+--- IPv4 addresses ---
+lo               UNKNOWN        127.0.0.1/8 
+eth0@if20        UP             172.16.1.10/24 
+--- IPv4 routes ---
+172.16.1.0/24 dev eth0 proto kernel scope link src 172.16.1.10 
+172.16.2.0/24 via 172.16.1.2 dev eth0 
+--- IPv4 forwarding ---
+0
+
+========== webserver ==========
+--- IPv4 addresses ---
+lo               UNKNOWN        127.0.0.1/8 
+eth0@if22        UP             172.16.1.20/24 
+--- IPv4 routes ---
+172.16.1.0/24 dev eth0 proto kernel scope link src 172.16.1.20 
+--- IPv4 forwarding ---
+0
+
+========== resolver ==========
+--- IPv4 addresses ---
+lo               UNKNOWN        127.0.0.1/8 
+eth0@if23        UP             172.16.2.10/24 
+--- IPv4 routes ---
+172.16.1.0/24 via 172.16.2.2 dev eth0 
+172.16.2.0/24 dev eth0 proto kernel scope link src 172.16.2.10 
+172.16.3.0/24 via 172.16.2.3 dev eth0 
+--- IPv4 forwarding ---
+0
+
+========== root-ns ==========
+--- IPv4 addresses ---
+lo               UNKNOWN        127.0.0.1/8 
+eth0@if21        UP             172.16.3.10/24 
+--- IPv4 routes ---
+172.16.2.0/24 via 172.16.3.3 dev eth0 
+172.16.3.0/24 dev eth0 proto kernel scope link src 172.16.3.10 
+--- IPv4 forwarding ---
+0
+
+========== tld-ns ==========
+--- IPv4 addresses ---
+lo               UNKNOWN        127.0.0.1/8 
+eth0@if19        UP             172.16.3.20/24 
+--- IPv4 routes ---
+172.16.2.0/24 via 172.16.3.3 dev eth0 
+172.16.3.0/24 dev eth0 proto kernel scope link src 172.16.3.20 
+--- IPv4 forwarding ---
+0
+
+========== domain-ns ==========
+--- IPv4 addresses ---
+lo               UNKNOWN        127.0.0.1/8 
+eth0@if18        UP             172.16.3.30/24 
+--- IPv4 routes ---
+172.16.2.0/24 via 172.16.3.3 dev eth0 
+172.16.3.0/24 dev eth0 proto kernel scope link src 172.16.3.30 
+--- IPv4 forwarding ---
+0
+
+========== edge-router ==========
+--- IPv4 addresses ---
+lo               UNKNOWN        127.0.0.1/8 
+eth0@if24        UP             172.16.1.2/24 
+eth1@if25        UP             172.16.2.2/24 
+--- IPv4 routes ---
+172.16.1.0/24 dev eth0 proto kernel scope link src 172.16.1.2 
+172.16.2.0/24 dev eth1 proto kernel scope link src 172.16.2.2 
+--- IPv4 forwarding ---
+1
+
+========== core-router ==========
+--- IPv4 addresses ---
+lo               UNKNOWN        127.0.0.1/8 
+eth0@if16        UP             172.16.3.3/24 
+eth1@if17        UP             172.16.2.3/24 
+--- IPv4 routes ---
+172.16.2.0/24 dev eth1 proto kernel scope link src 172.16.2.3 
+172.16.3.0/24 dev eth0 proto kernel scope link src 172.16.3.3 
+--- IPv4 forwarding ---
+1
