@@ -1,0 +1,74 @@
+; File written on Thu Oct 22 05:25:49 2026
+; dnssec-signzone version 9.20.30-1~deb13u1-Debian
+.			300	IN SOA	ns.root. hostmaster.root. (
+					2026102201 ; serial
+					3600       ; refresh (1 hour)
+					600        ; retry (10 minutes)
+					86400      ; expire (1 day)
+					300        ; minimum (5 minutes)
+					)
+			300	RRSIG	SOA 13 0 300 (
+					20261121042549 20261022042549 46729 .
+					wKhp4xjH0lcgocJPNHT2QTO8qCKjezxWhuNk
+					bIPg/YYPFbuujlTmxJDTc7ijuzT+7XzD/KgE
+					LIFA6SJqFAcsMg== )
+			300	NS	ns.root.
+			300	RRSIG	NS 13 0 300 (
+					20261121042549 20261022042549 46729 .
+					mlmSwW/vEAUGftx7xz+LKgYsUk+sVA7wrpD3
+					jEK/3olqHUcvBoItHRzzMczQTevuzUmmh4xI
+					8MKvGzJSjKJjuA== )
+			300	NSEC	com. NS SOA RRSIG NSEC DNSKEY
+			300	RRSIG	NSEC 13 0 300 (
+					20261121042549 20261022042549 46729 .
+					KL+fXovv4xEQbSS0BUuTmaUC7ARybG0+duva
+					SPchWOnyEnnfKxzl51BX240yM4qsLMNt79vd
+					Acs7wVh2BSGhAw== )
+			300	DNSKEY	256 3 13 (
+					Aal/EIg+KC40FHgc3bL9QPThJtPX5SNF6eGd
+					N1y5cmTRqEoEUZROa1bjTXoB76Q7o+42cqyG
+					8c71XbeGatr2bw==
+					) ; ZSK; alg = ECDSAP256SHA256 ; key id = 46729
+			300	DNSKEY	257 3 13 (
+					A+jYngeG3x3mfMvQKa3yfi41+fM/f9/Z/Gap
+					yPr+ZtdSPftkE/d3Br1hpOfl33xGy7O2O1Lh
+					06Gz/fXxXb1nBw==
+					) ; KSK; alg = ECDSAP256SHA256 ; key id = 39281
+			300	RRSIG	DNSKEY 13 0 300 (
+					20261121042549 20261022042549 39281 .
+					zOwRaIyeAP2zLCh7T+EBIX/R/AbXgwcZmX7J
+					htjWpqhcIr4jKiXvLlDdJgh3eX9To56ziaNT
+					aYg3xK2shiP32g== )
+			300	RRSIG	DNSKEY 13 0 300 (
+					20261121042549 20261022042549 46729 .
+					xTeVHhU1w/IHv0q2qSJuOGC9baEG93UPMz5U
+					upBje9W71XbOHo9UeWIFjjx37fH1GcJUMHxT
+					p/MhGRU6fawtCw== )
+com.			300	IN NS	ns.com.
+			300	DS	21980 13 2 (
+					CA0DB1DD1C38030B7D32173F65EFEEC4F1B5
+					D4F3C2E8A517993CB39546BFDA52 )
+			300	RRSIG	DS 13 1 300 (
+					20261121042549 20261022042549 46729 .
+					vpTGqFfkAANE/5FIX+Q3aAegs8zPNtdqWara
+					eg8FzgmKYhdeSVmRoOt6uMafWxZkbkadZkH1
+					w3qK/mHKAukEzw== )
+			300	NSEC	ns.root. NS DS RRSIG NSEC
+			300	RRSIG	NSEC 13 1 300 (
+					20261121042549 20261022042549 46729 .
+					eoXBfIdyuV/IkNC0RLUYNUPvAozG2zuDPE/w
+					nKa5TNQuWUDGJgtWBvACGfjbwBb2qyt6YGut
+					5eFn2kUMu+bU7A== )
+ns.com.			300	IN A	172.16.3.20
+ns.root.		300	IN A	172.16.3.10
+			300	RRSIG	A 13 2 300 (
+					20261121042549 20261022042549 46729 .
+					DmjRNmspZajOcFnTnQxS7aQ9En6dMkRFci2t
+					xcgte79PbP6Dr4PrQ/So1yO6+1pcb49ke7DW
+					YExAvEsCTCDgUw== )
+			300	NSEC	. A RRSIG NSEC
+			300	RRSIG	NSEC 13 2 300 (
+					20261121042549 20261022042549 46729 .
+					ff4YJeHEO0OaxcSogCNvHY2Ux81nxvWp60OG
+					zQlz3Fm4L8q2+/xg+17/NliyCCn5VfdrYAg3
+					g4hjB/YFoKReAw== )

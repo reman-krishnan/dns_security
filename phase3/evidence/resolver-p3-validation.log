@@ -1,0 +1,50 @@
+resolver-1  | 22-Oct-2026 05:57:06.015 compiled by GCC 14.2.0
+resolver-1  | 22-Oct-2026 05:57:06.015 compiled with OpenSSL version: OpenSSL 3.5.7 9 Jun 2026
+resolver-1  | 22-Oct-2026 05:57:06.015 linked to OpenSSL version: OpenSSL 3.5.7 9 Jun 2026
+resolver-1  | 22-Oct-2026 05:57:06.015 compiled with libuv version: 1.50.0
+resolver-1  | 22-Oct-2026 05:57:06.015 linked to libuv version: 1.50.0
+resolver-1  | 22-Oct-2026 05:57:06.015 compiled with liburcu version: 0.15.2
+resolver-1  | 22-Oct-2026 05:57:06.015 compiled with jemalloc version: 5.3.0
+resolver-1  | 22-Oct-2026 05:57:06.015 compiled with libnghttp2 version: 1.64.0
+resolver-1  | 22-Oct-2026 05:57:06.015 linked to libnghttp2 version: 1.64.0
+resolver-1  | 22-Oct-2026 05:57:06.015 compiled with libxml2 version: 2.9.14
+resolver-1  | 22-Oct-2026 05:57:06.015 linked to libxml2 version: 20914
+resolver-1  | 22-Oct-2026 05:57:06.015 compiled with json-c version: 0.18
+resolver-1  | 22-Oct-2026 05:57:06.015 linked to json-c version: 0.18
+resolver-1  | 22-Oct-2026 05:57:06.015 compiled with zlib version: 1.3.1
+resolver-1  | 22-Oct-2026 05:57:06.015 linked to zlib version: 1.3.1
+resolver-1  | 22-Oct-2026 05:57:06.015 linked to maxminddb version: 1.12.2
+resolver-1  | 22-Oct-2026 05:57:06.015 compiled with protobuf-c version: 1.5.1
+resolver-1  | 22-Oct-2026 05:57:06.015 linked to protobuf-c version: 1.5.1
+resolver-1  | 22-Oct-2026 05:57:06.015 ----------------------------------------------------
+resolver-1  | 22-Oct-2026 05:57:06.015 BIND 9 is maintained by Internet Systems Consortium,
+resolver-1  | 22-Oct-2026 05:57:06.015 Inc. (ISC), a non-profit 501(c)(3) public-benefit 
+resolver-1  | 22-Oct-2026 05:57:06.015 corporation.  Support and training for BIND 9 are 
+resolver-1  | 22-Oct-2026 05:57:06.015 available at https://www.isc.org/support
+resolver-1  | 22-Oct-2026 05:57:06.015 ----------------------------------------------------
+resolver-1  | 22-Oct-2026 05:57:06.015 adjusted limit on open files from 1024 to 524288
+resolver-1  | 22-Oct-2026 05:57:06.015 found 16 CPUs, using 1 worker thread
+resolver-1  | 22-Oct-2026 05:57:06.016 DNSSEC algorithms: RSASHA1 NSEC3RSASHA1 RSASHA256 RSASHA512 ECDSAP256SHA256 ECDSAP384SHA384 ED25519 ED448
+resolver-1  | 22-Oct-2026 05:57:06.016 DS algorithms: SHA-1 SHA-256 SHA-384
+resolver-1  | 22-Oct-2026 05:57:06.016 HMAC algorithms: HMAC-MD5 HMAC-SHA1 HMAC-SHA224 HMAC-SHA256 HMAC-SHA384 HMAC-SHA512
+resolver-1  | 22-Oct-2026 05:57:06.016 TKEY mode 2 support (Diffie-Hellman): no
+resolver-1  | 22-Oct-2026 05:57:06.016 TKEY mode 3 support (GSS-API): yes
+resolver-1  | 22-Oct-2026 05:57:06.017 the initial working directory is '/'
+resolver-1  | 22-Oct-2026 05:57:06.017 loading configuration from '/lab/configs/resolver.conf'
+resolver-1  | 22-Oct-2026 05:57:06.017 the working directory is now '/var/cache/bind'
+resolver-1  | 22-Oct-2026 05:57:06.017 looking for GeoIP2 databases in '/usr/share/GeoIP'
+resolver-1  | 22-Oct-2026 05:57:06.017 using default UDP/IPv4 port range: [32768, 60999]
+resolver-1  | 22-Oct-2026 05:57:06.017 listening on IPv4 interface lo, 127.0.0.1#53
+resolver-1  | 22-Oct-2026 05:57:06.017 listening on IPv4 interface eth0, 172.16.2.10#53
+resolver-1  | 22-Oct-2026 05:57:06.017 Disabling periodic interface re-scans timer
+resolver-1  | 22-Oct-2026 05:57:06.017 generating session key for dynamic DNS
+resolver-1  | 22-Oct-2026 05:57:06.018 not using config file logging statement for logging due to -g option
+resolver-1  | 22-Oct-2026 05:57:06.018 command channel listening on 127.0.0.1#953
+resolver-1  | 22-Oct-2026 05:57:06.018 all zones loaded
+resolver-1  | 22-Oct-2026 05:57:06.018 FIPS mode is disabled
+resolver-1  | 22-Oct-2026 05:57:06.018 running
+resolver-1  | 22-Oct-2026 05:57:17.252 received control channel command 'flush'
+resolver-1  | 22-Oct-2026 05:57:17.252 flushing caches in all views succeeded
+resolver-1  | 22-Oct-2026 05:57:21.529 received control channel command 'dumpdb -cache'
+resolver-1  | 22-Oct-2026 05:57:21.529 dumpdb started: -cache
+resolver-1  | 22-Oct-2026 05:57:21.530 dumpdb complete

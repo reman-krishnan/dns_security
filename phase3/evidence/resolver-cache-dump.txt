@@ -1,0 +1,43 @@
+;
+; Start view _default
+;
+;
+; Cache dump of view '_default' (cache _default)
+;
+; using a 0 second stale ttl
+$DATE 20261022055831
+;
+; Address database dump
+;
+; [edns success/timeout]
+; [plain success/timeout]
+;
+;
+; Unassociated entries
+;
+;	172.16.3.10 [srtt 192730] [flags 00000000] [edns 0/12] [plain 0/0] [ttl 50]
+;
+; SERVFAIL cache
+;
+; example.com/A [ttl 1]
+;
+; Start view _bind
+;
+;
+; Cache dump of view '_bind' (cache _bind)
+;
+; using a 0 second stale ttl
+$DATE 20261022055831
+;
+; Address database dump
+;
+; [edns success/timeout]
+; [plain success/timeout]
+;
+;
+; Unassociated entries
+;
+;
+; SERVFAIL cache
+;
+; Dump complete

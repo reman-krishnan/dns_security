@@ -1,0 +1,5 @@
+;; communications error to 172.16.2.10#53: timed out
+
+; <<>> DiG 9.20.30-1~deb13u1-Debian <<>> example.com A +time=2 +tries=1
+;; global options: +cmd
+;; no servers could be reached

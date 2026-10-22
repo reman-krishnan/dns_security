@@ -1,0 +1,5 @@
+; This is a key-signing key, keyid 48257, for .
+; Created: 20261022052219 (Thu Oct 22 05:22:19 2026)
+; Publish: 20261022052219 (Thu Oct 22 05:22:19 2026)
+; Activate: 20261022052219 (Thu Oct 22 05:22:19 2026)
+. IN DNSKEY 257 3 13 dGlnbX5QbSXhC0+bUsGKLPQQNucv+NuS2o0R/neA08YZe2p9OU6ArImh GwzuOkaxIq98cJadhjcHc8BHYi93zw==

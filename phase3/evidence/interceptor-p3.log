@@ -1,0 +1,14 @@
+Starting DNS Interceptor [FORGE mode] on eth0...
+Attacker MAC: 8e:26:b5:9c:43:d0 | Target Resolver MAC: 62:dc:c3:52:ce:78
+[FORGE] Poisoning A record for example.com (ID 0x8587) -> 172.16.1.30
+[RELAY] Relaying message for <non-query> (ID 0x5c2f)
+[FORGE] Poisoning A record for example.com (ID 0xf665) -> 172.16.1.30
+[RELAY] Relaying message for <non-query> (ID 0x1bf7)
+[FORGE] Poisoning A record for example.com (ID 0x0802) -> 172.16.1.30
+[RELAY] Relaying message for <non-query> (ID 0xa071)
+[FORGE] Poisoning A record for example.com (ID 0x5243) -> 172.16.1.30
+[RELAY] Relaying message for <non-query> (ID 0x40f9)
+[FORGE] Poisoning A record for example.com (ID 0xe150) -> 172.16.1.30
+[RELAY] Relaying message for <non-query> (ID 0xe745)
+[FORGE] Poisoning A record for example.com (ID 0x115b) -> 172.16.1.30
+[RELAY] Relaying message for <non-query> (ID 0x79c0)

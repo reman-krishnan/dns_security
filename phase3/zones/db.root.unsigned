@@ -1,0 +1,19 @@
+$ORIGIN .
+$TTL 300
+@ IN SOA ns.root. hostmaster.root. (
+    2026102201 3600 600 86400 300 )
+@       IN NS ns.root.
+ns.root. IN A 172.16.3.10
+com.    IN NS ns.com.
+ns.com. IN A 172.16.3.20
+com. IN DS 21980 13 2 CA0DB1DD1C38030B7D32173F65EFEEC4F1B5D4F3C2E8A517993CB39546BFDA52
+; This is a zone-signing key, keyid 46729, for .
+; Created: 20261022052549 (Thu Oct 22 05:25:49 2026)
+; Publish: 20261022052549 (Thu Oct 22 05:25:49 2026)
+; Activate: 20261022052549 (Thu Oct 22 05:25:49 2026)
+. IN DNSKEY 256 3 13 Aal/EIg+KC40FHgc3bL9QPThJtPX5SNF6eGdN1y5cmTRqEoEUZROa1bj TXoB76Q7o+42cqyG8c71XbeGatr2bw==
+; This is a key-signing key, keyid 39281, for .
+; Created: 20261022052549 (Thu Oct 22 05:25:49 2026)
+; Publish: 20261022052549 (Thu Oct 22 05:25:49 2026)
+; Activate: 20261022052549 (Thu Oct 22 05:25:49 2026)
+. IN DNSKEY 257 3 13 A+jYngeG3x3mfMvQKa3yfi41+fM/f9/Z/GapyPr+ZtdSPftkE/d3Br1h pOfl33xGy7O2O1Lh06Gz/fXxXb1nBw==
