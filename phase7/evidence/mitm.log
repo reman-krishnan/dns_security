@@ -1,0 +1,4 @@
+mitm: dev=eth0 forge-cleartext=1 break-dot=0 client at ca:10:30:c7:49:6a
+mitm: running
+[FORGE] cleartext example.com A -> 172.16.1.30 (AD set)
+[FORGE] cleartext example.com A -> 172.16.1.30 (AD set)

@@ -2,29 +2,29 @@
 ; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> +dnssec example.com A +time=6 +tries=2
 ;; global options: +cmd
 ;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 30665
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 53703
 ;; flags: qr rd ra ad; QUERY: 1, ANSWER: 2, AUTHORITY: 2, ADDITIONAL: 3
 
 ;; OPT PSEUDOSECTION:
 ; EDNS: version: 0, flags: do; udp: 1232
-; COOKIE: 93595de0331dda49010000006ada0459425a07ca0ba0527d (good)
+; COOKIE: 945ed14f0e40675b010000006adb19a5f22811f09a3991b1 (good)
 ;; QUESTION SECTION:
 ;example.com.			IN	A
 
 ;; ANSWER SECTION:
 example.com.		300	IN	A	172.16.1.20
-example.com.		300	IN	RRSIG	A 13 2 300 20261121114034 20261022114034 1791 example.com. F2yW7XtKSJOKbenJUf2zTPhprLVoM2W6ucYd2M2l2wCDuqSdckZO9iji z6nChrZu3Dovys8qpmaXeWJ07o8cnw==
+example.com.		300	IN	RRSIG	A 13 2 300 20261122072357 20261023072357 13075 example.com. AJVVpe/xmq/5LwbJ08FFlIT2HuJVwmhZ23N01PCWGp3RsbQmyfg4DQ1p Pma/Y3woTrl6k92/EqljxnSf89kY4g==
 
 ;; AUTHORITY SECTION:
 example.com.		300	IN	NS	ns.example.com.
-example.com.		300	IN	RRSIG	NS 13 2 300 20261121114034 20261022114034 1791 example.com. qrwy0Xs9w0Sgb2Rp+RoGLPQ61MDuRZalVOk15T7gej5QVsksj0zHnbWJ XLfxlcponI61bR3g/zQR5mk7hrQX9w==
+example.com.		300	IN	RRSIG	NS 13 2 300 20261122072357 20261023072357 13075 example.com. gAlCkKEM2tBUasRaitwVxCrtJQOvtSPPUsa653o86LeeR9UAwcwYDEK5 bFCcRb951VcEdWm2BlJOMCqNVvnQ7w==
 
 ;; ADDITIONAL SECTION:
 ns.example.com.		300	IN	A	172.16.3.30
-ns.example.com.		300	IN	RRSIG	A 13 3 300 20261121114034 20261022114034 1791 example.com. 9HeCPOxJSuy7qi9jLEIlDd4YYkHxb1GMLtohUPAz4zN+dRiF0FJUpzqD nnvl179LaEV8kIEQCtC6ZHc3hRPWwA==
+ns.example.com.		300	IN	RRSIG	A 13 3 300 20261122072357 20261023072357 13075 example.com. D3MkCE9vshPKZXwVMATNGi3HSzB8guK33HAUd/5QPZ98U5NxP6q70PaT 04OK86WG+r28pbmMkkIRts82XGucaA==
 
-;; Query time: 3 msec
+;; Query time: 12 msec
 ;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
-;; WHEN: Thu Oct 22 12:40:57 UTC 2026
+;; WHEN: Fri Oct 23 08:24:05 UTC 2026
 ;; MSG SIZE  rcvd: 438
 

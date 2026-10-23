@@ -1,5 +1,4 @@
-forge: mode=--forge dev=eth0 client 172.16.1.10 at e2:44:ed:65:6e:4d
+forge: mode=--forge dev=eth0 client 172.16.1.10 at da:12:a7:0f:b9:f0
 forge: running
-[FORGE] resolver->client example.com A (id 0xe1cf) -> 172.16.1.30 (AD set)
-[FORGE] resolver->client example.com A (id 0x97a0) -> 172.16.1.30 (AD set)
-[FORGE] resolver->client example.com A (id 0xa6ee) -> 172.16.1.30 (AD set)
+[FORGE] resolver->client example.com A (id 0x7566) -> 172.16.1.30 (AD set)
+[FORGE] resolver->client example.com A (id 0xc772) -> 172.16.1.30 (AD set)

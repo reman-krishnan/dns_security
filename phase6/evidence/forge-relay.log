@@ -1,2 +1,2 @@
-forge: mode=--relay dev=eth0 client 172.16.1.10 at e2:44:ed:65:6e:4d
+forge: mode=--relay dev=eth0 client 172.16.1.10 at 42:40:9d:dc:96:f8
 forge: running
