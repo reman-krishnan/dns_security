@@ -1,2 +1,5 @@
-resolver-1  | 23-Oct-2026 08:21:20.741 broken trust chain resolving 'example.com/A/IN': 172.16.3.30#53
-resolver-1  | 23-Oct-2026 08:21:20.841 broken trust chain resolving 'example.com/AAAA/IN': 172.16.3.30#53
+resolver-1  | /lab/configs/trust-anchors.conf:1: static entry for the root zone WILL FAIL after key rollover - use trust-anchors with initial-key or initial-ds instead.
+resolver-1  | 23-Oct-2026 15:22:41.508 DS algorithms: SHA-1 SHA-256 SHA-384
+resolver-1  | 23-Oct-2026 15:22:41.509 /lab/configs/trust-anchors.conf:1: static entry for the root zone WILL FAIL after key rollover - use trust-anchors with initial-key or initial-ds instead.
+resolver-1  | 23-Oct-2026 15:22:49.967 broken trust chain resolving 'example.com/A/IN': 172.16.3.30#53
+resolver-1  | 23-Oct-2026 15:22:50.077 broken trust chain resolving 'example.com/AAAA/IN': 172.16.3.30#53

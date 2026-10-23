@@ -3,7 +3,7 @@
 [strict] TLS diagnostic probe (openssl s_client) ...
 [strict] TLS probe: NO TLS SESSION ESTABLISHED -- transport unreachable, not a certificate issue
 [strict] --- raw openssl s_client output ---
-4067829A0E740000:error:8000006F:system library:BIO_connect:Connection refused:../crypto/bio/bio_sock2.c:117:calling connect()
-4067829A0E740000:error:10000067:BIO routines:BIO_connect:connect error:../crypto/bio/bio_sock2.c:119:
+40370659147F0000:error:8000006F:system library:BIO_connect:Connection refused:../crypto/bio/bio_sock2.c:117:calling connect()
+40370659147F0000:error:10000067:BIO routines:BIO_connect:connect error:../crypto/bio/bio_sock2.c:119:
 connect:errno=111
 [strict] --- end probe output ---

@@ -1,0 +1,8 @@
+    1   0.000000  172.16.2.10 → 172.16.3.10  DNS 94 Standard query 0x963c A example.com OPT
+    2   0.000064  172.16.2.10 → 172.16.3.10  DNS 82 Standard query 0x29ec NS <Root> OPT
+    3   0.000105  172.16.3.10 → 172.16.2.10  DNS 143 Standard query response 0x963c A example.com NS ns.com A 172.16.3.20 OPT
+    4   0.000141  172.16.3.10 → 172.16.2.10  DNS 118 Standard query response 0x29ec NS <Root> NS ns.root OPT
+    5   0.000271  172.16.2.10 → 172.16.3.20  DNS 94 Standard query 0xd51b A example.com OPT
+    6   0.000356  172.16.3.20 → 172.16.2.10  DNS 143 Standard query response 0xd51b A example.com NS ns.example.com A 172.16.3.30 OPT
+    7   0.000411  172.16.2.10 → 172.16.3.30  DNS 94 Standard query 0xc690 A example.com OPT
+    8   0.000463  172.16.3.30 → 172.16.2.10  DNS 159 Standard query response 0xc690 A example.com A 172.16.1.20 NS ns.example.com A 172.16.3.30 OPT

@@ -1,30 +1,30 @@
 
-; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> +dnssec example.com A +time=6 +tries=2
+; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> +dnssec example.com A +time=3 +tries=1
 ;; global options: +cmd
 ;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 32835
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 46624
 ;; flags: qr rd ra ad; QUERY: 1, ANSWER: 2, AUTHORITY: 2, ADDITIONAL: 3
 
 ;; OPT PSEUDOSECTION:
 ; EDNS: version: 0, flags: do; udp: 1232
-; COOKIE: 6d6e110b414512e8010000006adb48f60b6ceaeca3e13d62 (good)
+; COOKIE: 8555c9f210e79b97010000006adb7baa8a21876a376a4d7d (good)
 ;; QUESTION SECTION:
 ;example.com.			IN	A
 
 ;; ANSWER SECTION:
 example.com.		300	IN	A	172.16.1.20
-example.com.		300	IN	RRSIG	A 13 2 300 20261122104556 20261023104556 7712 example.com. nFIeBj3taGe8Z5mnm3s0QcJm3RelMS7XgDMtlNBUiX2iexSKBmdok5Lp tYAWq4bvqZkmGo/LqeChMFzfBeW+1w==
+example.com.		300	IN	RRSIG	A 13 2 300 20261122142217 20261023142217 25557 example.com. 3ghGK6TN22ekfwBPoZZ2B0baLe9bPnVA+1Gb+yec1b4W//OZcGTR8n/g X2MastRPPncoP7wEwpx+/nAzn94v/g==
 
 ;; AUTHORITY SECTION:
 example.com.		300	IN	NS	ns.example.com.
-example.com.		300	IN	RRSIG	NS 13 2 300 20261122104556 20261023104556 7712 example.com. al7VSnryvjPGJmCX9TvK03j/dwaDh0y1NR7v++a1TXoB8SxmCtDHWS3/ 8RyblU8VzTInnWu0PMg2I3KCrI6Lzw==
+example.com.		300	IN	RRSIG	NS 13 2 300 20261122142217 20261023142217 25557 example.com. WQqUjF1uAzpXJSmWJ3amKf3gWG2OWmQiGcGnhhxFHr/8wXI9YXa4DBp2 G+bO+hPJ9KGjrMZwFgWeWMh0Pfn15A==
 
 ;; ADDITIONAL SECTION:
 ns.example.com.		300	IN	A	172.16.3.30
-ns.example.com.		300	IN	RRSIG	A 13 3 300 20261122104556 20261023104556 7712 example.com. lr6nP3MrKlisevdpU8oHBL12FcGVulCi6Arzxss2XUkjYuaZfIZMT7Dj +mXjXZqeh3a6qki6lPm6qv0pZ+KqIQ==
+ns.example.com.		300	IN	RRSIG	A 13 3 300 20261122142217 20261023142217 25557 example.com. 537HmWfV4ULocS+lgdJPoSHQzIEfBP+a3yQGwlAOwdXvLs3cWA4CChUp m2i8l0eEjNKlHOcOFe0m7pn/F+1AEA==
 
-;; Query time: 2 msec
+;; Query time: 3 msec
 ;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
-;; WHEN: Fri Oct 23 11:45:58 UTC 2026
+;; WHEN: Fri Oct 23 15:22:18 UTC 2026
 ;; MSG SIZE  rcvd: 438
 

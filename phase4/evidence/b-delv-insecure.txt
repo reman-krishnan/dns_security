@@ -1,3 +1,4 @@
+;; validating example.com/A: no valid signature found
 ; unsigned answer
 example.com.		300	IN	A	172.16.1.20
-example.com.		300	IN	RRSIG	A 13 2 300 20261121062536 20261022062536 2331 example.com. 8k281LNFb/4ZOb8vM+GF/zaY1erwXKWGvzNK6IfJgQCu+Uwtx8YKLjI8 6iqIv73FNQuMoELDG1wuhy0sQQ37LQ==
+example.com.		300	IN	RRSIG	A 13 2 300 20261122142240 20261023142240 10687 example.com. v7jRppXcucGtSp+Th0knPQIPeHDpqVJ9c/u5K4aEocAlNomdmgmRqfNm QFF/oDOB3GHWITqESoI7/BuRF4jbvQ==

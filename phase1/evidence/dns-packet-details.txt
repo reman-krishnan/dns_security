@@ -1,9 +1,8 @@
 Frame 1: 94 bytes on wire (752 bits), 94 bytes captured (752 bits)
     Encapsulation type: Ethernet (1)
-    Arrival Time: Oct 22, 2026 04:15:34.673423000 UTC
-    UTC Arrival Time: Oct 22, 2026 04:15:34.673423000 UTC
-    Epoch Arrival Time: 1792642534.673423000
+    Arrival Time: Oct 23, 2026 15:21:35.929384000 UTC
     [Time shift for this packet: 0.000000000 seconds]
+    Epoch Time: 1792768895.929384000 seconds
     [Time delta from previous captured frame: 0.000000000 seconds]
     [Time delta from previous displayed frame: 0.000000000 seconds]
     [Time since reference or first frame: 0.000000000 seconds]
@@ -13,15 +12,16 @@ Frame 1: 94 bytes on wire (752 bits), 94 bytes captured (752 bits)
     [Frame is marked: False]
     [Frame is ignored: False]
     [Protocols in frame: eth:ethertype:ip:udp:dns]
-Ethernet II, Src: b6:48:c3:af:be:56 (b6:48:c3:af:be:56), Dst: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
-    Destination: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
+Ethernet II, Src: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa), Dst: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e)
+    Destination: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e)
+        Address: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e)
         .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
         .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
-    Source: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
+    Source: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa)
+        Address: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa)
         .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
         .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
     Type: IPv4 (0x0800)
-    [Stream index: 0]
 Internet Protocol Version 4, Src: 172.16.2.10, Dst: 172.16.3.10
     0100 .... = Version: 4
     .... 0101 = Header Length: 20 bytes (5)
@@ -29,7 +29,7 @@ Internet Protocol Version 4, Src: 172.16.2.10, Dst: 172.16.3.10
         0000 00.. = Differentiated Services Codepoint: Default (0)
         .... ..00 = Explicit Congestion Notification: Not ECN-Capable Transport (0)
     Total Length: 80
-    Identification: 0x9120 (37152)
+    Identification: 0xb939 (47417)
     000. .... = Flags: 0x0
         0... .... = Reserved bit: Not set
         .0.. .... = Don't fragment: Not set
@@ -37,25 +37,23 @@ Internet Protocol Version 4, Src: 172.16.2.10, Dst: 172.16.3.10
     ...0 0000 0000 0000 = Fragment Offset: 0
     Time to Live: 64
     Protocol: UDP (17)
-    Header Checksum: 0x8c48 [validation disabled]
+    Header Checksum: 0x642f [validation disabled]
     [Header checksum status: Unverified]
     Source Address: 172.16.2.10
     Destination Address: 172.16.3.10
-    [Stream index: 0]
-User Datagram Protocol, Src Port: 34198, Dst Port: 53
-    Source Port: 34198
+User Datagram Protocol, Src Port: 32778, Dst Port: 53
+    Source Port: 32778
     Destination Port: 53
     Length: 60
     Checksum: 0x5d82 [unverified]
     [Checksum Status: Unverified]
     [Stream index: 0]
-    [Stream Packet Number: 1]
     [Timestamps]
         [Time since first frame: 0.000000000 seconds]
         [Time since previous frame: 0.000000000 seconds]
     UDP payload (52 bytes)
 Domain Name System (query)
-    Transaction ID: 0x2493
+    Transaction ID: 0x963c
     Flags: 0x0010 Standard query
         0... .... .... .... = Response: Message is a query
         .000 0... .... .... = Opcode: Standard query (0)
@@ -72,12 +70,12 @@ Domain Name System (query)
             Name: example.com
             [Name Length: 11]
             [Label Count: 2]
-            Type: A (1) (Host Address)
+            Type: A (Host Address) (1)
             Class: IN (0x0001)
     Additional records
         <Root>: type OPT
             Name: <Root>
-            Type: OPT (41) 
+            Type: OPT (41)
             UDP payload size: 1232
             Higher bits in extended RCODE: 0x00
             EDNS0 version: 0
@@ -88,34 +86,34 @@ Domain Name System (query)
             Option: COOKIE
                 Option Code: COOKIE (10)
                 Option Length: 8
-                Option Data: 9f72125a34abf7a8
-                Client Cookie: 9f72125a34abf7a8
+                Option Data: a7134192614ca06e
+                Client Cookie: a7134192614ca06e
                 Server Cookie: <MISSING>
 
 Frame 2: 82 bytes on wire (656 bits), 82 bytes captured (656 bits)
     Encapsulation type: Ethernet (1)
-    Arrival Time: Oct 22, 2026 04:15:34.673466000 UTC
-    UTC Arrival Time: Oct 22, 2026 04:15:34.673466000 UTC
-    Epoch Arrival Time: 1792642534.673466000
+    Arrival Time: Oct 23, 2026 15:21:35.929448000 UTC
     [Time shift for this packet: 0.000000000 seconds]
-    [Time delta from previous captured frame: 0.000043000 seconds]
-    [Time delta from previous displayed frame: 0.000043000 seconds]
-    [Time since reference or first frame: 0.000043000 seconds]
+    Epoch Time: 1792768895.929448000 seconds
+    [Time delta from previous captured frame: 0.000064000 seconds]
+    [Time delta from previous displayed frame: 0.000064000 seconds]
+    [Time since reference or first frame: 0.000064000 seconds]
     Frame Number: 2
     Frame Length: 82 bytes (656 bits)
     Capture Length: 82 bytes (656 bits)
     [Frame is marked: False]
     [Frame is ignored: False]
     [Protocols in frame: eth:ethertype:ip:udp:dns]
-Ethernet II, Src: b6:48:c3:af:be:56 (b6:48:c3:af:be:56), Dst: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
-    Destination: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
+Ethernet II, Src: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa), Dst: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e)
+    Destination: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e)
+        Address: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e)
         .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
         .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
-    Source: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
+    Source: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa)
+        Address: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa)
         .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
         .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
     Type: IPv4 (0x0800)
-    [Stream index: 0]
 Internet Protocol Version 4, Src: 172.16.2.10, Dst: 172.16.3.10
     0100 .... = Version: 4
     .... 0101 = Header Length: 20 bytes (5)
@@ -123,7 +121,7 @@ Internet Protocol Version 4, Src: 172.16.2.10, Dst: 172.16.3.10
         0000 00.. = Differentiated Services Codepoint: Default (0)
         .... ..00 = Explicit Congestion Notification: Not ECN-Capable Transport (0)
     Total Length: 68
-    Identification: 0x5d13 (23827)
+    Identification: 0xb48f (46223)
     000. .... = Flags: 0x0
         0... .... = Reserved bit: Not set
         .0.. .... = Don't fragment: Not set
@@ -131,25 +129,23 @@ Internet Protocol Version 4, Src: 172.16.2.10, Dst: 172.16.3.10
     ...0 0000 0000 0000 = Fragment Offset: 0
     Time to Live: 64
     Protocol: UDP (17)
-    Header Checksum: 0xc061 [validation disabled]
+    Header Checksum: 0x68e5 [validation disabled]
     [Header checksum status: Unverified]
     Source Address: 172.16.2.10
     Destination Address: 172.16.3.10
-    [Stream index: 0]
-User Datagram Protocol, Src Port: 55598, Dst Port: 53
-    Source Port: 55598
+User Datagram Protocol, Src Port: 48958, Dst Port: 53
+    Source Port: 48958
     Destination Port: 53
     Length: 48
     Checksum: 0x5d76 [unverified]
     [Checksum Status: Unverified]
     [Stream index: 1]
-    [Stream Packet Number: 1]
     [Timestamps]
         [Time since first frame: 0.000000000 seconds]
         [Time since previous frame: 0.000000000 seconds]
     UDP payload (40 bytes)
 Domain Name System (query)
-    Transaction ID: 0xa5ba
+    Transaction ID: 0x29ec
     Flags: 0x0000 Standard query
         0... .... .... .... = Response: Message is a query
         .000 0... .... .... = Opcode: Standard query (0)
@@ -166,12 +162,12 @@ Domain Name System (query)
             Name: <Root>
             [Name Length: 6]
             [Label Count: 1]
-            Type: NS (2) (authoritative Name Server)
+            Type: NS (authoritative Name Server) (2)
             Class: IN (0x0001)
     Additional records
         <Root>: type OPT
             Name: <Root>
-            Type: OPT (41) 
+            Type: OPT (41)
             UDP payload size: 1232
             Higher bits in extended RCODE: 0x00
             EDNS0 version: 0
@@ -182,34 +178,34 @@ Domain Name System (query)
             Option: COOKIE
                 Option Code: COOKIE (10)
                 Option Length: 8
-                Option Data: 9f72125a34abf7a8
-                Client Cookie: 9f72125a34abf7a8
+                Option Data: a7134192614ca06e
+                Client Cookie: a7134192614ca06e
                 Server Cookie: <MISSING>
 
 Frame 3: 143 bytes on wire (1144 bits), 143 bytes captured (1144 bits)
     Encapsulation type: Ethernet (1)
-    Arrival Time: Oct 22, 2026 04:15:34.673506000 UTC
-    UTC Arrival Time: Oct 22, 2026 04:15:34.673506000 UTC
-    Epoch Arrival Time: 1792642534.673506000
+    Arrival Time: Oct 23, 2026 15:21:35.929489000 UTC
     [Time shift for this packet: 0.000000000 seconds]
-    [Time delta from previous captured frame: 0.000040000 seconds]
-    [Time delta from previous displayed frame: 0.000040000 seconds]
-    [Time since reference or first frame: 0.000083000 seconds]
+    Epoch Time: 1792768895.929489000 seconds
+    [Time delta from previous captured frame: 0.000041000 seconds]
+    [Time delta from previous displayed frame: 0.000041000 seconds]
+    [Time since reference or first frame: 0.000105000 seconds]
     Frame Number: 3
     Frame Length: 143 bytes (1144 bits)
     Capture Length: 143 bytes (1144 bits)
     [Frame is marked: False]
     [Frame is ignored: False]
     [Protocols in frame: eth:ethertype:ip:udp:dns]
-Ethernet II, Src: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd), Dst: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
-    Destination: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
+Ethernet II, Src: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e), Dst: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa)
+    Destination: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa)
+        Address: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa)
         .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
         .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
-    Source: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
+    Source: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e)
+        Address: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e)
         .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
         .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
     Type: IPv4 (0x0800)
-    [Stream index: 0]
 Internet Protocol Version 4, Src: 172.16.3.10, Dst: 172.16.2.10
     0100 .... = Version: 4
     .... 0101 = Header Length: 20 bytes (5)
@@ -217,7 +213,7 @@ Internet Protocol Version 4, Src: 172.16.3.10, Dst: 172.16.2.10
         0000 00.. = Differentiated Services Codepoint: Default (0)
         .... ..00 = Explicit Congestion Notification: Not ECN-Capable Transport (0)
     Total Length: 129
-    Identification: 0xb464 (46180)
+    Identification: 0xc28f (49807)
     000. .... = Flags: 0x0
         0... .... = Reserved bit: Not set
         .0.. .... = Don't fragment: Not set
@@ -225,25 +221,23 @@ Internet Protocol Version 4, Src: 172.16.3.10, Dst: 172.16.2.10
     ...0 0000 0000 0000 = Fragment Offset: 0
     Time to Live: 63
     Protocol: UDP (17)
-    Header Checksum: 0x69d3 [validation disabled]
+    Header Checksum: 0x5ba8 [validation disabled]
     [Header checksum status: Unverified]
     Source Address: 172.16.3.10
     Destination Address: 172.16.2.10
-    [Stream index: 0]
-User Datagram Protocol, Src Port: 53, Dst Port: 34198
+User Datagram Protocol, Src Port: 53, Dst Port: 32778
     Source Port: 53
-    Destination Port: 34198
+    Destination Port: 32778
     Length: 109
     Checksum: 0x5db3 [unverified]
     [Checksum Status: Unverified]
     [Stream index: 0]
-    [Stream Packet Number: 2]
     [Timestamps]
-        [Time since first frame: 0.000083000 seconds]
-        [Time since previous frame: 0.000083000 seconds]
+        [Time since first frame: 0.000105000 seconds]
+        [Time since previous frame: 0.000105000 seconds]
     UDP payload (101 bytes)
 Domain Name System (response)
-    Transaction ID: 0x2493
+    Transaction ID: 0x963c
     Flags: 0x8010 Standard query response, No error
         1... .... .... .... = Response: Message is a response
         .000 0... .... .... = Opcode: Standard query (0)
@@ -264,12 +258,12 @@ Domain Name System (response)
             Name: example.com
             [Name Length: 11]
             [Label Count: 2]
-            Type: A (1) (Host Address)
+            Type: A (Host Address) (1)
             Class: IN (0x0001)
     Authoritative nameservers
         com: type NS, class IN, ns ns.com
             Name: com
-            Type: NS (2) (authoritative Name Server)
+            Type: NS (authoritative Name Server) (2)
             Class: IN (0x0001)
             Time to live: 300 (5 minutes)
             Data length: 5
@@ -277,14 +271,14 @@ Domain Name System (response)
     Additional records
         ns.com: type A, class IN, addr 172.16.3.20
             Name: ns.com
-            Type: A (1) (Host Address)
+            Type: A (Host Address) (1)
             Class: IN (0x0001)
             Time to live: 300 (5 minutes)
             Data length: 4
             Address: 172.16.3.20
         <Root>: type OPT
             Name: <Root>
-            Type: OPT (41) 
+            Type: OPT (41)
             UDP payload size: 1232
             Higher bits in extended RCODE: 0x00
             EDNS0 version: 0
@@ -295,36 +289,36 @@ Domain Name System (response)
             Option: COOKIE
                 Option Code: COOKIE (10)
                 Option Length: 24
-                Option Data: 9f72125a34abf7a8010000006ad98de637508efb6f63ee2f
-                Client Cookie: 9f72125a34abf7a8
-                Server Cookie: 010000006ad98de637508efb6f63ee2f
+                Option Data: a7134192614ca06e010000006adb7b7ff7a12699e40cb5eb
+                Client Cookie: a7134192614ca06e
+                Server Cookie: 010000006adb7b7ff7a12699e40cb5eb
     [Request In: 1]
-    [Time: 0.000083000 seconds]
+    [Time: 0.000105000 seconds]
 
 Frame 4: 118 bytes on wire (944 bits), 118 bytes captured (944 bits)
     Encapsulation type: Ethernet (1)
-    Arrival Time: Oct 22, 2026 04:15:34.673530000 UTC
-    UTC Arrival Time: Oct 22, 2026 04:15:34.673530000 UTC
-    Epoch Arrival Time: 1792642534.673530000
+    Arrival Time: Oct 23, 2026 15:21:35.929525000 UTC
     [Time shift for this packet: 0.000000000 seconds]
-    [Time delta from previous captured frame: 0.000024000 seconds]
-    [Time delta from previous displayed frame: 0.000024000 seconds]
-    [Time since reference or first frame: 0.000107000 seconds]
+    Epoch Time: 1792768895.929525000 seconds
+    [Time delta from previous captured frame: 0.000036000 seconds]
+    [Time delta from previous displayed frame: 0.000036000 seconds]
+    [Time since reference or first frame: 0.000141000 seconds]
     Frame Number: 4
     Frame Length: 118 bytes (944 bits)
     Capture Length: 118 bytes (944 bits)
     [Frame is marked: False]
     [Frame is ignored: False]
     [Protocols in frame: eth:ethertype:ip:udp:dns]
-Ethernet II, Src: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd), Dst: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
-    Destination: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
+Ethernet II, Src: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e), Dst: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa)
+    Destination: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa)
+        Address: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa)
         .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
         .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
-    Source: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
+    Source: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e)
+        Address: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e)
         .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
         .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
     Type: IPv4 (0x0800)
-    [Stream index: 0]
 Internet Protocol Version 4, Src: 172.16.3.10, Dst: 172.16.2.10
     0100 .... = Version: 4
     .... 0101 = Header Length: 20 bytes (5)
@@ -332,7 +326,7 @@ Internet Protocol Version 4, Src: 172.16.3.10, Dst: 172.16.2.10
         0000 00.. = Differentiated Services Codepoint: Default (0)
         .... ..00 = Explicit Congestion Notification: Not ECN-Capable Transport (0)
     Total Length: 104
-    Identification: 0xb465 (46181)
+    Identification: 0xc290 (49808)
     000. .... = Flags: 0x0
         0... .... = Reserved bit: Not set
         .0.. .... = Don't fragment: Not set
@@ -340,25 +334,23 @@ Internet Protocol Version 4, Src: 172.16.3.10, Dst: 172.16.2.10
     ...0 0000 0000 0000 = Fragment Offset: 0
     Time to Live: 63
     Protocol: UDP (17)
-    Header Checksum: 0x69eb [validation disabled]
+    Header Checksum: 0x5bc0 [validation disabled]
     [Header checksum status: Unverified]
     Source Address: 172.16.3.10
     Destination Address: 172.16.2.10
-    [Stream index: 0]
-User Datagram Protocol, Src Port: 53, Dst Port: 55598
+User Datagram Protocol, Src Port: 53, Dst Port: 48958
     Source Port: 53
-    Destination Port: 55598
+    Destination Port: 48958
     Length: 84
     Checksum: 0x5d9a [unverified]
     [Checksum Status: Unverified]
     [Stream index: 1]
-    [Stream Packet Number: 2]
     [Timestamps]
-        [Time since first frame: 0.000064000 seconds]
-        [Time since previous frame: 0.000064000 seconds]
+        [Time since first frame: 0.000077000 seconds]
+        [Time since previous frame: 0.000077000 seconds]
     UDP payload (76 bytes)
 Domain Name System (response)
-    Transaction ID: 0xa5ba
+    Transaction ID: 0x29ec
     Flags: 0x8400 Standard query response, No error
         1... .... .... .... = Response: Message is a response
         .000 0... .... .... = Opcode: Standard query (0)
@@ -379,12 +371,12 @@ Domain Name System (response)
             Name: <Root>
             [Name Length: 6]
             [Label Count: 1]
-            Type: NS (2) (authoritative Name Server)
+            Type: NS (authoritative Name Server) (2)
             Class: IN (0x0001)
     Answers
         <Root>: type NS, class IN, ns ns.root
             Name: <Root>
-            Type: NS (2) (authoritative Name Server)
+            Type: NS (authoritative Name Server) (2)
             Class: IN (0x0001)
             Time to live: 300 (5 minutes)
             Data length: 9
@@ -392,7 +384,7 @@ Domain Name System (response)
     Additional records
         <Root>: type OPT
             Name: <Root>
-            Type: OPT (41) 
+            Type: OPT (41)
             UDP payload size: 1232
             Higher bits in extended RCODE: 0x00
             EDNS0 version: 0
@@ -403,36 +395,36 @@ Domain Name System (response)
             Option: COOKIE
                 Option Code: COOKIE (10)
                 Option Length: 24
-                Option Data: 9f72125a34abf7a8010000006ad98de637508efb6f63ee2f
-                Client Cookie: 9f72125a34abf7a8
-                Server Cookie: 010000006ad98de637508efb6f63ee2f
+                Option Data: a7134192614ca06e010000006adb7b7ff7a12699e40cb5eb
+                Client Cookie: a7134192614ca06e
+                Server Cookie: 010000006adb7b7ff7a12699e40cb5eb
     [Request In: 2]
-    [Time: 0.000064000 seconds]
+    [Time: 0.000077000 seconds]
 
 Frame 5: 94 bytes on wire (752 bits), 94 bytes captured (752 bits)
     Encapsulation type: Ethernet (1)
-    Arrival Time: Oct 22, 2026 04:15:34.673560000 UTC
-    UTC Arrival Time: Oct 22, 2026 04:15:34.673560000 UTC
-    Epoch Arrival Time: 1792642534.673560000
+    Arrival Time: Oct 23, 2026 15:21:35.929655000 UTC
     [Time shift for this packet: 0.000000000 seconds]
-    [Time delta from previous captured frame: 0.000030000 seconds]
-    [Time delta from previous displayed frame: 0.000030000 seconds]
-    [Time since reference or first frame: 0.000137000 seconds]
+    Epoch Time: 1792768895.929655000 seconds
+    [Time delta from previous captured frame: 0.000130000 seconds]
+    [Time delta from previous displayed frame: 0.000130000 seconds]
+    [Time since reference or first frame: 0.000271000 seconds]
     Frame Number: 5
     Frame Length: 94 bytes (752 bits)
     Capture Length: 94 bytes (752 bits)
     [Frame is marked: False]
     [Frame is ignored: False]
     [Protocols in frame: eth:ethertype:ip:udp:dns]
-Ethernet II, Src: b6:48:c3:af:be:56 (b6:48:c3:af:be:56), Dst: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
-    Destination: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
+Ethernet II, Src: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa), Dst: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e)
+    Destination: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e)
+        Address: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e)
         .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
         .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
-    Source: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
+    Source: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa)
+        Address: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa)
         .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
         .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
     Type: IPv4 (0x0800)
-    [Stream index: 0]
 Internet Protocol Version 4, Src: 172.16.2.10, Dst: 172.16.3.20
     0100 .... = Version: 4
     .... 0101 = Header Length: 20 bytes (5)
@@ -440,7 +432,7 @@ Internet Protocol Version 4, Src: 172.16.2.10, Dst: 172.16.3.20
         0000 00.. = Differentiated Services Codepoint: Default (0)
         .... ..00 = Explicit Congestion Notification: Not ECN-Capable Transport (0)
     Total Length: 80
-    Identification: 0x7e5f (32351)
+    Identification: 0xe0e6 (57574)
     000. .... = Flags: 0x0
         0... .... = Reserved bit: Not set
         .0.. .... = Don't fragment: Not set
@@ -448,25 +440,23 @@ Internet Protocol Version 4, Src: 172.16.2.10, Dst: 172.16.3.20
     ...0 0000 0000 0000 = Fragment Offset: 0
     Time to Live: 64
     Protocol: UDP (17)
-    Header Checksum: 0x9eff [validation disabled]
+    Header Checksum: 0x3c78 [validation disabled]
     [Header checksum status: Unverified]
     Source Address: 172.16.2.10
     Destination Address: 172.16.3.20
-    [Stream index: 1]
-User Datagram Protocol, Src Port: 55174, Dst Port: 53
-    Source Port: 55174
+User Datagram Protocol, Src Port: 43768, Dst Port: 53
+    Source Port: 43768
     Destination Port: 53
     Length: 60
     Checksum: 0x5d8c [unverified]
     [Checksum Status: Unverified]
     [Stream index: 2]
-    [Stream Packet Number: 1]
     [Timestamps]
         [Time since first frame: 0.000000000 seconds]
         [Time since previous frame: 0.000000000 seconds]
     UDP payload (52 bytes)
 Domain Name System (query)
-    Transaction ID: 0x7140
+    Transaction ID: 0xd51b
     Flags: 0x0010 Standard query
         0... .... .... .... = Response: Message is a query
         .000 0... .... .... = Opcode: Standard query (0)
@@ -483,12 +473,12 @@ Domain Name System (query)
             Name: example.com
             [Name Length: 11]
             [Label Count: 2]
-            Type: A (1) (Host Address)
+            Type: A (Host Address) (1)
             Class: IN (0x0001)
     Additional records
         <Root>: type OPT
             Name: <Root>
-            Type: OPT (41) 
+            Type: OPT (41)
             UDP payload size: 1232
             Higher bits in extended RCODE: 0x00
             EDNS0 version: 0
@@ -499,34 +489,34 @@ Domain Name System (query)
             Option: COOKIE
                 Option Code: COOKIE (10)
                 Option Length: 8
-                Option Data: 78354726412f2e38
-                Client Cookie: 78354726412f2e38
+                Option Data: 2da4ab1573f8b2fc
+                Client Cookie: 2da4ab1573f8b2fc
                 Server Cookie: <MISSING>
 
 Frame 6: 143 bytes on wire (1144 bits), 143 bytes captured (1144 bits)
     Encapsulation type: Ethernet (1)
-    Arrival Time: Oct 22, 2026 04:15:34.673618000 UTC
-    UTC Arrival Time: Oct 22, 2026 04:15:34.673618000 UTC
-    Epoch Arrival Time: 1792642534.673618000
+    Arrival Time: Oct 23, 2026 15:21:35.929740000 UTC
     [Time shift for this packet: 0.000000000 seconds]
-    [Time delta from previous captured frame: 0.000058000 seconds]
-    [Time delta from previous displayed frame: 0.000058000 seconds]
-    [Time since reference or first frame: 0.000195000 seconds]
+    Epoch Time: 1792768895.929740000 seconds
+    [Time delta from previous captured frame: 0.000085000 seconds]
+    [Time delta from previous displayed frame: 0.000085000 seconds]
+    [Time since reference or first frame: 0.000356000 seconds]
     Frame Number: 6
     Frame Length: 143 bytes (1144 bits)
     Capture Length: 143 bytes (1144 bits)
     [Frame is marked: False]
     [Frame is ignored: False]
     [Protocols in frame: eth:ethertype:ip:udp:dns]
-Ethernet II, Src: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd), Dst: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
-    Destination: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
+Ethernet II, Src: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e), Dst: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa)
+    Destination: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa)
+        Address: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa)
         .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
         .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
-    Source: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
+    Source: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e)
+        Address: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e)
         .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
         .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
     Type: IPv4 (0x0800)
-    [Stream index: 0]
 Internet Protocol Version 4, Src: 172.16.3.20, Dst: 172.16.2.10
     0100 .... = Version: 4
     .... 0101 = Header Length: 20 bytes (5)
@@ -534,7 +524,7 @@ Internet Protocol Version 4, Src: 172.16.3.20, Dst: 172.16.2.10
         0000 00.. = Differentiated Services Codepoint: Default (0)
         .... ..00 = Explicit Congestion Notification: Not ECN-Capable Transport (0)
     Total Length: 129
-    Identification: 0x1a0e (6670)
+    Identification: 0xdb04 (56068)
     000. .... = Flags: 0x0
         0... .... = Reserved bit: Not set
         .0.. .... = Don't fragment: Not set
@@ -542,25 +532,23 @@ Internet Protocol Version 4, Src: 172.16.3.20, Dst: 172.16.2.10
     ...0 0000 0000 0000 = Fragment Offset: 0
     Time to Live: 63
     Protocol: UDP (17)
-    Header Checksum: 0x0420 [validation disabled]
+    Header Checksum: 0x4329 [validation disabled]
     [Header checksum status: Unverified]
     Source Address: 172.16.3.20
     Destination Address: 172.16.2.10
-    [Stream index: 1]
-User Datagram Protocol, Src Port: 53, Dst Port: 55174
+User Datagram Protocol, Src Port: 53, Dst Port: 43768
     Source Port: 53
-    Destination Port: 55174
+    Destination Port: 43768
     Length: 109
     Checksum: 0x5dbd [unverified]
     [Checksum Status: Unverified]
     [Stream index: 2]
-    [Stream Packet Number: 2]
     [Timestamps]
-        [Time since first frame: 0.000058000 seconds]
-        [Time since previous frame: 0.000058000 seconds]
+        [Time since first frame: 0.000085000 seconds]
+        [Time since previous frame: 0.000085000 seconds]
     UDP payload (101 bytes)
 Domain Name System (response)
-    Transaction ID: 0x7140
+    Transaction ID: 0xd51b
     Flags: 0x8010 Standard query response, No error
         1... .... .... .... = Response: Message is a response
         .000 0... .... .... = Opcode: Standard query (0)
@@ -581,12 +569,12 @@ Domain Name System (response)
             Name: example.com
             [Name Length: 11]
             [Label Count: 2]
-            Type: A (1) (Host Address)
+            Type: A (Host Address) (1)
             Class: IN (0x0001)
     Authoritative nameservers
         example.com: type NS, class IN, ns ns.example.com
             Name: example.com
-            Type: NS (2) (authoritative Name Server)
+            Type: NS (authoritative Name Server) (2)
             Class: IN (0x0001)
             Time to live: 300 (5 minutes)
             Data length: 5
@@ -594,14 +582,14 @@ Domain Name System (response)
     Additional records
         ns.example.com: type A, class IN, addr 172.16.3.30
             Name: ns.example.com
-            Type: A (1) (Host Address)
+            Type: A (Host Address) (1)
             Class: IN (0x0001)
             Time to live: 300 (5 minutes)
             Data length: 4
             Address: 172.16.3.30
         <Root>: type OPT
             Name: <Root>
-            Type: OPT (41) 
+            Type: OPT (41)
             UDP payload size: 1232
             Higher bits in extended RCODE: 0x00
             EDNS0 version: 0
@@ -612,36 +600,36 @@ Domain Name System (response)
             Option: COOKIE
                 Option Code: COOKIE (10)
                 Option Length: 24
-                Option Data: 78354726412f2e38010000006ad98de6f4f3f24f8dc5bf3b
-                Client Cookie: 78354726412f2e38
-                Server Cookie: 010000006ad98de6f4f3f24f8dc5bf3b
+                Option Data: 2da4ab1573f8b2fc010000006adb7b7fea12c98ff4b5ae99
+                Client Cookie: 2da4ab1573f8b2fc
+                Server Cookie: 010000006adb7b7fea12c98ff4b5ae99
     [Request In: 5]
-    [Time: 0.000058000 seconds]
+    [Time: 0.000085000 seconds]
 
 Frame 7: 94 bytes on wire (752 bits), 94 bytes captured (752 bits)
     Encapsulation type: Ethernet (1)
-    Arrival Time: Oct 22, 2026 04:15:34.673649000 UTC
-    UTC Arrival Time: Oct 22, 2026 04:15:34.673649000 UTC
-    Epoch Arrival Time: 1792642534.673649000
+    Arrival Time: Oct 23, 2026 15:21:35.929795000 UTC
     [Time shift for this packet: 0.000000000 seconds]
-    [Time delta from previous captured frame: 0.000031000 seconds]
-    [Time delta from previous displayed frame: 0.000031000 seconds]
-    [Time since reference or first frame: 0.000226000 seconds]
+    Epoch Time: 1792768895.929795000 seconds
+    [Time delta from previous captured frame: 0.000055000 seconds]
+    [Time delta from previous displayed frame: 0.000055000 seconds]
+    [Time since reference or first frame: 0.000411000 seconds]
     Frame Number: 7
     Frame Length: 94 bytes (752 bits)
     Capture Length: 94 bytes (752 bits)
     [Frame is marked: False]
     [Frame is ignored: False]
     [Protocols in frame: eth:ethertype:ip:udp:dns]
-Ethernet II, Src: b6:48:c3:af:be:56 (b6:48:c3:af:be:56), Dst: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
-    Destination: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
+Ethernet II, Src: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa), Dst: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e)
+    Destination: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e)
+        Address: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e)
         .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
         .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
-    Source: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
+    Source: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa)
+        Address: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa)
         .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
         .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
     Type: IPv4 (0x0800)
-    [Stream index: 0]
 Internet Protocol Version 4, Src: 172.16.2.10, Dst: 172.16.3.30
     0100 .... = Version: 4
     .... 0101 = Header Length: 20 bytes (5)
@@ -649,7 +637,7 @@ Internet Protocol Version 4, Src: 172.16.2.10, Dst: 172.16.3.30
         0000 00.. = Differentiated Services Codepoint: Default (0)
         .... ..00 = Explicit Congestion Notification: Not ECN-Capable Transport (0)
     Total Length: 80
-    Identification: 0x3e11 (15889)
+    Identification: 0x3fdf (16351)
     000. .... = Flags: 0x0
         0... .... = Reserved bit: Not set
         .0.. .... = Don't fragment: Not set
@@ -657,25 +645,23 @@ Internet Protocol Version 4, Src: 172.16.2.10, Dst: 172.16.3.30
     ...0 0000 0000 0000 = Fragment Offset: 0
     Time to Live: 64
     Protocol: UDP (17)
-    Header Checksum: 0xdf43 [validation disabled]
+    Header Checksum: 0xdd75 [validation disabled]
     [Header checksum status: Unverified]
     Source Address: 172.16.2.10
     Destination Address: 172.16.3.30
-    [Stream index: 2]
-User Datagram Protocol, Src Port: 49952, Dst Port: 53
-    Source Port: 49952
+User Datagram Protocol, Src Port: 35107, Dst Port: 53
+    Source Port: 35107
     Destination Port: 53
     Length: 60
     Checksum: 0x5d96 [unverified]
     [Checksum Status: Unverified]
     [Stream index: 3]
-    [Stream Packet Number: 1]
     [Timestamps]
         [Time since first frame: 0.000000000 seconds]
         [Time since previous frame: 0.000000000 seconds]
     UDP payload (52 bytes)
 Domain Name System (query)
-    Transaction ID: 0xa9a8
+    Transaction ID: 0xc690
     Flags: 0x0010 Standard query
         0... .... .... .... = Response: Message is a query
         .000 0... .... .... = Opcode: Standard query (0)
@@ -692,12 +678,12 @@ Domain Name System (query)
             Name: example.com
             [Name Length: 11]
             [Label Count: 2]
-            Type: A (1) (Host Address)
+            Type: A (Host Address) (1)
             Class: IN (0x0001)
     Additional records
         <Root>: type OPT
             Name: <Root>
-            Type: OPT (41) 
+            Type: OPT (41)
             UDP payload size: 1232
             Higher bits in extended RCODE: 0x00
             EDNS0 version: 0
@@ -708,34 +694,34 @@ Domain Name System (query)
             Option: COOKIE
                 Option Code: COOKIE (10)
                 Option Length: 8
-                Option Data: e4118550a44b137d
-                Client Cookie: e4118550a44b137d
+                Option Data: bac2026b57a6abe9
+                Client Cookie: bac2026b57a6abe9
                 Server Cookie: <MISSING>
 
 Frame 8: 159 bytes on wire (1272 bits), 159 bytes captured (1272 bits)
     Encapsulation type: Ethernet (1)
-    Arrival Time: Oct 22, 2026 04:15:34.673749000 UTC
-    UTC Arrival Time: Oct 22, 2026 04:15:34.673749000 UTC
-    Epoch Arrival Time: 1792642534.673749000
+    Arrival Time: Oct 23, 2026 15:21:35.929847000 UTC
     [Time shift for this packet: 0.000000000 seconds]
-    [Time delta from previous captured frame: 0.000100000 seconds]
-    [Time delta from previous displayed frame: 0.000100000 seconds]
-    [Time since reference or first frame: 0.000326000 seconds]
+    Epoch Time: 1792768895.929847000 seconds
+    [Time delta from previous captured frame: 0.000052000 seconds]
+    [Time delta from previous displayed frame: 0.000052000 seconds]
+    [Time since reference or first frame: 0.000463000 seconds]
     Frame Number: 8
     Frame Length: 159 bytes (1272 bits)
     Capture Length: 159 bytes (1272 bits)
     [Frame is marked: False]
     [Frame is ignored: False]
     [Protocols in frame: eth:ethertype:ip:udp:dns]
-Ethernet II, Src: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd), Dst: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
-    Destination: b6:48:c3:af:be:56 (b6:48:c3:af:be:56)
+Ethernet II, Src: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e), Dst: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa)
+    Destination: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa)
+        Address: ae:b7:f3:4f:7f:fa (ae:b7:f3:4f:7f:fa)
         .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
         .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
-    Source: 3e:94:4c:bd:97:cd (3e:94:4c:bd:97:cd)
+    Source: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e)
+        Address: 16:c4:f2:16:bf:2e (16:c4:f2:16:bf:2e)
         .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
         .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
     Type: IPv4 (0x0800)
-    [Stream index: 0]
 Internet Protocol Version 4, Src: 172.16.3.30, Dst: 172.16.2.10
     0100 .... = Version: 4
     .... 0101 = Header Length: 20 bytes (5)
@@ -743,7 +729,7 @@ Internet Protocol Version 4, Src: 172.16.3.30, Dst: 172.16.2.10
         0000 00.. = Differentiated Services Codepoint: Default (0)
         .... ..00 = Explicit Congestion Notification: Not ECN-Capable Transport (0)
     Total Length: 145
-    Identification: 0x5f7f (24447)
+    Identification: 0xacf6 (44278)
     000. .... = Flags: 0x0
         0... .... = Reserved bit: Not set
         .0.. .... = Don't fragment: Not set
@@ -751,25 +737,23 @@ Internet Protocol Version 4, Src: 172.16.3.30, Dst: 172.16.2.10
     ...0 0000 0000 0000 = Fragment Offset: 0
     Time to Live: 63
     Protocol: UDP (17)
-    Header Checksum: 0xbe94 [validation disabled]
+    Header Checksum: 0x711d [validation disabled]
     [Header checksum status: Unverified]
     Source Address: 172.16.3.30
     Destination Address: 172.16.2.10
-    [Stream index: 2]
-User Datagram Protocol, Src Port: 53, Dst Port: 49952
+User Datagram Protocol, Src Port: 53, Dst Port: 35107
     Source Port: 53
-    Destination Port: 49952
+    Destination Port: 35107
     Length: 125
     Checksum: 0x5dd7 [unverified]
     [Checksum Status: Unverified]
     [Stream index: 3]
-    [Stream Packet Number: 2]
     [Timestamps]
-        [Time since first frame: 0.000100000 seconds]
-        [Time since previous frame: 0.000100000 seconds]
+        [Time since first frame: 0.000052000 seconds]
+        [Time since previous frame: 0.000052000 seconds]
     UDP payload (117 bytes)
 Domain Name System (response)
-    Transaction ID: 0xa9a8
+    Transaction ID: 0xc690
     Flags: 0x8410 Standard query response, No error
         1... .... .... .... = Response: Message is a response
         .000 0... .... .... = Opcode: Standard query (0)
@@ -790,12 +774,12 @@ Domain Name System (response)
             Name: example.com
             [Name Length: 11]
             [Label Count: 2]
-            Type: A (1) (Host Address)
+            Type: A (Host Address) (1)
             Class: IN (0x0001)
     Answers
         example.com: type A, class IN, addr 172.16.1.20
             Name: example.com
-            Type: A (1) (Host Address)
+            Type: A (Host Address) (1)
             Class: IN (0x0001)
             Time to live: 300 (5 minutes)
             Data length: 4
@@ -803,7 +787,7 @@ Domain Name System (response)
     Authoritative nameservers
         example.com: type NS, class IN, ns ns.example.com
             Name: example.com
-            Type: NS (2) (authoritative Name Server)
+            Type: NS (authoritative Name Server) (2)
             Class: IN (0x0001)
             Time to live: 300 (5 minutes)
             Data length: 5
@@ -811,14 +795,14 @@ Domain Name System (response)
     Additional records
         ns.example.com: type A, class IN, addr 172.16.3.30
             Name: ns.example.com
-            Type: A (1) (Host Address)
+            Type: A (Host Address) (1)
             Class: IN (0x0001)
             Time to live: 300 (5 minutes)
             Data length: 4
             Address: 172.16.3.30
         <Root>: type OPT
             Name: <Root>
-            Type: OPT (41) 
+            Type: OPT (41)
             UDP payload size: 1232
             Higher bits in extended RCODE: 0x00
             EDNS0 version: 0
@@ -829,9 +813,9 @@ Domain Name System (response)
             Option: COOKIE
                 Option Code: COOKIE (10)
                 Option Length: 24
-                Option Data: e4118550a44b137d010000006ad98de6a396e75939e9b609
-                Client Cookie: e4118550a44b137d
-                Server Cookie: 010000006ad98de6a396e75939e9b609
+                Option Data: bac2026b57a6abe9010000006adb7b7f432a70f76bb51075
+                Client Cookie: bac2026b57a6abe9
+                Server Cookie: 010000006adb7b7f432a70f76bb51075
     [Request In: 7]
-    [Time: 0.000100000 seconds]
+    [Time: 0.000052000 seconds]
 

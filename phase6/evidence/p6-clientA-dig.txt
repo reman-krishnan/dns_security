@@ -2,7 +2,7 @@
 ; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> example.com A +time=6 +tries=2
 ;; global options: +cmd
 ;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 14787
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 3468
 ;; flags: qr rd ra ad; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 0
 
 ;; QUESTION SECTION:
@@ -11,8 +11,8 @@
 ;; ANSWER SECTION:
 example.com.		300	IN	A	172.16.1.30
 
-;; Query time: 7 msec
+;; Query time: 13 msec
 ;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
-;; WHEN: Fri Oct 23 08:24:11 UTC 2026
+;; WHEN: Fri Oct 23 15:24:26 UTC 2026
 ;; MSG SIZE  rcvd: 45
 

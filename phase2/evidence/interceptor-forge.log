@@ -1,8 +1,9 @@
 Starting DNS Interceptor [FORGE mode] on eth0...
-Attacker MAC: 4a:67:49:30:15:81
-Target Resolver MAC: 32:a7:b0:7c:06:1c (resolved via ARP)
-[RELAY] Relaying message for example.com (ID 0x3ffa)
-[RELAY] Relaying message for <non-query> (ID 0x5f96)
-[RELAY] Relaying message for example.com (ID 0xbdc5)
-[FORGE] Poisoning A record for example.com (ID 0x4a18) -> 172.16.1.30
-[RELAY] Relaying message for example.com (ID 0xacee)
+Attacker MAC: 92:51:56:4c:6a:2e
+Target Resolver MAC: 0a:24:95:17:9d:24 (resolved via ARP)
+[RELAY] Relaying message for example.com (ID 0x9b85)
+[RELAY] Relaying message for <non-query> (ID 0x4f5e)
+[RELAY] Relaying message for example.com (ID 0x48c5)
+[FORGE] Poisoning A record for example.com (ID 0x936c) -> 172.16.1.30
+[RELAY] Relaying message for example.com (ID 0x7342)
+[RELAY] Relaying message for www.example.com (ID 0xb4aa)

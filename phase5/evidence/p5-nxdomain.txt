@@ -2,25 +2,25 @@
 ; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> +dnssec doesnotexist.example.com A +time=6 +tries=2
 ;; global options: +cmd
 ;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 38020
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 18921
 ;; flags: qr rd ra ad; QUERY: 1, ANSWER: 0, AUTHORITY: 6, ADDITIONAL: 1
 
 ;; OPT PSEUDOSECTION:
 ; EDNS: version: 0, flags: do; udp: 1232
-; COOKIE: e334e6fc87aed3c8010000006ada03e20f1a718604f75cbf (good)
+; COOKIE: fb2160233baf3b75010000006adb7be392e37f9453206186 (good)
 ;; QUESTION SECTION:
 ;doesnotexist.example.com.	IN	A
 
 ;; AUTHORITY SECTION:
-dev.example.com.	300	IN	RRSIG	NSEC 13 3 300 20261121091254 20261022091254 58815 example.com. JtUgOHrVUnqCRIUiRvexUWIhvxxpm6sVyA3R/LZHNMHMa+H9DlM0WAgR B5HbUy9FhkOi+rXoDxxQ4bLvG7gAew==
+dev.example.com.	300	IN	RRSIG	NSEC 13 3 300 20261122142313 20261023142313 48509 example.com. sZdYUBrmwebppEA56s6sXzKREAKLfkqJCJRsB41cFIfWh0BWiPiGMrTp /fozwpiTm69ykDbLgABProBTffUSJQ==
 dev.example.com.	300	IN	NSEC	git.example.com. A RRSIG NSEC
 example.com.		300	IN	SOA	ns.example.com. hostmaster.example.com. 2026102201 3600 600 86400 300
-example.com.		300	IN	RRSIG	SOA 13 2 300 20261121091254 20261022091254 58815 example.com. 2dB0ee6HOGkTZm8PwC9BeWCHG8ZN3TfNkSbUAPgfr2UNH+zv9bfAudr9 OgV4+RxEAnThZxhaF1fcw28EpIE0Rw==
-example.com.		300	IN	RRSIG	NSEC 13 2 300 20261121091254 20261022091254 58815 example.com. /qQjeO/JaZ088za6cFWh423XKLRvwZIPFXzPhuJpAFy73WM0rWpBRnQ9 MSw0JbBcRQRIL+dr7ptiVV2ddyJNWQ==
+example.com.		300	IN	RRSIG	SOA 13 2 300 20261122142313 20261023142313 48509 example.com. uC91Q7lQrCkCWVZnvjiWHc+lZTBK9F8Kkyoun62sxgY3Vis5YesCyqMd uCW2VRcHVYHq4GPxuvrc/Rzl8r4Pcg==
+example.com.		300	IN	RRSIG	NSEC 13 2 300 20261122142313 20261023142313 48509 example.com. J2JWHSg7JVcWBfzgt3UIhji+CodjIZq6qW39N6LNYWDz0+VlR5hTgzNX D9RMzfseuBxoTGTYnj5fisfxaYlfhA==
 example.com.		300	IN	NSEC	backup.example.com. A NS SOA RRSIG NSEC DNSKEY
 
-;; Query time: 1 msec
+;; Query time: 3 msec
 ;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
-;; WHEN: Thu Oct 22 12:38:58 UTC 2026
+;; WHEN: Fri Oct 23 15:23:15 UTC 2026
 ;; MSG SIZE  rcvd: 534
 

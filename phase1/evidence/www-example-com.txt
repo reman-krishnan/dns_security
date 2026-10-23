@@ -1,13 +1,13 @@
 
-; <<>> DiG 9.20.30-1~deb13u1-Debian <<>> www.example.com A +time=3 +tries=1
+; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> www.example.com A +time=3 +tries=1
 ;; global options: +cmd
 ;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 58189
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 19664
 ;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 1, ADDITIONAL: 2
 
 ;; OPT PSEUDOSECTION:
 ; EDNS: version: 0, flags:; udp: 1232
-; COOKIE: 334a5d6c0b7d048b010000006ad98d9024f4403b0550b7ed (good)
+; COOKIE: e48f5d6507c047ce010000006adb7b707566d1381508ee8d (good)
 ;; QUESTION SECTION:
 ;www.example.com.		IN	A
 
@@ -15,13 +15,13 @@
 www.example.com.	300	IN	A	172.16.1.20
 
 ;; AUTHORITY SECTION:
-example.com.		300	IN	NS	ns.example.com.
+example.com.		299	IN	NS	ns.example.com.
 
 ;; ADDITIONAL SECTION:
-ns.example.com.		300	IN	A	172.16.3.30
+ns.example.com.		299	IN	A	172.16.3.30
 
-;; Query time: 3 msec
+;; Query time: 1 msec
 ;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
-;; WHEN: Thu Oct 22 04:14:08 UTC 2026
+;; WHEN: Fri Oct 23 15:21:20 UTC 2026
 ;; MSG SIZE  rcvd: 121
 

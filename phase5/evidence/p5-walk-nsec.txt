@@ -1,4 +1,4 @@
-[walker] resolver 172.16.2.10 at 9e:88:00:6d:5c:8e
+[walker] resolver 172.16.2.10 at 7e:3e:20:05:61:74
 [walker] starting NSEC walk of example.com via resolver
 
   found: example.com           next -> backup.example.com

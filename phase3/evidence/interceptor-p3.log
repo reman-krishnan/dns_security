@@ -1,10 +1,11 @@
-Starting DNS Interceptor [RELAY mode] on eth0...
-Attacker MAC: 0a:18:86:6a:f9:d5
-Target Resolver MAC: ea:44:3a:b7:48:1e (resolved via ARP)
-[RELAY] Relaying message for example.com (ID 0x05f6)
-[RELAY] Relaying message for <non-query> (ID 0x155a)
-[RELAY] Relaying message for <non-query> (ID 0x83a4)
-[RELAY] Relaying message for example.com (ID 0xbd61)
-[RELAY] Relaying message for example.com (ID 0x19e3)
-[RELAY] Relaying message for example.com (ID 0xa58e)
-[RELAY] Relaying message for com (ID 0x362c)
+Starting DNS Interceptor [FORGE mode] on eth0...
+Attacker MAC: 6a:43:d2:1b:a7:c9
+Target Resolver MAC: 2e:18:6c:17:b7:4b (resolved via ARP)
+[RELAY] Relaying message for example.com (ID 0xf28a)
+[RELAY] Relaying message for <non-query> (ID 0x272a)
+[RELAY] Relaying message for <non-query> (ID 0xba6d)
+[RELAY] Relaying message for example.com (ID 0xb0e9)
+[FORGE] Poisoning A record for example.com (ID 0xfa88) -> 172.16.1.30
+[RELAY] Relaying message for com (ID 0xcadc)
+[RELAY] Relaying message for example.com (ID 0xc2c4)
+[RELAY] Relaying message for example.com (ID 0xcc69)

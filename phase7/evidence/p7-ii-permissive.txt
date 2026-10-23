@@ -1,5 +1,5 @@
 [permissive] trying DoT @resolver.cs6008.local...
-;; WARNING: TLS, handshake failed (Error in the certificate.)
+;; WARNING: can't connect to 172.16.2.10@853(TCP)
 ;; ERROR: failed to query server resolver.cs6008.local@853(TCP)
 [permissive] DoT failed -> FALLING BACK TO CLEARTEXT (insecure).
 example.com.		300	IN	A	172.16.1.30

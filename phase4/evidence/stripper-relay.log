@@ -1,3 +1,3 @@
-stripper: mode=--relay dev=eth0 attacker=22:85:2a:fa:73:1f
-stripper: resolver 172.16.2.10 is at f2:c7:38:e7:e1:3a
+stripper: mode=--relay dev=eth0 attacker=e6:b6:af:a5:f5:0a
+stripper: resolver 172.16.2.10 is at b6:c4:be:c8:b1:1f
 stripper: running

@@ -1,7 +1,6 @@
-mitm: dev=eth0 forge-cleartext=1 break-dot=1 client at 5a:b5:be:4b:54:e9
+mitm: dev=eth0 forge-cleartext=1 break-dot=1 client at 5e:e0:35:eb:01:08
 mitm: running
 [BREAK-DoT] leaving initial handshake record (content-type 0x16) untouched
-[BREAK-DoT] corrupted 195-byte TLS record (content-type 0x88) -> TLS will reject
 [BREAK-DoT] corrupted 542-byte TLS record (content-type 0x17) -> TLS will reject
 [BREAK-DoT] corrupted 113-byte TLS record (content-type 0x17) -> TLS will reject
 [BREAK-DoT] leaving initial handshake record (content-type 0x16) untouched
