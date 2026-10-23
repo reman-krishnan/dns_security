@@ -1,5 +1,3 @@
-$ cat /tmp/walker-fixed.c
-
 /*
  * CS6008 Assignment 2 — Phase 5: Zone Walking via NSEC
  * ----------------------------------------------------
