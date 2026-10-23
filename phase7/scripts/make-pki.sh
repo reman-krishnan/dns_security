@@ -49,7 +49,15 @@ openssl x509 -req -in rogue.csr -CA rogue-ca.crt -CAkey rogue-ca.key -CAcreatese
 cat rogue.crt rogue-ca.crt > rogue.fullchain.crt
 
 chmod 644 *.crt
-chmod 600 *.key
+# CA private keys never get mounted into a running container (only used
+# once, here, to sign leaf certs) -> keep them root-only.
+chmod 600 ca.key rogue-ca.key
+# Leaf keys ARE mounted into a running daemon (resolver/edge-router) that
+# drops root privilege (named runs as `bind`) -> must stay world-readable
+# *inside that container*. Exposure is still scoped by compose.yml's
+# per-file mounts: only the one container that legitimately holds a given
+# leaf key ever sees it.
+chmod 644 resolver.key rogue.key
 rm -f *.csr
 echo "PKI written to $PKI:"
 ls -1 "$PKI"
