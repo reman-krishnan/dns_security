@@ -1,0 +1,135 @@
+% ---------- Preamble: shared setup, diagram and evidence macros ----------
+% Policy: all body text, headings, captions, tables and callouts are BLACK.
+% Colour appears ONLY inside TikZ diagrams.
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,calc,fit,backgrounds,shapes.geometric}
+\usepackage[hidelinks]{hyperref}
+
+% ---------- Diagram-only palette (never used for text) ----------
+\definecolor{accent}{HTML}{2C6E91}
+\definecolor{accentlt}{HTML}{E6EEF3}
+\definecolor{good}{HTML}{2E7D4F}
+\definecolor{goodlt}{HTML}{E4F1E9}
+\definecolor{bad}{HTML}{B23A3A}
+\definecolor{badlt}{HTML}{F6E5E4}
+\definecolor{net1}{HTML}{E7F0F7}
+\definecolor{net2}{HTML}{FBEFE3}
+\definecolor{net3}{HTML}{EAF2EA}
+\definecolor{dslate}{HTML}{45566B}
+% grayscale tones for placeholders and code frames (neutral, not colour)
+\definecolor{boxframe}{gray}{0.0}
+\definecolor{boxfill}{gray}{0.96}
+\definecolor{boxtext}{gray}{0.25}
+\definecolor{coderule}{gray}{0.55}
+
+% ---------- Section styling: black ----------
+\titleformat{\section}{\color{black}\Large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\color{black}\large\bfseries}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\color{black}\normalsize\bfseries}{\thesubsubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.4em}{0.7em}
+
+% ---------- Header / footer: black ----------
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyhead[L]{\small CS6008 Network Security}
+\fancyhead[R]{\small Assignment 2: DNS Security}
+\fancyfoot[C]{\small\thepage}
+
+% ---------- Listings: black text, white ground, plain frame ----------
+\lstdefinestyle{term}{
+  basicstyle=\ttfamily\footnotesize\color{black},
+  backgroundcolor=\color{white},
+  breaklines=true,
+  breakatwhitespace=false,
+  columns=fullflexible,
+  keepspaces=true,
+  frame=single,
+  rulecolor=\color{coderule},
+  framesep=6pt,
+  xleftmargin=10pt,
+  xrightmargin=4pt,
+  aboveskip=10pt,
+  belowskip=8pt,
+  showstringspaces=false
+}
+\lstset{style=term}
+
+% ---------- Evidence figures ----------
+% Each figure embeds its screenshot AUTOMATICALLY, found by the figure's label:
+% a figure with \label{fig:p2-attack} looks for an image called p2-attack.
+% It searches, in order:  images/p2-attack.png, images/p2-attack.PNG,
+% images/p2-attack.jpg, images/p2-attack.jpeg, images/p2-attack.pdf, and the
+% same five names at the project root.  As soon as one of those files exists
+% the picture appears; until then a gray "reserved space" box is shown that
+% prints the exact filename it is waiting for.  So the ONLY thing you have to do
+% is name each screenshot after its figure (see the list in SCREENSHOTS.md) and
+% drop them in an images/ folder.  Nothing in report.tex needs editing.
+\graphicspath{{images/}{./}}
+
+% strip the leading "fig:" from a label so we can build the image filename
+\def\stripfigcolon fig:#1\stripfigend{#1}
+\newcommand{\figimgname}[1]{\expandafter\stripfigcolon#1\stripfigend}
+
+% try to include <base> with any known folder+extension; run #2 if none found
+\newcommand{\tryshot}[2]{% #1 = basename (e.g. p2-attack), #2 = fallback code
+  \IfFileExists{images/#1.png}{\includegraphics[width=0.92\linewidth]{images/#1.png}}{%
+  \IfFileExists{images/#1.PNG}{\includegraphics[width=0.92\linewidth]{images/#1.PNG}}{%
+  \IfFileExists{images/#1.jpg}{\includegraphics[width=0.92\linewidth]{images/#1.jpg}}{%
+  \IfFileExists{images/#1.jpeg}{\includegraphics[width=0.92\linewidth]{images/#1.jpeg}}{%
+  \IfFileExists{images/#1.pdf}{\includegraphics[width=0.92\linewidth]{images/#1.pdf}}{%
+  \IfFileExists{#1.png}{\includegraphics[width=0.92\linewidth]{#1.png}}{%
+  \IfFileExists{#1.jpg}{\includegraphics[width=0.92\linewidth]{#1.jpg}}{%
+  #2}}}}}}}%
+}
+
+% #1 = caption, #2 = what the screenshot should show, #3 = suggested file,
+% #4 = label. #5 = minipage height for the fallback box.
+\newcommand{\shotboxinner}[5]{%
+\begin{figure}[H]
+\centering
+\edef\figbase{\figimgname{#4}}%
+\tryshot{\figbase}{%
+  \setlength{\fboxsep}{0pt}%
+  \fcolorbox{boxframe}{boxfill}{%
+  \begin{minipage}[c][#5][c]{0.90\linewidth}
+  \centering
+  {\small\itshape\color{boxtext} Space reserved for screenshot}\\[3pt]
+  {\small\color{boxtext} #2}\\[5pt]
+  {\footnotesize\color{boxtext} Save screenshot as \texttt{images/\figbase.png} \quad (source: \texttt{#3})}
+  \end{minipage}}%
+}%
+\caption{#1}
+\label{#4}
+\end{figure}}
+
+\newcommand{\shot}[4]{\shotboxinner{#1}{#2}{#3}{#4}{40mm}}
+\newcommand{\shottall}[4]{\shotboxinner{#1}{#2}{#3}{#4}{58mm}}
+
+% ---------- Callout: black framed box ----------
+\newcommand{\takeaway}[1]{%
+\par\smallskip\noindent
+\setlength{\fboxsep}{7pt}%
+\fbox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\small #1}}%
+\par\smallskip}
+
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\captionsetup{font=small,labelfont=bf,textfont=normal}
