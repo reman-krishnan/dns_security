@@ -56,6 +56,7 @@ Expect `ad` + `172.16.1.20` + the real page (relay is transparent).
 ```bash
 IFACE=$(sudo docker compose exec -T edge-router sh -c 'ip -o -4 addr show' | grep -oE 'eth[0-9]+ +inet 172\.16\.1\.' | grep -oE 'eth[0-9]+' | head -1)
 sudo docker compose exec -d edge-router sh -c "exec tcpdump -i $IFACE -nn -s0 -U -Z root -w /evidence/p6-attack.pcap 'udp port 53' > /evidence/p6-tcpdump.log 2>&1"
+sleep 1   # let tcpdump finish opening the socket before traffic flows, or it misses the capture window
 
 sudo docker compose exec -d attacker sh -c 'exec /usr/local/bin/forge --forge > /evidence/forge-attack.log 2>&1'
 sudo docker compose exec -T resolver rndc -k /run/named/rndc.key -s 127.0.0.1 flush

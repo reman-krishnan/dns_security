@@ -57,6 +57,7 @@ edge-router while the strict client resolves over DoT:
 ```bash
 IFACE=$(sudo docker compose exec -T edge-router sh -c 'ip -o -4 addr show' | grep -oE 'eth[0-9]+ +inet 172\.16\.1\.' | grep -oE 'eth[0-9]+' | head -1)
 sudo docker compose exec -d edge-router sh -c "exec tcpdump -i $IFACE -nn -s0 -U -Z root -w /evidence/p7-verify.pcap 'host 172.16.1.10 and (port 53 or port 853 or port 443)' > /evidence/p7-verify-tcpdump.log 2>&1"
+sleep 1   # let tcpdump finish opening the socket before traffic flows, or it misses the capture window
 
 sudo docker compose exec -T resolver rndc -k /run/named/rndc.key -s 127.0.0.1 flush
 sudo docker compose exec -T client /scripts/resolve-strict.sh | tee evidence/p7-verify-strict.txt

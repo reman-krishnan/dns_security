@@ -123,6 +123,7 @@ Still `ad` + `172.16.1.20` + the real page — the relay is transparent.
 # capture the authoritative<->resolver exchange on the resolver-subnet interface
 IFACE=$(sudo docker compose exec -T core-router sh -c 'ip -o -4 addr show' | grep -oE 'eth[0-9]+ +inet 172\.16\.2\.' | grep -oE 'eth[0-9]+' | head -1)
 sudo docker compose exec -d core-router sh -c "exec tcpdump -i $IFACE -nn -s0 -U -Z root -w /evidence/p4-runA.pcap 'udp port 53' > /evidence/p4-runA-tcpdump.log 2>&1"
+sleep 1   # let tcpdump finish opening the socket before traffic flows, or it misses the capture window
 
 sudo docker compose exec -T core-router /scripts/divert-on.sh
 sudo docker compose exec -d attacker sh -c 'exec /usr/local/bin/stripper --strip-runA > /evidence/stripper-runA.log 2>&1'
@@ -193,6 +194,7 @@ example.com. IN RRSIG NSEC 13 2 ... com.          (signed by com, ad flag set)
 ```bash
 IFACE=$(sudo docker compose exec -T core-router sh -c 'ip -o -4 addr show' | grep -oE 'eth[0-9]+ +inet 172\.16\.2\.' | grep -oE 'eth[0-9]+' | head -1)
 sudo docker compose exec -d core-router sh -c "exec tcpdump -i $IFACE -nn -s0 -U -Z root -w /evidence/p4-runB.pcap 'udp port 53' > /evidence/p4-runB-tcpdump.log 2>&1"
+sleep 1   # let tcpdump finish opening the socket before traffic flows, or it misses the capture window
 
 sudo docker compose exec -T core-router /scripts/divert-on.sh
 sudo docker compose exec -d attacker sh -c 'exec /usr/local/bin/stripper --strip-runB > /evidence/stripper-runB.log 2>&1'
