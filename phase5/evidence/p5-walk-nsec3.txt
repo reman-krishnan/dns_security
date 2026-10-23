@@ -1,4 +1,4 @@
-[walker] resolver 172.16.2.10 at e2:99:f2:fb:d3:c2
+[walker] resolver 172.16.2.10 at 86:ea:91:1a:96:a8
 [walker] starting NSEC walk of example.com via resolver
 
 [walker] example.com: signed denial carries NO NSEC next-name (NSEC3 or no DNSSEC) -> walk cannot continue
