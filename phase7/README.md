@@ -86,6 +86,11 @@ with both flags):
 ```bash
 IFACE=$(sudo docker compose exec -T edge-router sh -c 'ip -o -4 addr show' | grep -oE 'eth[0-9]+ +inet 172\.16\.1\.' | grep -oE 'eth[0-9]+' | head -1)
 sudo docker compose exec -d edge-router sh -c "exec tcpdump -i $IFACE -nn -s0 -U -Z root -w /evidence/p7-i.pcap 'host 172.16.1.10 and (port 53 or port 853 or port 443)' > /evidence/p7-i-tcpdump.log 2>&1"
+# Second capture on the attacker's own interface: a host always sees the frames
+# it transmits, so this reliably records the forged UDP/53 fallback leaving
+# toward the client (the edge-router vantage may not, per the capture note below).
+AIFACE=$(sudo docker compose exec -T attacker sh -c 'ip -o -4 addr show' | grep -oE 'eth[0-9]+ +inet 172\.16\.1\.' | grep -oE 'eth[0-9]+' | head -1)
+sudo docker compose exec -d attacker sh -c "exec tcpdump -i $AIFACE -nn -s0 -U -w /evidence/p7-i-attacker.pcap 'host 172.16.1.10 and port 53' > /evidence/p7-i-attacker-tcpdump.log 2>&1"
 sleep 1   # let tcpdump finish opening the socket before traffic flows, or it misses the capture window
 
 sudo docker compose exec -T attacker pkill -x mitm || true
@@ -94,11 +99,13 @@ sudo docker compose exec -T client /scripts/resolve-strict.sh      | tee evidenc
 sudo docker compose exec -T client /scripts/resolve-permissive.sh  | tee evidence/p7-i-permissive.txt
 
 sudo docker compose exec -T edge-router pkill -INT -x tcpdump || true
+sudo docker compose exec -T attacker pkill -INT -x tcpdump || true
 ```
 - **strict:** TLS record MAC fails → session torn down → **no answer** (does not land).
 - **permissive:** DoT fails → cleartext fallback → forged → **172.16.1.30 (lands)**.
-- `evidence/p7-i.pcap` shows the TCP/853 stream abort and, for the permissive
-  client, the forged UDP/53 fallback answer.
+- `evidence/p7-i.pcap` (edge-router) shows the TCP/853 stream being relayed and
+  torn down; `evidence/p7-i-attacker.pcap` shows the attacker's forged UDP/53
+  fallback answer transmitted toward the client.
 
 Reset mitm to forge-only for the next attempts:
 ```bash
@@ -110,6 +117,8 @@ sudo docker compose exec -d attacker sh -c 'exec /usr/local/bin/mitm --forge-cle
 ```bash
 IFACE=$(sudo docker compose exec -T edge-router sh -c 'ip -o -4 addr show' | grep -oE 'eth[0-9]+ +inet 172\.16\.1\.' | grep -oE 'eth[0-9]+' | head -1)
 sudo docker compose exec -d edge-router sh -c "exec tcpdump -i $IFACE -nn -s0 -U -Z root -w /evidence/p7-ii.pcap 'host 172.16.1.10 and (port 53 or port 853 or port 443)' > /evidence/p7-ii-tcpdump.log 2>&1"
+AIFACE=$(sudo docker compose exec -T attacker sh -c 'ip -o -4 addr show' | grep -oE 'eth[0-9]+ +inet 172\.16\.1\.' | grep -oE 'eth[0-9]+' | head -1)
+sudo docker compose exec -d attacker sh -c "exec tcpdump -i $AIFACE -nn -s0 -U -w /evidence/p7-ii-attacker.pcap 'host 172.16.1.10 and port 53' > /evidence/p7-ii-attacker-tcpdump.log 2>&1"
 sleep 1   # let tcpdump finish opening the socket before traffic flows, or it misses the capture window
 
 sudo docker compose exec -T edge-router /scripts/attack-rogue-on.sh
@@ -118,16 +127,20 @@ sudo docker compose exec -T client /scripts/resolve-permissive.sh  | tee evidenc
 sudo docker compose exec -T edge-router /scripts/attack-rogue-off.sh
 
 sudo docker compose exec -T edge-router pkill -INT -x tcpdump || true
+sudo docker compose exec -T attacker pkill -INT -x tcpdump || true
 ```
 - **strict:** rogue cert not signed by the lab CA → validation fails → **no answer**.
 - **permissive:** DoT cert fails → fallback → forged → **172.16.1.30 (lands)**.
-- `evidence/p7-ii.pcap` shows the redirected TCP/853 handshake against the
-  rogue certificate and, for the permissive client, the forged UDP/53 fallback.
+- `evidence/p7-ii.pcap` (edge-router) shows the redirected TCP/853 handshake
+  against the rogue certificate; `evidence/p7-ii-attacker.pcap` shows the
+  attacker's forged UDP/53 fallback transmitted toward the client.
 
 ### (iii) Deny the encrypted transport (force cleartext)
 ```bash
 IFACE=$(sudo docker compose exec -T edge-router sh -c 'ip -o -4 addr show' | grep -oE 'eth[0-9]+ +inet 172\.16\.1\.' | grep -oE 'eth[0-9]+' | head -1)
 sudo docker compose exec -d edge-router sh -c "exec tcpdump -i $IFACE -nn -s0 -U -Z root -w /evidence/p7-iii.pcap 'host 172.16.1.10 and (port 53 or port 853 or port 443)' > /evidence/p7-iii-tcpdump.log 2>&1"
+AIFACE=$(sudo docker compose exec -T attacker sh -c 'ip -o -4 addr show' | grep -oE 'eth[0-9]+ +inet 172\.16\.1\.' | grep -oE 'eth[0-9]+' | head -1)
+sudo docker compose exec -d attacker sh -c "exec tcpdump -i $AIFACE -nn -s0 -U -w /evidence/p7-iii-attacker.pcap 'host 172.16.1.10 and port 53' > /evidence/p7-iii-attacker-tcpdump.log 2>&1"
 sleep 1   # let tcpdump finish opening the socket before traffic flows, or it misses the capture window
 
 sudo docker compose exec -T edge-router /scripts/attack-block-on.sh
@@ -136,9 +149,13 @@ sudo docker compose exec -T client /scripts/resolve-permissive.sh  | tee evidenc
 sudo docker compose exec -T edge-router /scripts/attack-block-off.sh
 
 sudo docker compose exec -T edge-router pkill -INT -x tcpdump || true
+sudo docker compose exec -T attacker pkill -INT -x tcpdump || true
 ```
 - **strict:** 853/443 rejected → DoT fails → **no answer** (refuses cleartext).
 - **permissive:** fallback to cleartext → forged → **172.16.1.30 (lands)**.
+- `evidence/p7-iii.pcap` (edge-router) shows the rejected 853/443 attempts;
+  `evidence/p7-iii-attacker.pcap` shows the attacker's forged cleartext UDP/53
+  answer transmitted toward the client.
 - `evidence/p7-iii.pcap` shows the rejected 853/443 attempts and, for the
   permissive client, the subsequent cleartext UDP/53 exchange with the forged
   answer.
@@ -178,11 +195,13 @@ not the cryptography.
 client transport (DoH/443 is also enabled on the resolver). DoT's drawback versus
 DoH: it uses a dedicated well-known port, so it is trivially identified and
 **blocked** by a network operator (attempt iii) — exactly what forces the
-fallback here. DoH hides DNS inside ordinary HTTPS on 443, which resists that
-blocking and censorship, but at the cost of being harder for a site operator to
-monitor or filter, more complex (full HTTP/2 stack), and often centralised in
-browsers. Neither changes the integrity/authentication story; they differ mainly
-in blockability and operational visibility.
+fallback here. DoH hides DNS inside ordinary HTTPS on 443, which is harder to
+classify and block *selectively* — but it is not immune: an operator can still
+block the known resolver's endpoint or IP address. Its cost is being harder for
+a site operator to monitor or filter, more complex (full HTTP/2 stack), and
+often centralised in browsers. Neither changes the integrity/authentication
+story; they differ mainly in how selectively they can be blocked and in
+operational visibility.
 
 **What an encrypted, authenticated last mile still does not protect.** It secures
 only the stub↔resolver channel. It does **not**: make an unsigned or
@@ -199,13 +218,22 @@ needs DNSSEC validation (ideally on the client) plus a no-downgrade policy.
 |---|---|
 | `evidence/p7-verify-strict.txt` | DoT resolution, cert valid, `172.16.1.20` |
 | `evidence/p7-verify-no-cleartext.txt` | empty port-53 capture of the last mile |
-| `evidence/p7-i-*.txt`, `evidence/p7-i.pcap` | attempt (i) strict vs permissive, + packet capture |
-| `evidence/p7-ii-*.txt`, `evidence/p7-ii.pcap` | attempt (ii) strict vs permissive, + packet capture |
-| `evidence/p7-iii-*.txt`, `evidence/p7-iii.pcap` | attempt (iii) strict vs permissive, + packet capture |
+| `evidence/p7-i-*.txt`, `p7-i.pcap` (edge), `p7-i-attacker.pcap` (injection) | attempt (i) strict vs permissive + both captures |
+| `evidence/p7-ii-*.txt`, `p7-ii.pcap` (edge), `p7-ii-attacker.pcap` (injection) | attempt (ii) strict vs permissive + both captures |
+| `evidence/p7-iii-*.txt`, `p7-iii.pcap` (edge), `p7-iii-attacker.pcap` (injection) | attempt (iii) strict vs permissive + both captures |
 | `evidence/mitm*.log`, `rogue-sserver.log` | attacker + rogue-responder activity |
 
 ## Notes / troubleshooting
 
+- **Capture vantage.** Each attempt runs two captures. The edge-router capture
+  sits on the diversion path and reliably shows the TCP/853 exchange (relay,
+  rogue-cert handshake, or blocked connection). The forged UDP/53 fallback,
+  however, is a unicast frame the attacker sends directly to the client over the
+  shared `client-net` bridge; once the bridge has learned both MACs it is *not*
+  guaranteed to traverse the edge-router again, so that capture may not show it.
+  The second capture runs inside the attacker container, where a host always
+  sees the frames it transmits — `p7-*-attacker.pcap` is therefore the reliable
+  evidence that the forged answer was actually injected toward the client.
 - BIND DoH uses the built-in `http default` endpoint `/dns-query`. If `named`
   rejects `http default`, add `http default { endpoints { "/dns-query"; }; };`
   above `options` and reload.
