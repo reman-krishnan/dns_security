@@ -12,9 +12,10 @@
     \vspace*{0.6cm}
 
     % --- Institute logo ---
-    % Replace "iitb_logo.png" with your actual logo filename.
-    % Keep it in the same directory as your .tex file, or give a relative path.
-    \includegraphics[width=6.2cm]{iitb_logo.png}
+    % Put your logo at images/iitb_logo.png (or iitb_logo.png next to this file).
+    % If it is not present the title page still compiles, just without the logo.
+    \IfFileExists{images/iitb_logo.png}{\includegraphics[width=6.2cm]{images/iitb_logo.png}}{%
+      \IfFileExists{iitb_logo.png}{\includegraphics[width=6.2cm]{iitb_logo.png}}{}}
 
     \vspace{0.8cm}
 
@@ -488,7 +489,7 @@ defacement page. The captured \texttt{dig} output below is the real result from
 the submitted evidence.
 
 \begin{lstlisting}[language=,caption={The poisoned answer. example.com now resolves to the rogue server at 172.16.1.30 (evidence/p2-attack-dig.txt).}]
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 13528
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 29447
 ;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 1, ADDITIONAL: 2
 ;; ANSWER SECTION:
 example.com.        300  IN  A  172.16.1.30
@@ -639,7 +640,7 @@ the lab root key as its trust anchor, reports the answer as fully validated.
 \begin{lstlisting}[language=,caption={Healthy validation before the attack, showing the ad flag and a valid RRSIG, with delv reporting full validation (evidence/p3-valid-dig.txt, p3-valid-delv.txt).}]
 ;; flags: qr rd ra ad; QUERY: 1, ANSWER: 2, ...
 example.com.  300  IN  A      172.16.1.20
-example.com.  300  IN  RRSIG  A 13 2 300 20261122104556 20261023104556 7712 example.com. ...
+example.com.  300  IN  RRSIG  A 13 2 300 20261122142217 20261023142217 25557 example.com. ...
 
 ; fully validated          <-- delv, anchored on the lab root key
 \end{lstlisting}
@@ -671,7 +672,7 @@ that poisoned the cache in Phase 2 is simply discarded here, which is the whole
 difference that DNSSEC makes.
 
 \begin{lstlisting}[language=,caption={The validating resolver returns SERVFAIL with an empty answer section for the forged answer (evidence/p3-attack-dig-servfail.txt).}]
-;; ->>HEADER<<- opcode: QUERY, status: SERVFAIL, id: 60952
+;; ->>HEADER<<- opcode: QUERY, status: SERVFAIL, id: 5520
 ;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 1
 ;; QUESTION SECTION:
 ;example.com.			IN	A
@@ -823,7 +824,7 @@ the unsigned forged answer.
 ; unsigned answer                 <-- delv: no secure link into example.com
 example.com.  300  IN  A  172.16.1.20
 
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 39692   (note: NO ad flag)
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 26383   (note: NO ad flag)
 example.com.  300  IN  A  172.16.1.30     <-- forged, accepted
 \end{lstlisting}
 
@@ -1150,7 +1151,7 @@ authenticated is only a single unauthenticated bit that whoever writes the packe
 can set at will.
 
 \begin{lstlisting}[language=,caption={Client A, an ordinary stub, accepts the forged last-mile reply, ad flag and all (evidence/p6-clientA-dig.txt).}]
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 14787
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 3468
 ;; flags: qr rd ra ad; QUERY: 1, ANSWER: 1, ...
 example.com.  300  IN  A  172.16.1.30
 \end{lstlisting}
