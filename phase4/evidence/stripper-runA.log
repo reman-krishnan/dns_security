@@ -1,8 +1,8 @@
-stripper: mode=--strip-runA dev=eth0 attacker=22:85:2a:fa:73:1f
-stripper: resolver 172.16.2.10 is at f2:c7:38:e7:e1:3a
+stripper: mode=--strip-runA dev=eth0 attacker=1a:0b:89:e5:d6:d7
+stripper: resolver 172.16.2.10 is at 56:97:d7:cb:3d:e8
 stripper: running
-[STRIP] removed example.com DNSSEC RRs from reply (qname=example.com qtype=1) 248->101 bytes
-[FORGE] example.com A (id 0x21f3) -> 172.16.1.30  [runA]
-[STRIP] removed example.com DNSSEC RRs from reply (qname=example.com qtype=43) 215->68 bytes
+[STRIP] removed example.com DNSSEC RRs from reply (qname=example.com qtype=1) 228->101 bytes
+[FORGE] example.com A (id 0x55e6) -> 172.16.1.30  [runA]
+[STRIP] removed example.com DNSSEC RRs from reply (qname=example.com qtype=43) 344->217 bytes
 [STRIP] removed example.com DNSSEC RRs from reply (qname=example.com qtype=28) 369->118 bytes
-[STRIP] removed example.com DNSSEC RRs from reply (qname=example.com qtype=43) 215->68 bytes
+[STRIP] removed example.com DNSSEC RRs from reply (qname=example.com qtype=43) 344->217 bytes

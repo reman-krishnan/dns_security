@@ -1,4 +1,4 @@
-stripper: mode=--strip-runB dev=eth0 attacker=22:85:2a:fa:73:1f
-stripper: resolver 172.16.2.10 is at f2:c7:38:e7:e1:3a
+stripper: mode=--strip-runB dev=eth0 attacker=1a:0b:89:e5:d6:d7
+stripper: resolver 172.16.2.10 is at 56:97:d7:cb:3d:e8
 stripper: running
-[FORGE] example.com A (id 0x2b15) -> 172.16.1.30  [runB]
+[FORGE] example.com A (id 0x2f2f) -> 172.16.1.30  [runB]

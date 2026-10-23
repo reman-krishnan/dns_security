@@ -1,18 +1,18 @@
 
-; <<>> DiG 9.20.30-1~deb13u1-Debian <<>> example.com A +time=6 +tries=2
+; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> example.com A +time=6 +tries=2
 ;; global options: +cmd
 ;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: SERVFAIL, id: 8968
+;; ->>HEADER<<- opcode: QUERY, status: SERVFAIL, id: 49834
 ;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 1
 
 ;; OPT PSEUDOSECTION:
 ; EDNS: version: 0, flags:; udp: 1232
-; COOKIE: 602976584563d3ec010000006ad9c24b3c1b013362646302 (good)
+; COOKIE: 6f07332313a86e1f010000006adb1900beafaecca207906a (good)
 ;; QUESTION SECTION:
 ;example.com.			IN	A
 
-;; Query time: 36 msec
+;; Query time: 42 msec
 ;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
-;; WHEN: Thu Oct 22 07:59:07 UTC 2026
+;; WHEN: Fri Oct 23 08:21:20 UTC 2026
 ;; MSG SIZE  rcvd: 68
 
