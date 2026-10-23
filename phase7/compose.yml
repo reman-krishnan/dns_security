@@ -40,7 +40,7 @@ services:
       - "resolver.cs6008.local:172.16.2.10"
     volumes:
       - ./configs:/lab/configs:ro
-      - ./pki:/lab/pki:ro
+      - ./pki/ca.crt:/lab/pki/ca.crt:ro
       - ./scripts:/scripts:ro
       - ./evidence:/evidence
     networks:
@@ -78,7 +78,6 @@ services:
     volumes:
       - ./src:/src:ro
       - ./scripts:/scripts:ro
-      - ./pki:/lab/pki:ro
       - ./evidence:/evidence
     networks:
       client-net:
@@ -91,7 +90,8 @@ services:
     volumes:
       - ./configs:/lab/configs:ro
       - ./zones:/lab/zones:ro
-      - ./pki:/lab/pki:ro
+      - ./pki/resolver.key:/lab/pki/resolver.key:ro
+      - ./pki/resolver.fullchain.crt:/lab/pki/resolver.fullchain.crt:ro
     networks:
       resolver-net:
         ipv4_address: 172.16.2.10
@@ -128,7 +128,8 @@ services:
       ROLE: edge-router
     volumes:
       - ./scripts:/scripts:ro
-      - ./pki:/lab/pki:ro
+      - ./pki/rogue.key:/lab/pki/rogue.key:ro
+      - ./pki/rogue.fullchain.crt:/lab/pki/rogue.fullchain.crt:ro
       - ./evidence:/evidence
     networks:
       client-net:

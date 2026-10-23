@@ -71,7 +71,7 @@ Expect `status: NOERROR`, `example.com. A 172.16.1.30`, **with the `ad` flag set
 
 **Client B — locally-validating with the root anchor (expect detection):**
 ```bash
-sudo docker compose exec -T client delv @172.16.2.10 -a /lab/configs/trust-anchors.conf example.com A | tee evidence/p6-clientB-delv.txt
+sudo docker compose exec -T client delv @172.16.2.10 -a /lab/configs/trust-anchors.conf example.com A 2>&1 | tee evidence/p6-clientB-delv.txt
 ```
 Expect delv to report the answer as **bogus / "no valid signature"** and refuse
 to return an address — it validated the chain itself and the forged `A` has no
