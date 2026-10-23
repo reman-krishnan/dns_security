@@ -1,18 +1,14 @@
 Starting DNS Interceptor [FORGE mode] on eth0...
-Attacker MAC: a2:eb:0b:c2:f5:b8
-Target Resolver MAC: c2:05:63:ff:9d:08 (resolved via ARP)
-[FORGE] Poisoning A record for example.com (ID 0x0cfa) -> 172.16.1.30
-[RELAY] Relaying message for <non-query> (ID 0xcdc0)
-[RELAY] Relaying message for com (ID 0x65f3)
-[RELAY] Relaying message for <non-query> (ID 0x45c4)
-[RELAY] Relaying message for example.com (ID 0xe734)
-[RELAY] Relaying message for <non-query> (ID 0x1675)
-[RELAY] Relaying message for example.com (ID 0xe9c1)
-[RELAY] Relaying message for <non-query> (ID 0x6e0e)
-[RELAY] Relaying message for example.com (ID 0x79b4)
-[RELAY] Relaying message for example.com (ID 0x6cbe)
-[RELAY] Relaying message for com (ID 0x4588)
-[RELAY] Relaying message for <non-query> (ID 0x3ee9)
-[RELAY] Relaying message for <non-query> (ID 0xd207)
-[RELAY] Relaying message for <non-query> (ID 0x8065)
-[RELAY] Relaying message for <non-query> (ID 0x243b)
+Attacker MAC: 0a:18:86:6a:f9:d5
+Target Resolver MAC: ea:44:3a:b7:48:1e (resolved via ARP)
+[FORGE] Poisoning A record for example.com (ID 0x3e44) -> 172.16.1.30
+[RELAY] Relaying message for <non-query> (ID 0xdf47)
+[RELAY] Relaying message for com (ID 0xd434)
+[RELAY] Relaying message for <non-query> (ID 0xbbbf)
+[RELAY] Relaying message for example.com (ID 0xcaa3)
+[RELAY] Relaying message for example.com (ID 0xba38)
+[RELAY] Relaying message for com (ID 0x3476)
+[RELAY] Relaying message for <non-query> (ID 0x0f75)
+[RELAY] Relaying message for example.com (ID 0xc4e0)
+[RELAY] Relaying message for example.com (ID 0x7d98)
+[RELAY] Relaying message for example.com (ID 0xb56f)

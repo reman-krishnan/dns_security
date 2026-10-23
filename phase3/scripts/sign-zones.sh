@@ -49,7 +49,7 @@ KEY_LINE=$(grep -E '^[.]?[[:space:]]+IN[[:space:]]+DNSKEY' "$KEYDIR/$ROOT_KSK.ke
 FLAGS=$(echo "$KEY_LINE" | awk '{for(i=1;i<=NF;i++) if($i=="DNSKEY") print $(i+1)}')
 PROTO=$(echo "$KEY_LINE" | awk '{for(i=1;i<=NF;i++) if($i=="DNSKEY") print $(i+2)}')
 ALG=$(echo "$KEY_LINE" | awk '{for(i=1;i<=NF;i++) if($i=="DNSKEY") print $(i+3)}')
-PUBKEY=$(echo "$KEY_LINE" | awk '{for(i=1;i<=NF;i++) if($i=="DNSKEY") print $(i+4)}')
+PUBKEY=$(echo "$KEY_LINE" | awk '{for(i=1;i<=NF;i++) if($i=="DNSKEY"){s=""; for(j=i+4;j<=NF;j++) s=s $j; print s; exit}}')
 
 echo "Extracted Root Key: Flags=$FLAGS Proto=$PROTO Alg=$ALG PubKey=$PUBKEY"
 
