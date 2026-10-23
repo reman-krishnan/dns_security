@@ -122,7 +122,7 @@ forces traffic through.
 client      & client        & 172.16.1.10  & End host issuing lookups and web requests \\
 webserver   & client        & 172.16.1.20  & Serves the legitimate \texttt{example.com} site over HTTP \\
 rogue-web   & client        & 172.16.1.30  & Adversary's web server hosting the defacement page \\
-resolver    & resolver      & 172.16.2.10  & Recursive caching resolver; validates DNSSEC from Phase 3 \\
+resolver    & resolver      & 172.16.2.10  & Recursive caching resolver that validates DNSSEC from Phase 3 \\
 root-ns     & authoritative & 172.16.3.10  & Authoritative server for the root zone (\texttt{.}) \\
 tld-ns      & authoritative & 172.16.3.20  & Authoritative server for the \texttt{.com} zone \\
 domain-ns   & authoritative & 172.16.3.30  & Authoritative server for \texttt{example.com} \\
@@ -438,8 +438,9 @@ nameservers keep their Phase 1 configuration untouched, which is what makes the
 demonstration clean, because the attack lives entirely in a position the topology
 already grants.
 
-\begin{lstlisting}[language=bash,caption={The Phase 2 diversion, a single route on the core router (scripts/divert-on.sh). The resolver's own configuration is never touched.}]
-ip route replace 172.16.2.10 via 172.16.2.100 dev eth1
+\begin{lstlisting}[language=bash,caption={The Phase 2 diversion on the core router, which finds the resolver-facing interface by its address so nothing is hard-coded (scripts/divert-on.sh). The resolver's own configuration is never touched.}]
+DEV=$(ip -o -4 addr show | awk '$4 ~ /^172\.16\.2\./{print $2; exit}')
+ip route replace 172.16.2.10 via 172.16.2.100 dev "$DEV"
 \end{lstlisting}
 
 The second decision is the interceptor itself, in \texttt{src/interceptor.c},
@@ -487,8 +488,8 @@ defacement page. The captured \texttt{dig} output below is the real result from
 the submitted evidence.
 
 \begin{lstlisting}[language=,caption={The poisoned answer. example.com now resolves to the rogue server at 172.16.1.30 (evidence/p2-attack-dig.txt).}]
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 31219
-;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 1, ADDITIONAL: 1
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 13528
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 1, ADDITIONAL: 2
 ;; ANSWER SECTION:
 example.com.        300  IN  A  172.16.1.30
 \end{lstlisting}
@@ -638,7 +639,7 @@ the lab root key as its trust anchor, reports the answer as fully validated.
 \begin{lstlisting}[language=,caption={Healthy validation before the attack, showing the ad flag and a valid RRSIG, with delv reporting full validation (evidence/p3-valid-dig.txt, p3-valid-delv.txt).}]
 ;; flags: qr rd ra ad; QUERY: 1, ANSWER: 2, ...
 example.com.  300  IN  A      172.16.1.20
-example.com.  300  IN  RRSIG  A 13 2 300 20261121042549 20261022042549 37982 example.com. ...
+example.com.  300  IN  RRSIG  A 13 2 300 20261122104556 20261023104556 7712 example.com. ...
 
 ; fully validated          <-- delv, anchored on the lab root key
 \end{lstlisting}
@@ -655,40 +656,37 @@ necessary starting point before the attack is re-run.
 \subsection{Re-running the forgery under DNSSEC}
 
 The Phase 2 attack is now re-run without modification, and the result is completely
-different. The forged, unsigned answer carries no valid signature from the
+different. The forged and unsigned answer carries no valid signature from the
 \texttt{example.com} key, so the validating resolver refuses to accept it and fails
-the lookup rather than caching a lie. The resolver does not give up at once. It
-keeps trying to obtain a signed answer it can validate, and only after those
-attempts are exhausted does it return SERVFAIL. Because that takes a few seconds, a
-\texttt{dig} with a short timeout reports only a client-side timeout and the message
-``no servers could be reached'', whereas a \texttt{dig} given a longer timeout of
-\texttt{+time=6 +tries=2} captures the SERVFAIL response itself. That response
-carries the extended DNS error code 22, \emph{No Reachable Authority}, which states
-that the resolver could not obtain a usable answer from any authority for the name.
-This code describes the outcome of the resolver giving up, and it does not by itself
-name DNSSEC validation as the cause, so the clearest proof that the cause was
-signature validation is the resolver's own DNSSEC debug log, which records the
-forged RRset being rejected for want of a valid signature. Either way the client's
-fetch fails at the name resolution step, so it never reaches the rogue server.
+the lookup rather than caching a lie. It exhausts its attempts to obtain a signed
+answer that it can validate and then returns SERVFAIL with an empty answer section,
+which the capture below records. The client's web fetch therefore fails at the name
+resolution step and never reaches the rogue server.
 
-\begin{lstlisting}[language=,caption={The validating resolver returns SERVFAIL for the forged answer, while a dig with the default short timeout only reports a client-side timeout because the resolver is still retrying (evidence/p3-attack-dig-servfail.txt and p3-attack-dig.txt).}]
-;; communications error to 172.16.2.10#53: timed out
-;; ->>HEADER<<- opcode: QUERY, status: SERVFAIL, id: 45196
+The cause of the failure is signature validation rather than any network fault. The
+attacker holds no zone key, so the record it injects carries no RRSIG that the
+resolver can verify against the \texttt{example.com} zone key, and a validating
+resolver treats a signed zone whose data does not verify as bogus. The very packet
+that poisoned the cache in Phase 2 is simply discarded here, which is the whole
+difference that DNSSEC makes.
+
+\begin{lstlisting}[language=,caption={The validating resolver returns SERVFAIL with an empty answer section for the forged answer (evidence/p3-attack-dig-servfail.txt).}]
+;; ->>HEADER<<- opcode: QUERY, status: SERVFAIL, id: 60952
 ;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 1
-; EDE: 22 (No Reachable Authority)
-;; Query time: 3996 msec
+;; QUESTION SECTION:
+;example.com.			IN	A
+;; Query time: 4 msec
 ;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
 \end{lstlisting}
 
-\shot{The re-run attack under DNSSEC. The validating resolver rejects the forged answer and returns SERVFAIL, and \texttt{curl} cannot resolve the host, so the client never reaches the rogue page.}{dig (with +time=6 +tries=2) showing a SERVFAIL status with EDE No Reachable Authority, curl reporting "Could not resolve host", and, where captured, the resolver DNSSEC log line rejecting the forged RRset}{phase3/evidence/p3-attack-dig-servfail.txt, p3-attack-curl.txt}{fig:p3-attack}
+\shot{The re-run attack under DNSSEC. The validating resolver rejects the forged answer and returns SERVFAIL with an empty answer section, and \texttt{curl} cannot resolve the host, so the client never reaches the rogue page.}{dig with +time=6 +tries=2 showing a SERVFAIL status and no answer, next to curl reporting "Could not resolve host"}{phase3/evidence/p3-attack-dig-servfail.txt, p3-attack-curl.txt}{fig:p3-attack}
 
 The screenshot in Figure~\ref{fig:p3-attack} is the evidence for 3.3 and 3.4. It
 should show the resolver failing the lookup with a SERVFAIL status rather than
-returning the rogue address, and the client's fetch failing to resolve the host.
-These show that the identical attack that succeeded in Phase 2 no longer works. To
-pin the failure specifically on signature validation rather than on any network
-problem, the resolver's DNSSEC debug log can be captured as well, since it records
-the forged RRset being rejected for want of a valid signature.
+returning the rogue address, and it should show the client's fetch failing to
+resolve the host. Together they establish that the identical attack which succeeded
+in Phase 2 no longer works once the resolver validates the chain, because the
+forged record carries no signature the resolver can verify.
 
 \subsection{Report answers}
 
@@ -825,7 +823,7 @@ the unsigned forged answer.
 ; unsigned answer                 <-- delv: no secure link into example.com
 example.com.  300  IN  A  172.16.1.20
 
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 30890   (note: NO ad flag)
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 39692   (note: NO ad flag)
 example.com.  300  IN  A  172.16.1.30     <-- forged, accepted
 \end{lstlisting}
 
@@ -1152,7 +1150,7 @@ authenticated is only a single unauthenticated bit that whoever writes the packe
 can set at will.
 
 \begin{lstlisting}[language=,caption={Client A, an ordinary stub, accepts the forged last-mile reply, ad flag and all (evidence/p6-clientA-dig.txt).}]
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 57807
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 14787
 ;; flags: qr rd ra ad; QUERY: 1, ANSWER: 1, ...
 example.com.  300  IN  A  172.16.1.30
 \end{lstlisting}
@@ -1170,15 +1168,15 @@ should show the stub accepting the rogue address with the \texttt{ad} flag prese
 and the rogue page loading. The presence of the \texttt{ad} flag on a forged answer
 is the detail that proves the flag carries no real guarantee on the last mile.
 
-\shot{Client B catches the forgery. The locally validating client checks signatures itself and reports the forged answer as bogus, returning no address.}{delv output reporting the answer as bogus or "no valid signature" and refusing to return an address. Note that delv prints this to standard error, so capture the command's full stderr}{phase6/evidence/p6-clientB-delv.txt}{fig:p6-clientB}
+\shot{Client B catches the forgery. The locally validating client checks signatures itself and reports the forged answer as bogus, returning no address.}{delv output reporting the answer as bogus or "insecurity proof failed" and refusing to return an address, captured with 2>&1 since delv prints it to standard error}{phase6/evidence/p6-clientB-delv.txt}{fig:p6-clientB}
 
 The screenshot in Figure~\ref{fig:p6-clientB} is the Client B evidence for 6.3 and
 6.4. It should show \texttt{delv} rejecting the forged answer as bogus and
 returning no address, which demonstrates that a client that performs its own
 validation is not fooled by the forged \texttt{ad} flag. One practical note applies
-here. The submitted \texttt{p6-clientB-delv.txt} captured standard output only, and
-\texttt{delv} writes its validation failure to standard error, so the screenshot
-should capture the full standard error of the command.
+here. The \texttt{delv} command writes its validation failure to standard error, so
+it is run with \texttt{2>\&1}, and the submitted \texttt{p6-clientB-delv.txt}
+accordingly records the ``insecurity proof failed'' rejection in full.
 
 \subsection{Report answers}
 
@@ -1347,12 +1345,13 @@ forger. The vulnerability is the fallback policy, not the encryption.
 
 \begin{lstlisting}[language=,caption={The permissive client's fallback is the whole weakness, because DoT is denied, it drops to cleartext, and the forged 172.16.1.30 is accepted (evidence/p7-iii-permissive.txt).}]
 [permissive] trying DoT @resolver.cs6008.local...
-;; WARNING: connection timeout for 172.16.2.10@853(TCP)
+;; WARNING: can't connect to 172.16.2.10@853(TCP)
+;; ERROR: failed to query server resolver.cs6008.local@853(TCP)
 [permissive] DoT failed -> FALLING BACK TO CLEARTEXT (insecure).
 example.com.  300  IN  A  172.16.1.30
 \end{lstlisting}
 
-\shot{All six outcomes under attack. For each of the three attempts, the strict client refuses cleartext and returns no answer, while the permissive client falls back and lands on the rogue address. Every strict run prints ``refusing cleartext; NO answer'', confirming it never downgrades.}{the six files side by side, with p7-i/ii/iii-strict each showing "refusing cleartext; NO answer", and p7-i/ii/iii-permissive each falling back to 172.16.1.30}{phase7/evidence/p7-i-strict.txt, p7-i-permissive.txt, p7-ii-strict-certerr.txt, p7-ii-permissive.txt, p7-iii-strict.txt, p7-iii-permissive.txt}{fig:p7-attacks}
+\shot{All six outcomes under attack. For each of the three attempts, the strict client refuses cleartext and returns no answer, while the permissive client falls back and lands on the rogue address. Every strict run prints ``refusing cleartext; NO answer'', confirming it never downgrades.}{the six files side by side, with p7-i/ii/iii-strict each showing "refusing cleartext; NO answer", and p7-i/ii/iii-permissive each falling back to 172.16.1.30}{phase7/evidence/p7-i-strict.txt, p7-i-permissive.txt, p7-ii-strict.txt, p7-ii-permissive.txt, p7-iii-strict.txt, p7-iii-permissive.txt}{fig:p7-attacks}
 
 The screenshot in Figure~\ref{fig:p7-attacks} is the attack evidence for 7.3, and
 it covers all six attempt-by-client combinations rather than a representative few.
@@ -1381,11 +1380,13 @@ on TCP 853, with DoH on 443 also enabled on the resolver. DoT's drawback relativ
 to DoH is precisely what attempt (iii) exploits. It uses a dedicated well-known
 port, so a network operator or an on-path adversary can identify and block it
 trivially, which is what forces the fallback. DoH hides DNS inside ordinary HTTPS
-on 443, so it resists that blocking and is harder to censor, but at the cost of
-being harder for a site operator to monitor or filter, carrying a heavier HTTP
-stack, and tending toward centralisation in browsers. Neither changes the integrity
-or authentication story, and they differ mainly in blockability and operational
-visibility.
+on 443, so it is harder to classify and block selectively, although it is not immune
+to blocking, because an operator can still deny access to the known resolver
+endpoint or its address. Its cost is that it is harder for a site operator to
+monitor or filter, it carries a heavier HTTP stack, and it tends toward
+centralisation in browsers. Neither transport changes the integrity or
+authentication story, and they differ mainly in how selectively they can be blocked
+and in operational visibility.
 
 \textbf{What an encrypted, authenticated last mile still does not protect.} It
 secures only the stub to resolver channel. It does not make an unsigned or
@@ -1486,7 +1487,7 @@ reproduce the results from that README alone.
 \toprule
 \textbf{Path} & \textbf{Contents} \\
 \midrule
-\texttt{common/} & shared Dockerfile, entrypoints, and network helper scripts \\
+\texttt{common/} & shared Dockerfile and the \texttt{node-start.sh} role-dispatch entrypoint \\
 \texttt{phaseN/compose.yml} & the topology for phase N \\
 \texttt{phaseN/configs/} & BIND daemon and, from Phase 3, trust-anchor configuration \\
 \texttt{phaseN/zones/} & zone files, with signed variants regenerated, not committed \\
@@ -1523,10 +1524,10 @@ space names the exact evidence file it should contain. Before submission, each s
 space should be replaced with the corresponding screenshot from the
 \texttt{phaseN/evidence/} directories, and the explanatory sentence that accompanies
 each figure already states what the reader should look for in it. Two items deserve
-a careful check. First, the Phase 6 Client B result should capture the full output
-of the \texttt{delv} command including its standard error, since \texttt{delv}
-prints its validation failure there. Second, the Phase 7 no-cleartext read should be
-confirmed empty for the lookup in question, because an empty result is the intended
-positive evidence that the last mile carried no cleartext DNS.
+a careful check. First, the Phase 6 Client B result is captured with \texttt{2>\&1}
+so that the validation failure \texttt{delv} prints to standard error is recorded in
+the file rather than lost. Second, the Phase 7 no-cleartext read should be confirmed
+empty for the lookup in question, because an empty result is the intended positive
+evidence that the last mile carried no cleartext DNS.
 
 \end{document}
