@@ -1,2 +1,19 @@
 [strict] DoT @resolver.cs6008.local (validating cert against lab CA)...
 [strict] DoT failed (rc=1) -> refusing cleartext; NO answer.
+[strict] TLS diagnostic probe (openssl s_client) ...
+[strict] TLS probe: CERTIFICATE REJECTED -- Verification error: unable to verify the first certificate
+[strict] --- raw openssl s_client output ---
+depth=0 O = Evil Corp, CN = resolver.cs6008.local
+verify error:num=20:unable to get local issuer certificate
+depth=0 O = Evil Corp, CN = resolver.cs6008.local
+verify error:num=21:unable to verify the first certificate
+CONNECTION ESTABLISHED
+Protocol version: TLSv1.3
+Ciphersuite: TLS_AES_256_GCM_SHA384
+Peer certificate: O = Evil Corp, CN = resolver.cs6008.local
+Hash used: SHA256
+Signature type: ECDSA
+Verification error: unable to verify the first certificate
+Server Temp Key: X25519, 253 bits
+DONE
+[strict] --- end probe output ---

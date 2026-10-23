@@ -1,4 +1,7 @@
-mitm: dev=eth0 forge-cleartext=1 break-dot=0 client at ca:10:30:c7:49:6a
+mitm: dev=eth0 forge-cleartext=1 break-dot=0 client at 9e:74:f5:c4:53:0f
 mitm: running
+[RELAY] passed through 1 packet(s) so far (last: proto=6)
+[RELAY] passed through 11 packet(s) so far (last: proto=6)
 [FORGE] cleartext example.com A -> 172.16.1.30 (AD set)
+[RELAY] passed through 21 packet(s) so far (last: proto=6)
 [FORGE] cleartext example.com A -> 172.16.1.30 (AD set)

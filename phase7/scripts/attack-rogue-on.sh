@@ -2,7 +2,7 @@
 # Attack (ii): impersonate the resolver on DoT with a ROGUE cert (untrusted CA).
 set -eu
 echo "[edge-router] starting rogue DoT responder (untrusted cert) on :8853..."
-openssl s_server -quiet -accept 8853 \
+openssl s_server -state -accept 8853 \
     -cert /lab/pki/rogue.fullchain.crt -key /lab/pki/rogue.key \
     >/evidence/rogue-sserver.log 2>&1 &
 echo $! > /tmp/rogue.pid

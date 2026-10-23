@@ -1,2 +1,7 @@
 [strict] DoT @resolver.cs6008.local (validating cert against lab CA)...
 [strict] DoT failed (rc=1) -> refusing cleartext; NO answer.
+[strict] TLS diagnostic probe (openssl s_client) ...
+[strict] TLS probe: NO TLS SESSION ESTABLISHED -- transport unreachable, not a certificate issue
+[strict] --- raw openssl s_client output ---
+40F7F4769F740000:error:0A000119:SSL routines:ssl3_get_record:decryption failed or bad record mac:../ssl/record/ssl3_record.c:616:
+[strict] --- end probe output ---

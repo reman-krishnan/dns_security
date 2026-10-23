@@ -1,6 +1,6 @@
 [strict] DoT @resolver.cs6008.local (validating cert against lab CA)...
 ;; TLS session (TLS1.3)-(ECDHE-SECP256R1)-(ECDSA-SECP256R1-SHA256)-(AES-256-GCM)
-;; ->>HEADER<<- opcode: QUERY; status: NOERROR; id: 62690
+;; ->>HEADER<<- opcode: QUERY; status: NOERROR; id: 36765
 ;; Flags: qr rd ra ad; QUERY: 1; ANSWER: 1; AUTHORITY: 1; ADDITIONAL: 2
 
 ;; EDNS PSEUDOSECTION:
@@ -19,5 +19,5 @@ example.com.        	300	IN	NS	ns.example.com.
 ns.example.com.     	300	IN	A	172.16.3.30
 
 ;; Received 89 B
-;; Time 2026-10-23 08:32:11 UTC
-;; From 172.16.2.10@853(TCP) in 4.3 ms
+;; Time 2026-10-23 10:36:04 UTC
+;; From 172.16.2.10@853(TCP) in 2.9 ms
