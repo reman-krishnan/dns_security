@@ -385,7 +385,7 @@ transaction identifiers between each query and its reply are worth marking,
 because they are exactly the values that make a reply acceptable to the resolver,
 and they are sitting in plain view.
 
-\subsection{Report answers}
+\subsection{Analysis and Discussion}
 
 \textbf{What the capture exposes on the wire.} Every field that matters is in
 plain view. Each message carries the query name, the 16-bit transaction
@@ -523,7 +523,7 @@ for \texttt{example.com}. Reading the capture together with the log confirms tha
 the rogue address the client received originated from the attacker's injection and
 not from any authoritative server.
 
-\subsection{Report answers}
+\subsection{Analysis and Discussion}
 
 \textbf{Why the attack succeeds.} Plain DNS has no way for a resolver to tell a
 genuine answer from a forged one. A UDP response is accepted if it arrives on the
@@ -689,7 +689,7 @@ resolve the host. Together they establish that the identical attack which succee
 in Phase 2 no longer works once the resolver validates the chain, because the
 forged record carries no signature the resolver can verify.
 
-\subsection{Report answers}
+\subsection{Analysis and Discussion}
 
 \textbf{What the resolver checks, and how this differs from Phase 2.} In Phase 2
 the resolver accepted the first matching reply and cached 172.16.1.30. Here the
@@ -869,7 +869,7 @@ is treating the zone as insecure rather than claiming to have validated a lie.
 \label{fig:p4-decision}
 \end{figure}
 
-\subsection{Report answers}
+\subsection{Analysis and Discussion}
 
 \textbf{Run A, why the attacker cannot make the zone look unsigned.} Stripping
 signatures off the wire does not remove the parent's knowledge that the child is
@@ -1032,7 +1032,7 @@ cleartext names. The second is that the same walker now recovers nothing. The
 combination proves the fix preserves authenticated denial while removing the
 enumeration it previously enabled.
 
-\subsection{Report answers}
+\subsection{Analysis and Discussion}
 
 \textbf{Names recovered and the exact steps.} The walk recovered \texttt{backup},
 \texttt{dev}, \texttt{git}, \texttt{mail}, and \texttt{vpn}, together with
@@ -1179,7 +1179,7 @@ here. The \texttt{delv} command writes its validation failure to standard error,
 it is run with \texttt{2>\&1}, and the submitted \texttt{p6-clientB-delv.txt}
 accordingly records the ``insecurity proof failed'' rejection in full.
 
-\subsection{Report answers}
+\subsection{Analysis and Discussion}
 
 \textbf{Why DNSSEC does not stop this.} The distinction the phase draws out is
 between where validation happens and where trust is placed. Validation happened at
@@ -1366,7 +1366,7 @@ comparison is the proof that
 every success against the permissive client came through the fallback and not
 through any break of TLS.
 
-\subsection{Report answers}
+\subsection{Analysis and Discussion}
 
 \textbf{Every attempt and client, and why.} Against the strict client,
 confidentiality denies the attacker the query it would need to forge, integrity
