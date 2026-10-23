@@ -326,12 +326,11 @@ end-to-end resolution and fetch. The same holds for \texttt{www.example.com}.
 
 \shot{Client-side resolution of \texttt{example.com} and \texttt{www.example.com}, both returning 172.16.1.20, and the \texttt{curl} fetch of the legitimate page.}{dig for both names resolving to 172.16.1.20, and the fetched HTML identifying itself as the real example.com site}{phase1/evidence/example-com.txt, www-example-com.txt, legitimate-page.html}{fig:p1-resolve}
 
-The screenshot in Figure~\ref{fig:p1-resolve} is the evidence for requirement 1.2
+Figure~\ref{fig:p1-resolve} is the evidence for requirement 1.2
 that the names resolve to the web server and that the fetched page is the genuine
-one. The reader should look for the answer section giving 172.16.1.20 and for the
-page body identifying itself as the legitimate site served from that address,
-which together confirm that the client reaches the real web server through normal
-recursive resolution.
+one. The answer section gives 172.16.1.20 and the page body identifies itself as
+the legitimate site served from that address, which together confirm that the
+client reaches the real web server through normal recursive resolution.
 
 Third, a query sent directly from the client to the root server at 172.16.3.10
 gets no answer, because the client has no route into the authoritative subnet and
@@ -339,7 +338,7 @@ the routers do not carry it there. This is the isolation check.
 
 \shot{The isolation check. A query sent directly from the client to root-ns at 172.16.3.10 receives no answer because the authoritative subnet is not directly reachable.}{dig @172.16.3.10 example.com timing out or reporting no servers reached}{phase1/evidence/direct-root-query.txt}{fig:p1-isolation}
 
-The screenshot in Figure~\ref{fig:p1-isolation} demonstrates requirement 1.2's
+Figure~\ref{fig:p1-isolation} demonstrates requirement 1.2's
 isolation condition. The timeout, rather than any answer, is the point. It shows
 that the client cannot talk to an authoritative server directly, so the only way
 its lookups can succeed is through the resolver, and the only way the resolver can
@@ -377,13 +376,12 @@ address.
 
 \shottall{Annotated \texttt{tshark} decode of the referral chain captured on the core router, with the root, com, and example.com exchanges marked.}{tshark summary and detailed decode showing frames 1,3,5,6,7,8 and the matching transaction IDs from Table 3}{phase1/evidence/dns-packet-details.txt, core-dns.pcap}{fig:p1-capture}
 
-The screenshot in Figure~\ref{fig:p1-capture} is the capture that requirement 1.3
-asks for. It should show, in order, the query to the root and its referral to
+Figure~\ref{fig:p1-capture} is the capture that requirement 1.3
+asks for. It shows, in order, the query to the root and its referral to
 \texttt{com}, the query to the TLD and its referral to \texttt{example.com}, and
 the final query to the domain server and its address answer. The matching
-transaction identifiers between each query and its reply are worth marking,
-because they are exactly the values that make a reply acceptable to the resolver,
-and they are sitting in plain view.
+transaction identifiers between each query and its reply are exactly the values
+that make a reply acceptable to the resolver, and they sit in plain view.
 
 \subsection{Analysis and Discussion}
 
@@ -475,8 +473,8 @@ the next step from any effect of the diversion itself.
 
 \shot{Transparent relay mode. With the attacker on the path but forging disabled, \texttt{example.com} still resolves to 172.16.1.20 and the real page is fetched.}{dig and curl through the relay showing the legitimate 172.16.1.20 answer and the real page}{phase2/evidence/p2-relay-dig.txt, p2-relay-curl.txt, relay.log}{fig:p2-relay}
 
-The screenshot in Figure~\ref{fig:p2-relay} is the verification required by 2.2.
-It should show the client still receiving 172.16.1.20 and the genuine page while
+Figure~\ref{fig:p2-relay} is the verification required by 2.2.
+It shows the client still receiving 172.16.1.20 and the genuine page while
 the attacker is actively relaying, which establishes that the diversion by itself
 changes nothing. Any change seen once forging is enabled is therefore the work of
 the forgery alone.
@@ -507,21 +505,21 @@ www.example.com.    300  IN  A  172.16.1.20
 
 \shot{The poisoning result. The client resolves \texttt{example.com} to 172.16.1.30 and \texttt{curl} returns the rogue defacement page, while \texttt{www.example.com} still returns 172.16.1.20.}{dig example.com showing 172.16.1.30, curl showing the rogue page, and dig www.example.com showing 172.16.1.20 side by side}{phase2/evidence/p2-attack-dig.txt, p2-attack-curl.html, p2-nontarget-dig.txt}{fig:p2-attack}
 
-The screenshot in Figure~\ref{fig:p2-attack} is the central evidence for 2.3 and
-2.4. It should show three things together. The target name now resolves to the
+Figure~\ref{fig:p2-attack} is the central evidence for 2.3 and
+2.4. It shows three things together. The target name now resolves to the
 rogue address, the rogue page actually loads in place of the real one, and the
 non-target name still resolves correctly. The contrast between the first two and
 the third is the proof that the poisoning is precise rather than a blanket
 interception.
 
-\shottall{Annotated capture of the interception and injection on the core router, showing the genuine reply from the authoritative server and the forged reply carrying 172.16.1.30.}{tcpdump or tshark view of p2-attack.pcap with the forged A record, alongside the interceptor-forge.log line reporting the poisoning}{phase2/evidence/p2-attack.pcap, interceptor-forge.log}{fig:p2-capture}
+\shottall{The interceptor's log of the interception and injection, where the forge line poisons \texttt{example.com} toward 172.16.1.30 while every other message is relayed untouched.}{interceptor-forge.log with the FORGE line reporting the poisoning and the RELAY lines passing other traffic}{phase2/evidence/interceptor-forge.log}{fig:p2-capture}
 
-The screenshot in Figure~\ref{fig:p2-capture} is the packet-level evidence 2.4
-asks for. It should show the forged response carrying 172.16.1.30 reaching the
-resolver, and the interceptor's own log line recording that it poisoned the answer
-for \texttt{example.com}. Reading the capture together with the log confirms that
-the rogue address the client received originated from the attacker's injection and
-not from any authoritative server.
+Figure~\ref{fig:p2-capture} is the packet-level evidence 2.4
+asks for. It shows the interceptor's own log, whose forge line records it
+poisoning the answer for \texttt{example.com} toward 172.16.1.30 while every other
+message is relayed untouched. The log confirms that the rogue address the client
+received originated from the attacker's injection and not from any authoritative
+server.
 
 \subsection{Analysis and Discussion}
 
@@ -647,8 +645,8 @@ example.com.  300  IN  RRSIG  A 13 2 300 20261122142217 20261023142217 25557 exa
 
 \shot{Healthy DNSSEC validation. \texttt{dig +dnssec} shows the \texttt{ad} flag and a valid RRSIG, and \texttt{delv} reports the chain as fully validated against the root trust anchor.}{dig +dnssec output with the ad flag visible and the RRSIG present, and delv printing "fully validated"}{phase3/evidence/p3-valid-dig.txt, p3-valid-delv.txt}{fig:p3-valid}
 
-The screenshot in Figure~\ref{fig:p3-valid} is the verification required by 3.2.
-It should show the \texttt{ad} flag in the \texttt{dig} header and the RRSIG
+Figure~\ref{fig:p3-valid} is the verification required by 3.2.
+It shows the \texttt{ad} flag in the \texttt{dig} header and the RRSIG
 accompanying the address, together with the \texttt{delv} line reporting full
 validation. These are the signs that the signed hierarchy is healthy and that the
 whole chain from the root down to \texttt{example.com} verifies, which is the
@@ -682,9 +680,9 @@ difference that DNSSEC makes.
 
 \shot{The re-run attack under DNSSEC. The validating resolver rejects the forged answer and returns SERVFAIL with an empty answer section, and \texttt{curl} cannot resolve the host, so the client never reaches the rogue page.}{dig with +time=6 +tries=2 showing a SERVFAIL status and no answer, next to curl reporting "Could not resolve host"}{phase3/evidence/p3-attack-dig-servfail.txt, p3-attack-curl.txt}{fig:p3-attack}
 
-The screenshot in Figure~\ref{fig:p3-attack} is the evidence for 3.3 and 3.4. It
-should show the resolver failing the lookup with a SERVFAIL status rather than
-returning the rogue address, and it should show the client's fetch failing to
+Figure~\ref{fig:p3-attack} is the evidence for 3.3 and 3.4. It
+shows the resolver failing the lookup with a SERVFAIL status rather than
+returning the rogue address, and it shows the client's fetch failing to
 resolve the host. Together they establish that the identical attack which succeeded
 in Phase 2 no longer works once the resolver validates the chain, because the
 forged record carries no signature the resolver can verify.
@@ -772,8 +770,8 @@ nothing.
 
 \shot{Verification before stripping. Through the transparent relay the client still resolves \texttt{example.com} to 172.16.1.20 with the \texttt{ad} flag set and fetches the real page.}{dig +dnssec through the relay showing ad and 172.16.1.20, and curl returning the real page}{phase4/evidence/a-verify-dig.txt, a-verify-curl.html}{fig:p4-verify}
 
-The screenshot in Figure~\ref{fig:p4-verify} is the verification required by 4.2.
-It should show the authenticated answer and the real page while the stripper is on
+Figure~\ref{fig:p4-verify} is the verification required by 4.2.
+It shows the authenticated answer and the real page while the stripper is on
 the path in relay mode, which establishes that anything different seen in the two
 attack runs is caused by stripping and forging, not by the attacker's presence.
 
@@ -800,8 +798,8 @@ resolver's log naming a broken trust chain is the direct evidence of this.
 
 \shot{Run A evidence. The stripper log shows the DNSSEC records removed and the A record forged, yet the resolver reports a broken trust chain and returns SERVFAIL.}{the stripper-runA.log [STRIP] and [FORGE] lines, the SERVFAIL dig, and the resolver "broken trust chain" log line, shown together}{phase4/evidence/stripper-runA.log, a-attack-dig.txt, a-resolver-log.txt}{fig:p4-runA}
 
-The screenshot in Figure~\ref{fig:p4-runA} is the Run A evidence for 4.3 and 4.4.
-It should show that the attacker genuinely stripped and forged, from its own log,
+Figure~\ref{fig:p4-runA} is the Run A evidence for 4.3 and 4.4.
+It shows that the attacker genuinely stripped and forged, from its own log,
 and that the resolver nonetheless refused the result with a broken trust chain.
 The pairing matters, because it proves the failure is the resolver detecting an
 unverifiable delegation, not the attack failing to execute.
@@ -837,12 +835,12 @@ into it. Figure~\ref{fig:p4-decision} shows the two paths side by side.
 
 \shot{Run B evidence. With no DS in the parent, the delegation is authenticated as insecure, and the same strip-and-forge attack now lands the client on the rogue page at 172.16.1.30.}{delv reporting "unsigned answer", the no-DS signed denial, dig returning 172.16.1.30 with no ad flag, and the rogue page}{phase4/evidence/b-delv-insecure.txt, b-ds-nodata.txt, b-attack-dig.txt, b-attack-curl.html}{fig:p4-runB}
 
-The screenshot in Figure~\ref{fig:p4-runB} is the Run B evidence for 4.3 and 4.4.
-It should show that the delegation is now authenticated as insecure, from the
+Figure~\ref{fig:p4-runB} is the Run B evidence for 4.3 and 4.4.
+It shows that the delegation is now authenticated as insecure, from the
 \texttt{delv} output and the signed no-DS denial, and that the forged address is
-consequently accepted and the rogue page loads. The absence of the \texttt{ad}
-flag on the accepted answer is the detail to mark, because it shows the resolver
-is treating the zone as insecure rather than claiming to have validated a lie.
+consequently accepted and the rogue page loads. The accepted answer carries no
+\texttt{ad} flag, which shows the resolver is treating the zone as insecure rather
+than claiming to have validated a lie.
 
 \begin{figure}[H]
 \centering
@@ -971,11 +969,10 @@ of proving the absence of the queried one.
 
 \shot{A signed NSEC denial for a nonexistent name. The NXDOMAIN response carries an NSEC record and its RRSIG whose span discloses a real neighbouring name.}{dig +dnssec for a nonexistent name showing NXDOMAIN with the NSEC record and RRSIG in the authority section}{phase5/evidence/p5-nxdomain.txt}{fig:p5-nxdomain}
 
-The screenshot in Figure~\ref{fig:p5-nxdomain} is the verification required by 5.2.
-It should show the signed NXDOMAIN response and, within it, the NSEC record whose
-owner and next-name bracket the queried name. The point to notice is that the
-proof of nonexistence necessarily names a real neighbour, which is the exact
-property the walk exploits.
+Figure~\ref{fig:p5-nxdomain} is the verification required by 5.2.
+It shows the signed NXDOMAIN response and, within it, the NSEC record whose
+owner and next-name bracket the queried name. The proof of nonexistence
+necessarily names a real neighbour, which is the exact property the walk exploits.
 
 \subsection{Walking the zone}
 
@@ -998,8 +995,8 @@ recovered 8 owner name(s) in 8 queries
 
 \shot{The complete NSEC walk. The walker follows the chain from the apex and recovers all eight owner names, including backup, dev, git, mail, and vpn, in eight queries.}{the walker output listing all recovered names and "chain wrapped to apex"}{phase5/evidence/p5-walk-nsec.txt}{fig:p5-walk}
 
-The screenshot in Figure~\ref{fig:p5-walk} is the central evidence for 5.3. It
-should show the walker stepping through the chain and the final list of recovered
+Figure~\ref{fig:p5-walk} is the central evidence for 5.3. It
+shows the walker stepping through the chain and the final list of recovered
 names, including the five that were never advertised. The query count, one per
 name, confirms that the recovery stayed within the stated budget and used ordinary
 DNS queries rather than a transfer or a guess list.
@@ -1025,8 +1022,8 @@ recovered 0 owner name(s) in 1 queries
 
 \shot{After the NSEC3 fix. A nonexistent name still gets an authenticated denial, now via hashed NSEC3 records, and the re-run walk recovers zero names.}{p5-nxdomain-nsec3 showing the hashed NSEC3 denial, and p5-walk-nsec3 showing the walk failing with 0 names}{phase5/evidence/p5-nxdomain-nsec3.txt, p5-walk-nsec3.txt}{fig:p5-nsec3}
 
-The screenshot in Figure~\ref{fig:p5-nsec3} is the evidence that the fix works,
-required by 5.3. It should show two things. The first is that a nonexistent name
+Figure~\ref{fig:p5-nsec3} is the evidence that the fix works,
+required by 5.3. It shows two things. The first is that a nonexistent name
 still receives a valid signed denial, now carrying hashed NSEC3 records instead of
 cleartext names. The second is that the same walker now recovers nothing. The
 combination proves the fix preserves authenticated denial while removing the
@@ -1137,8 +1134,8 @@ is harmless until forging is switched on.
 
 \shot{Transparent relay on the last mile. With forging disabled, the client still resolves \texttt{example.com} to 172.16.1.20 and fetches the real page.}{dig showing 172.16.1.20 with the ad flag and curl returning the real page through the relay}{phase6/evidence/p6-verify-dig.txt, p6-verify-curl.html}{fig:p6-verify}
 
-The screenshot in Figure~\ref{fig:p6-verify} is the verification required by 6.2.
-It should show the client receiving the correct address and the genuine page while
+Figure~\ref{fig:p6-verify} is the verification required by 6.2.
+It shows the client receiving the correct address and the genuine page while
 the attacker relays, so that the two client outcomes that follow can be attributed
 to the forgery rather than to the diversion.
 
@@ -1164,15 +1161,15 @@ someone actually verifies the cryptography rather than believing a bit in a head
 
 \shot{Client A on the rogue page. The ordinary stub accepts the forged reply, with the \texttt{ad} flag set by the attacker, and \texttt{curl} returns the defacement page at 172.16.1.30.}{dig showing 172.16.1.30 with ad set, and curl returning the rogue page}{phase6/evidence/p6-clientA-dig.txt, p6-clientA-curl.html}{fig:p6-clientA}
 
-The screenshot in Figure~\ref{fig:p6-clientA} is the Client A evidence for 6.3. It
-should show the stub accepting the rogue address with the \texttt{ad} flag present,
+Figure~\ref{fig:p6-clientA} is the Client A evidence for 6.3. It
+shows the stub accepting the rogue address with the \texttt{ad} flag present,
 and the rogue page loading. The presence of the \texttt{ad} flag on a forged answer
 is the detail that proves the flag carries no real guarantee on the last mile.
 
 \shot{Client B catches the forgery. The locally validating client checks signatures itself and reports the forged answer as bogus, returning no address.}{delv output reporting the answer as bogus or "insecurity proof failed" and refusing to return an address, captured with 2>&1 since delv prints it to standard error}{phase6/evidence/p6-clientB-delv.txt}{fig:p6-clientB}
 
-The screenshot in Figure~\ref{fig:p6-clientB} is the Client B evidence for 6.3 and
-6.4. It should show \texttt{delv} rejecting the forged answer as bogus and
+Figure~\ref{fig:p6-clientB} is the Client B evidence for 6.3 and
+6.4. It shows \texttt{delv} rejecting the forged answer as bogus and
 returning no address, which demonstrates that a client that performs its own
 validation is not fooled by the forged \texttt{ad} flag. One practical note applies
 here. The \texttt{delv} command writes its validation failure to standard error, so
@@ -1292,9 +1289,9 @@ example.com.  300  IN  A  172.16.1.20
 
 \shot{Verified encrypted resolution. The strict client resolves over DoT with the certificate validating cleanly, the upstream \texttt{ad} flag intact, and a port-53 read of the capture showing no cleartext DNS on the last mile.}{p7-verify-strict showing the TLS1.3 session and 172.16.1.20, alongside the empty port-53 read of the capture}{phase7/evidence/p7-verify-strict.txt, p7-verify-no-cleartext.txt, p7-verify.pcap}{fig:p7-verify}
 
-The screenshot in Figure~\ref{fig:p7-verify} is the verification required by 7.2.
-It should show the encrypted DoT session establishing with a validated
-certificate and returning the correct address, and it should show that a read of
+Figure~\ref{fig:p7-verify} is the verification required by 7.2.
+It shows the encrypted DoT session establishing with a validated
+certificate and returning the correct address, and it shows that a read of
 the captured traffic filtered to port 53 is empty for the lookup. The empty
 port-53 read is the positive evidence that no cleartext DNS crossed the last mile,
 which is exactly what the encryption is meant to guarantee.
@@ -1354,17 +1351,15 @@ example.com.  300  IN  A  172.16.1.30
 
 \shot{All six outcomes under attack. For each of the three attempts, the strict client refuses cleartext and returns no answer, while the permissive client falls back and lands on the rogue address. Every strict run prints ``refusing cleartext; NO answer'', confirming it never downgrades.}{the six files side by side, with p7-i/ii/iii-strict each showing "refusing cleartext; NO answer", and p7-i/ii/iii-permissive each falling back to 172.16.1.30}{phase7/evidence/p7-i-strict.txt, p7-i-permissive.txt, p7-ii-strict.txt, p7-ii-permissive.txt, p7-iii-strict.txt, p7-iii-permissive.txt}{fig:p7-attacks}
 
-The screenshot in Figure~\ref{fig:p7-attacks} is the attack evidence for 7.3, and
+Figure~\ref{fig:p7-attacks} is the attack evidence for 7.3, and
 it covers all six attempt-by-client combinations rather than a representative few.
-For each of the three attempts it should show the strict client refusing to fall
+For each of the three attempts it shows the strict client refusing to fall
 back and returning no answer, next to the permissive client falling back to
-cleartext and accepting the forged address. Two things are worth confirming in it.
-The first is that every one of the three strict runs prints ``refusing cleartext;
-NO answer'', so the strict client never downgrades under any attempt. The second is
-that every permissive run ends in the forged 172.16.1.30. The side-by-side
-comparison is the proof that
-every success against the permissive client came through the fallback and not
-through any break of TLS.
+cleartext and accepting the forged address. Every one of the three strict runs
+prints ``refusing cleartext; NO answer'', so the strict client never downgrades
+under any attempt, and every permissive run ends in the forged 172.16.1.30. The
+side-by-side comparison is the proof that every success against the permissive
+client came through the fallback and not through any break of TLS.
 
 \subsection{Analysis and Discussion}
 
