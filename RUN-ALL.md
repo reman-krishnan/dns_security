@@ -36,7 +36,7 @@ teardown
 # build the shared image once (this also runs the BIND 9.20.x version check)
 cd ~/cs6008-dns-security/phase1
 sudo docker build -t cs6008-dns-lab:local -f ../common/Dockerfile ..
-sudo docker run --rm cs6008-dns-lab:local named -v     # expect: BIND 9.20.x
+sudo docker run --rm --entrypoint named cs6008-dns-lab:local -v   # expect: BIND 9.20.x
 ```
 
 ---
