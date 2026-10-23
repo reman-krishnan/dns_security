@@ -81,15 +81,24 @@ sudo docker compose exec -d attacker sh -c 'exec /usr/local/bin/mitm --forge-cle
 ```
 
 ### (i) Alter the answer in transit
-Add DoT corruption (restart mitm with both flags):
+Capture the last mile for this attempt, then add DoT corruption (restart mitm
+with both flags):
 ```bash
+IFACE=$(sudo docker compose exec -T edge-router sh -c 'ip -o -4 addr show' | grep -oE 'eth[0-9]+ +inet 172\.16\.1\.' | grep -oE 'eth[0-9]+' | head -1)
+sudo docker compose exec -d edge-router sh -c "exec tcpdump -i $IFACE -nn -s0 -U -Z root -w /evidence/p7-i.pcap 'host 172.16.1.10 and (port 53 or port 853 or port 443)' > /evidence/p7-i-tcpdump.log 2>&1"
+sleep 1   # let tcpdump finish opening the socket before traffic flows, or it misses the capture window
+
 sudo docker compose exec -T attacker pkill -x mitm || true
 sudo docker compose exec -d attacker sh -c 'exec /usr/local/bin/mitm --forge-cleartext --break-dot > /evidence/mitm-i.log 2>&1'
 sudo docker compose exec -T client /scripts/resolve-strict.sh      | tee evidence/p7-i-strict.txt
 sudo docker compose exec -T client /scripts/resolve-permissive.sh  | tee evidence/p7-i-permissive.txt
+
+sudo docker compose exec -T edge-router pkill -INT -x tcpdump || true
 ```
 - **strict:** TLS record MAC fails → session torn down → **no answer** (does not land).
 - **permissive:** DoT fails → cleartext fallback → forged → **172.16.1.30 (lands)**.
+- `evidence/p7-i.pcap` shows the TCP/853 stream abort and, for the permissive
+  client, the forged UDP/53 fallback answer.
 
 Reset mitm to forge-only for the next attempts:
 ```bash
@@ -99,23 +108,40 @@ sudo docker compose exec -d attacker sh -c 'exec /usr/local/bin/mitm --forge-cle
 
 ### (ii) Impersonate the resolver with a rogue certificate
 ```bash
+IFACE=$(sudo docker compose exec -T edge-router sh -c 'ip -o -4 addr show' | grep -oE 'eth[0-9]+ +inet 172\.16\.1\.' | grep -oE 'eth[0-9]+' | head -1)
+sudo docker compose exec -d edge-router sh -c "exec tcpdump -i $IFACE -nn -s0 -U -Z root -w /evidence/p7-ii.pcap 'host 172.16.1.10 and (port 53 or port 853 or port 443)' > /evidence/p7-ii-tcpdump.log 2>&1"
+sleep 1   # let tcpdump finish opening the socket before traffic flows, or it misses the capture window
+
 sudo docker compose exec -T edge-router /scripts/attack-rogue-on.sh
 sudo docker compose exec -T client /scripts/resolve-strict.sh      | tee evidence/p7-ii-strict.txt
 sudo docker compose exec -T client /scripts/resolve-permissive.sh  | tee evidence/p7-ii-permissive.txt
 sudo docker compose exec -T edge-router /scripts/attack-rogue-off.sh
+
+sudo docker compose exec -T edge-router pkill -INT -x tcpdump || true
 ```
 - **strict:** rogue cert not signed by the lab CA → validation fails → **no answer**.
 - **permissive:** DoT cert fails → fallback → forged → **172.16.1.30 (lands)**.
+- `evidence/p7-ii.pcap` shows the redirected TCP/853 handshake against the
+  rogue certificate and, for the permissive client, the forged UDP/53 fallback.
 
 ### (iii) Deny the encrypted transport (force cleartext)
 ```bash
+IFACE=$(sudo docker compose exec -T edge-router sh -c 'ip -o -4 addr show' | grep -oE 'eth[0-9]+ +inet 172\.16\.1\.' | grep -oE 'eth[0-9]+' | head -1)
+sudo docker compose exec -d edge-router sh -c "exec tcpdump -i $IFACE -nn -s0 -U -Z root -w /evidence/p7-iii.pcap 'host 172.16.1.10 and (port 53 or port 853 or port 443)' > /evidence/p7-iii-tcpdump.log 2>&1"
+sleep 1   # let tcpdump finish opening the socket before traffic flows, or it misses the capture window
+
 sudo docker compose exec -T edge-router /scripts/attack-block-on.sh
 sudo docker compose exec -T client /scripts/resolve-strict.sh      | tee evidence/p7-iii-strict.txt
 sudo docker compose exec -T client /scripts/resolve-permissive.sh  | tee evidence/p7-iii-permissive.txt
 sudo docker compose exec -T edge-router /scripts/attack-block-off.sh
+
+sudo docker compose exec -T edge-router pkill -INT -x tcpdump || true
 ```
 - **strict:** 853/443 rejected → DoT fails → **no answer** (refuses cleartext).
 - **permissive:** fallback to cleartext → forged → **172.16.1.30 (lands)**.
+- `evidence/p7-iii.pcap` shows the rejected 853/443 attempts and, for the
+  permissive client, the subsequent cleartext UDP/53 exchange with the forged
+  answer.
 
 ### Tear down
 ```bash
@@ -173,9 +199,9 @@ needs DNSSEC validation (ideally on the client) plus a no-downgrade policy.
 |---|---|
 | `evidence/p7-verify-strict.txt` | DoT resolution, cert valid, `172.16.1.20` |
 | `evidence/p7-verify-no-cleartext.txt` | empty port-53 capture of the last mile |
-| `evidence/p7-i-*.txt` | attempt (i) strict vs permissive |
-| `evidence/p7-ii-*.txt` | attempt (ii) strict vs permissive |
-| `evidence/p7-iii-*.txt` | attempt (iii) strict vs permissive |
+| `evidence/p7-i-*.txt`, `evidence/p7-i.pcap` | attempt (i) strict vs permissive, + packet capture |
+| `evidence/p7-ii-*.txt`, `evidence/p7-ii.pcap` | attempt (ii) strict vs permissive, + packet capture |
+| `evidence/p7-iii-*.txt`, `evidence/p7-iii.pcap` | attempt (iii) strict vs permissive, + packet capture |
 | `evidence/mitm*.log`, `rogue-sserver.log` | attacker + rogue-responder activity |
 
 ## Notes / troubleshooting

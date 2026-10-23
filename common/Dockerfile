@@ -20,6 +20,10 @@ RUN set -eux; \
         procps net-tools busybox python3 vim-tiny less; \
     rm -rf /var/lib/apt/lists/*
 
+# Fail the build (not a later container boot) if backports ever serves a
+# different major/minor than what this lab was built and tested against.
+RUN named -v | grep -E 'BIND 9\.20\.'
+
 RUN mkdir -p /var/cache/bind /var/log/named /run/named && \
     chown -R bind:bind /var/cache/bind /var/log/named /run/named
 RUN mkdir -p /opt/attack

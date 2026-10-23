@@ -186,7 +186,7 @@ static void packet_handler(u_char *user, const struct pcap_pkthdr *hdr, const u_
             out_dns[0] = (uint8_t)(dns_id >> 8);
             out_dns[1] = (uint8_t)(dns_id & 0xFF);
             out_dns[2] = 0x85; /* QR + AA: forged answer claims authoritative, matching the real reply it mimics */
-            out_dns[3] = 0x80;
+            out_dns[3] = 0x00; /* no RA: a genuine authoritative-only nameserver doesn't offer recursion */
             out_dns[4] = 0x00; out_dns[5] = 0x01;
             out_dns[6] = 0x00; out_dns[7] = 0x01;
             out_dns[8] = 0x00; out_dns[9] = 0x00;
