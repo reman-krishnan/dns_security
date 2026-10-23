@@ -1,20 +1,43 @@
-resolver-1  | 22-Oct-2026 05:53:01.511 HMAC algorithms: HMAC-MD5 HMAC-SHA1 HMAC-SHA224 HMAC-SHA256 HMAC-SHA384 HMAC-SHA512
-resolver-1  | 22-Oct-2026 05:53:01.511 TKEY mode 2 support (Diffie-Hellman): no
-resolver-1  | 22-Oct-2026 05:53:01.511 TKEY mode 3 support (GSS-API): yes
-resolver-1  | 22-Oct-2026 05:53:01.511 the initial working directory is '/'
-resolver-1  | 22-Oct-2026 05:53:01.511 loading configuration from '/lab/configs/resolver.conf'
-resolver-1  | 22-Oct-2026 05:53:01.511 the working directory is now '/var/cache/bind'
-resolver-1  | 22-Oct-2026 05:53:01.511 looking for GeoIP2 databases in '/usr/share/GeoIP'
-resolver-1  | 22-Oct-2026 05:53:01.511 using default UDP/IPv4 port range: [32768, 60999]
-resolver-1  | 22-Oct-2026 05:53:01.512 listening on IPv4 interface lo, 127.0.0.1#53
-resolver-1  | 22-Oct-2026 05:53:01.512 listening on IPv4 interface eth0, 172.16.2.10#53
-resolver-1  | 22-Oct-2026 05:53:01.512 Disabling periodic interface re-scans timer
-resolver-1  | 22-Oct-2026 05:53:01.512 generating session key for dynamic DNS
-resolver-1  | 22-Oct-2026 05:53:01.512 not using config file logging statement for logging due to -g option
-resolver-1  | 22-Oct-2026 05:53:01.512 command channel listening on 127.0.0.1#953
-resolver-1  | 22-Oct-2026 05:53:01.512 all zones loaded
-resolver-1  | 22-Oct-2026 05:53:01.512 FIPS mode is disabled
-resolver-1  | 22-Oct-2026 05:53:01.512 running
-resolver-1  | 22-Oct-2026 05:54:29.947 received control channel command 'flush'
-resolver-1  | 22-Oct-2026 05:54:29.948 flushing caches in all views succeeded
-resolver-1  | 22-Oct-2026 05:54:40.043 resolver priming query complete: timed out
+resolver-1  | 23-Oct-2026 10:47:46.740 validating ./DNSKEY: no valid signature found (DS)
+resolver-1  | 23-Oct-2026 10:47:46.740 no valid RRSIG resolving './DNSKEY/IN': 172.16.3.10#53
+resolver-1  | 23-Oct-2026 10:47:46.740 broken trust chain resolving './NS/IN': 172.16.3.10#53
+resolver-1  | 23-Oct-2026 10:47:46.740 resolver priming query complete: broken trust chain
+resolver-1  | 23-Oct-2026 10:47:46.740 validating ./DNSKEY: no valid signature found (DS)
+resolver-1  | 23-Oct-2026 10:47:46.740 no valid RRSIG resolving './DNSKEY/IN': 172.16.3.10#53
+resolver-1  | 23-Oct-2026 10:47:46.741 broken trust chain resolving './NS/IN': 172.16.3.10#53
+resolver-1  | 23-Oct-2026 10:47:46.741 resolver priming query complete: broken trust chain
+resolver-1  | 23-Oct-2026 10:47:46.741 broken trust chain resolving 'com/DNSKEY/IN': 172.16.3.20#53
+resolver-1  | 23-Oct-2026 10:47:46.741 broken trust chain resolving 'example.com/DNSKEY/IN': 172.16.3.30#53
+resolver-1  | 23-Oct-2026 10:47:46.741 broken trust chain resolving 'example.com/A/IN': 172.16.3.30#53
+resolver-1  | 23-Oct-2026 10:47:49.239 validating ./DNSKEY: no valid signature found (DS)
+resolver-1  | 23-Oct-2026 10:47:49.239 no valid RRSIG resolving './DNSKEY/IN': 172.16.3.10#53
+resolver-1  | 23-Oct-2026 10:47:49.239 broken trust chain resolving './NS/IN': 172.16.3.10#53
+resolver-1  | 23-Oct-2026 10:47:49.239 resolver priming query complete: broken trust chain
+resolver-1  | 23-Oct-2026 10:47:49.242 validating ./DNSKEY: no valid signature found (DS)
+resolver-1  | 23-Oct-2026 10:47:49.242 no valid RRSIG resolving './DNSKEY/IN': 172.16.3.10#53
+resolver-1  | 23-Oct-2026 10:47:49.243 broken trust chain resolving './NS/IN': 172.16.3.10#53
+resolver-1  | 23-Oct-2026 10:47:49.243 resolver priming query complete: broken trust chain
+resolver-1  | 23-Oct-2026 10:47:49.243 broken trust chain resolving 'com/DNSKEY/IN': 172.16.3.20#53
+resolver-1  | 23-Oct-2026 10:47:49.243 broken trust chain resolving 'example.com/DNSKEY/IN': 172.16.3.30#53
+resolver-1  | 23-Oct-2026 10:47:49.243 broken trust chain resolving 'example.com/A/IN': 172.16.3.30#53
+resolver-1  | 23-Oct-2026 10:47:51.854 validating ./DNSKEY: no valid signature found (DS)
+resolver-1  | 23-Oct-2026 10:47:51.854 no valid RRSIG resolving './DNSKEY/IN': 172.16.3.10#53
+resolver-1  | 23-Oct-2026 10:47:51.854 broken trust chain resolving 'com/DS/IN': 172.16.3.10#53
+resolver-1  | 23-Oct-2026 10:47:51.854 broken trust chain resolving './NS/IN': 172.16.3.10#53
+resolver-1  | 23-Oct-2026 10:47:51.854 resolver priming query complete: broken trust chain
+resolver-1  | 23-Oct-2026 10:47:51.854 broken trust chain resolving 'example.com/A/IN': 172.16.3.10#53
+resolver-1  | 23-Oct-2026 10:47:52.040 validating ./DNSKEY: no valid signature found (DS)
+resolver-1  | 23-Oct-2026 10:47:52.040 no valid RRSIG resolving './DNSKEY/IN': 172.16.3.10#53
+resolver-1  | 23-Oct-2026 10:47:52.041 broken trust chain resolving './NS/IN': 172.16.3.10#53
+resolver-1  | 23-Oct-2026 10:47:52.041 resolver priming query complete: broken trust chain
+resolver-1  | 23-Oct-2026 10:47:52.044 validating ./DNSKEY: no valid signature found (DS)
+resolver-1  | 23-Oct-2026 10:47:52.044 no valid RRSIG resolving './DNSKEY/IN': 172.16.3.10#53
+resolver-1  | 23-Oct-2026 10:47:52.044 broken trust chain resolving './NS/IN': 172.16.3.10#53
+resolver-1  | 23-Oct-2026 10:47:52.044 resolver priming query complete: broken trust chain
+resolver-1  | 23-Oct-2026 10:47:52.044 broken trust chain resolving 'com/DNSKEY/IN': 172.16.3.20#53
+resolver-1  | 23-Oct-2026 10:47:52.044 broken trust chain resolving 'example.com/DNSKEY/IN': 172.16.3.30#53
+resolver-1  | 23-Oct-2026 10:47:52.045 validating ./DNSKEY: no valid signature found (DS)
+resolver-1  | 23-Oct-2026 10:47:52.045 no valid RRSIG resolving './DNSKEY/IN': 172.16.3.10#53
+resolver-1  | 23-Oct-2026 10:47:52.045 broken trust chain resolving './NS/IN': 172.16.3.10#53
+resolver-1  | 23-Oct-2026 10:47:52.045 resolver priming query complete: broken trust chain
+resolver-1  | 23-Oct-2026 10:47:52.045 broken trust chain resolving 'example.com/AAAA/IN': 172.16.3.30#53

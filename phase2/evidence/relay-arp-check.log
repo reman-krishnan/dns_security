@@ -1,0 +1,7 @@
+Starting DNS Interceptor [RELAY mode] on eth0...
+Attacker MAC: b6:22:93:13:1c:9b
+Target Resolver MAC: 1a:32:37:af:60:e1 (resolved via ARP)
+[RELAY] Relaying message for example.com (ID 0xa525)
+[RELAY] Relaying message for <non-query> (ID 0x9ecb)
+[RELAY] Relaying message for example.com (ID 0x3d19)
+[RELAY] Relaying message for example.com (ID 0x45cd)

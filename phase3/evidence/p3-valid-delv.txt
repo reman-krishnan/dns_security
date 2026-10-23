@@ -1,3 +1,0 @@
-; fully validated
-example.com.		300	IN	A	172.16.1.20
-example.com.		300	IN	RRSIG	A 13 2 300 20261121042549 20261022042549 37982 example.com. wQ+9mgHOInEeGQ9FL4ZgnBXFbnYjC6f4V7l8iot96hvpWVj7tkmlrKbq k9nbGUQ5Dyn0H1cV8DEyhqvmi3KbtQ==

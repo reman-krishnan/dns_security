@@ -1,20 +1,18 @@
-;; communications error to 172.16.2.10#53: timed out
 
-; <<>> DiG 9.20.30-1~deb13u1-Debian <<>> example.com A +time=6 +tries=2
+; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> example.com A +time=3 +tries=1
 ;; global options: +cmd
 ;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: SERVFAIL, id: 45196
+;; ->>HEADER<<- opcode: QUERY, status: SERVFAIL, id: 59003
 ;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 1
 
 ;; OPT PSEUDOSECTION:
 ; EDNS: version: 0, flags:; udp: 1232
-; COOKIE: 9fd84e0353b7f984010000006ad9a607c0a3451938cfe417 (good)
-; EDE: 22 (No Reachable Authority)
+; COOKIE: bc2c429d37bc0204010000006adb3b5751913fabf75712fd (good)
 ;; QUESTION SECTION:
 ;example.com.			IN	A
 
-;; Query time: 3996 msec
+;; Query time: 0 msec
 ;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
-;; WHEN: Thu Oct 22 05:58:31 UTC 2026
-;; MSG SIZE  rcvd: 74
+;; WHEN: Fri Oct 23 10:47:51 UTC 2026
+;; MSG SIZE  rcvd: 68
 

