@@ -1,0 +1,2 @@
+forge: mode=--relay dev=eth0 client 172.16.1.10 at e2:44:ed:65:6e:4d
+forge: running

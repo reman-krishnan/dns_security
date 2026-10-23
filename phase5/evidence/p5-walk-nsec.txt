@@ -1,0 +1,23 @@
+[walker] resolver 172.16.2.10 at e2:99:f2:fb:d3:c2
+[walker] starting NSEC walk of example.com via resolver
+
+  found: example.com           next -> backup.example.com
+  found: backup.example.com    next -> dev.example.com
+  found: dev.example.com       next -> git.example.com
+  found: git.example.com       next -> mail.example.com
+  found: mail.example.com      next -> ns.example.com
+  found: ns.example.com        next -> vpn.example.com
+  found: vpn.example.com       next -> www.example.com
+  found: www.example.com       next -> example.com
+
+[walker] chain wrapped to apex — zone complete.
+
+[walker] recovered 8 owner name(s) in 8 queries:
+    example.com
+    backup.example.com
+    dev.example.com
+    git.example.com
+    mail.example.com
+    ns.example.com
+    vpn.example.com
+    www.example.com

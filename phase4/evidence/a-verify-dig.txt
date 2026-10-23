@@ -1,0 +1,22 @@
+
+; <<>> DiG 9.20.30-1~deb13u1-Debian <<>> +dnssec example.com A +time=6 +tries=2
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 59189
+;; flags: qr rd ra ad; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags: do; udp: 1232
+; COOKIE: 4e675062820fade5010000006ad9c249c5eebf29a0bd980e (good)
+;; QUESTION SECTION:
+;example.com.			IN	A
+
+;; ANSWER SECTION:
+example.com.		300	IN	A	172.16.1.20
+example.com.		300	IN	RRSIG	A 13 2 300 20261121062536 20261022062536 2331 example.com. 8k281LNFb/4ZOb8vM+GF/zaY1erwXKWGvzNK6IfJgQCu+Uwtx8YKLjI8 6iqIv73FNQuMoELDG1wuhy0sQQ37LQ==
+
+;; Query time: 48 msec
+;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
+;; WHEN: Thu Oct 22 07:59:05 UTC 2026
+;; MSG SIZE  rcvd: 191
+

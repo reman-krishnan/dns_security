@@ -1,0 +1,24 @@
+
+; <<>> DiG 9.20.30-1~deb13u1-Debian <<>> example.com DS +dnssec
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 36256
+;; flags: qr rd ra ad; QUERY: 1, ANSWER: 0, AUTHORITY: 4, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags: do; udp: 1232
+; COOKIE: e218c8b0a7d0788e010000006ad9c24f4ba838490a3cb872 (good)
+;; QUESTION SECTION:
+;example.com.			IN	DS
+
+;; AUTHORITY SECTION:
+com.			299	IN	SOA	ns.com. hostmaster.com. 2026102202 3600 600 86400 300
+com.			299	IN	RRSIG	SOA 13 1 300 20261121065908 20261022065908 17415 com. AMi8PWBGvV4l9Jrfn48XhOcM1mFmq9hkP5oVAf356XOkNK+uPyu5RW96 jt7NRujybg5pWecMFhCK5O49Ves8jg==
+example.com.		299	IN	RRSIG	NSEC 13 2 300 20261121065908 20261022065908 17415 com. hNceixjuCrErk3ImOWt1U0QJkOXAO4ruOlask3mAUNS6ZwfoO7Zzj8tL WJ5HkI1xgvm5cPwpsr52MeYeBqsU1A==
+example.com.		299	IN	NSEC	ns.com. NS RRSIG NSEC
+
+;; Query time: 1 msec
+;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
+;; WHEN: Thu Oct 22 07:59:11 UTC 2026
+;; MSG SIZE  rcvd: 344
+

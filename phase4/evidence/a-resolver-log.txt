@@ -1,0 +1,2 @@
+resolver-1  | 22-Oct-2026 07:59:07.723 broken trust chain resolving 'example.com/A/IN': 172.16.3.30#53
+resolver-1  | 22-Oct-2026 07:59:07.833 broken trust chain resolving 'example.com/AAAA/IN': 172.16.3.30#53
