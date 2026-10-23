@@ -1,3 +1,5 @@
+$ cat /tmp/walker-fixed.c
+
 /*
  * CS6008 Assignment 2 — Phase 5: Zone Walking via NSEC
  * ----------------------------------------------------
@@ -301,14 +303,17 @@ int main(int argc, char **argv) {
     for (int step = 0; step < MAX_NAMES; step++) {
         uint16_t id = (uint16_t)(rand() & 0xFFFF);
         uint16_t sport = (uint16_t)(40000 + (rand() % 20000));
-        /* a couple of retries for lossy first packets */
+        /* a couple of retries for lossy first packets. queries++ counts
+         * every transmitted packet, not just loop iterations, so the
+         * reported total is the real number of DNS queries sent even if a
+         * retry fires. */
         char owner[256] = {0}, next[256] = {0};
         int r = -1;
         for (int try = 0; try < 3 && r < 0; try++) {
             send_query(id, sport, cur);
+            queries++;
             r = recv_reply(id, owner, next, sizeof(next));
         }
-        queries++;
         if (r < 0) { printf("[walker] no reply for %s (timeout)\n", cur); break; }
         if (r == 0) {
             printf("[walker] %s: signed denial carries NO NSEC next-name "

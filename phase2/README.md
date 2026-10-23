@@ -6,6 +6,7 @@ An adversary is positioned at `172.16.2.100` on the resolver subnet. Inbound aut
 ## Build and Deployment
 1. Start the containers:
    ```bash
+   sudo docker build -t cs6008-dns-lab:local -f ../common/Dockerfile ..
    sudo docker compose up -d
    ```
 2. Build the attacker C interceptor binary:
@@ -34,7 +35,8 @@ An adversary is positioned at `172.16.2.100` on the resolver subnet. Inbound aut
 ## Attack 2.3 — Active Poisoning
 1. Start tcpdump capture on `core-router`:
    ```bash
-   sudo docker compose exec -d core-router sh -c 'exec tcpdump -i eth1 -nn -s 0 -U -Z root -w /evidence/p2-attack.pcap "udp port 53" > /evidence/p2-tcpdump.log 2>&1'
+   IFACE=$(sudo docker compose exec -T core-router sh -c 'ip -o -4 addr show' | grep -oE 'eth[0-9]+ +inet 172\.16\.2\.' | grep -oE 'eth[0-9]+' | head -1)
+sudo docker compose exec -d core-router sh -c "exec tcpdump -i $IFACE -nn -s0 -c 300 -w /evidence/p2-attack.pcap 'udp port 53' > /evidence/p2-tcpdump.log 2>&1"
    ```
 2. Run the interceptor in forge mode:
    ```bash

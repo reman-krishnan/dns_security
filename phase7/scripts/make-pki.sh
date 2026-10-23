@@ -48,7 +48,8 @@ openssl x509 -req -in rogue.csr -CA rogue-ca.crt -CAkey rogue-ca.key -CAcreatese
     -sha256 -days 365 -extfile resolver.ext -out rogue.crt
 cat rogue.crt rogue-ca.crt > rogue.fullchain.crt
 
-chmod 644 *.crt *.key
+chmod 644 *.crt
+chmod 600 *.key
 rm -f *.csr
 echo "PKI written to $PKI:"
 ls -1 "$PKI"

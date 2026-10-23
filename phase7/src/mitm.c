@@ -200,10 +200,36 @@ static void handler(u_char*u,const struct pcap_pkthdr*h,const u_char*pkt){
             struct iphdr*bi=(struct iphdr*)(buf+sizeof(struct ether_header));
             size_t iptot=ntohs(bi->tot_len);
             uint8_t*tcp=(uint8_t*)bi+ihl; size_t tcplen=iptot-ihl;
-            struct tcphdr*bth=(struct tcphdr*)tcp; size_t doff=bth->doff*4;
+                        struct tcphdr*bth=(struct tcphdr*)tcp; size_t doff=bth->doff*4;
             if(tcplen>doff){
-                tcp[tcplen-1]^=0xFF;
-                printf("[BREAK-DoT] corrupted %zu-byte DoT record -> TLS will reject\n",tcplen-doff); fflush(stdout);
+                /* TLS record content-type byte: 0x16 handshake, 0x17
+                 * application data, 0x15 alert. Skip the one unencrypted
+                 * handshake flight (ClientHello/ServerHello, visible as
+                 * 0x16) so corruption lands after the TLS session has at
+                 * least begun, not on the very first plaintext message.
+                 *
+                 * HONEST LIMITATION: under TLS 1.3 every record emitted
+                 * after ServerHello -- the remainder of the handshake
+                 * (EncryptedExtensions/Certificate/Finished) as well as
+                 * genuine post-handshake application data -- is wrapped at
+                 * the outer record layer as type 0x17, by design (TLS 1.3's
+                 * record-type obfuscation). A single captured byte cannot
+                 * distinguish "still finishing the handshake" from "an
+                 * established session's DNS answer" at that point; doing so
+                 * would need per-connection TCP sequence/flow tracking
+                 * against a small TLS state machine, which this tool does
+                 * not implement. This check therefore narrows corruption to
+                 * "after the initial plaintext flight", not to "only an
+                 * established session's application data" -- report the
+                 * result as DoT-stream/session corruption, not as a proven
+                 * alteration of an already-established answer. */
+                uint8_t content_type = tcp[doff];
+                if(content_type != 0x16){
+                    tcp[tcplen-1]^=0xFF;
+                    printf("[BREAK-DoT] corrupted %zu-byte TLS record (content-type 0x%02x) -> TLS will reject\n",tcplen-doff,content_type); fflush(stdout);
+                } else {
+                    printf("[BREAK-DoT] leaving initial handshake record (content-type 0x16) untouched\n"); fflush(stdout);
+                }
             }
             /* Recompute IP + TCP checksums on EVERY relayed segment here, not
              * just the ones actually corrupted above -- same reasoning as

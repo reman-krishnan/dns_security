@@ -15,6 +15,7 @@ sudo docker run --rm -v "$PWD:/lab" --entrypoint /bin/bash cs6008-dns-lab:local 
 
 ## Build and Deployment
 ```bash
+sudo docker build -t cs6008-dns-lab:local -f ../common/Dockerfile ..
 sudo docker compose up -d
 sudo docker compose exec -T attacker /scripts/build-attacker.sh
 ```
@@ -28,7 +29,8 @@ sudo docker compose exec -T client delv @172.16.2.10 -a /lab/configs/trust-ancho
 
 ## Attack 3.3 — Repeat Phase 2 Attack against Validating Resolver
 ```bash
-sudo docker compose exec -d core-router sh -c 'exec tcpdump -i eth1 -nn -s 0 -U -Z root -w /evidence/p3-attack.pcap "udp port 53" > /evidence/p3-tcpdump.log 2>&1'
+IFACE=$(sudo docker compose exec -T core-router sh -c 'ip -o -4 addr show' | grep -oE 'eth[0-9]+ +inet 172\.16\.2\.' | grep -oE 'eth[0-9]+' | head -1)
+sudo docker compose exec -d core-router sh -c "exec tcpdump -i $IFACE -nn -s0 -c 300 -w /evidence/p2-attack.pcap 'udp port 53' > /evidence/p2-tcpdump.log 2>&1"
 sudo docker compose exec -T core-router /scripts/divert-on.sh
 sudo docker compose exec -d attacker sh -c 'exec /usr/local/bin/interceptor --forge > /evidence/interceptor-p3.log 2>&1'
 sudo docker compose exec -T resolver rndc -k /run/named/rndc.key -s 127.0.0.1 flush

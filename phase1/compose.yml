@@ -3,7 +3,8 @@ name: cs6008-p1
 x-node: &node
   image: cs6008-dns-lab:local
   build:
-    context: ../common
+    context: ..
+    dockerfile: common/Dockerfile
   init: true
   cap_drop:
     - NET_RAW

