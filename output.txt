@@ -1,0 +1,1491 @@
+reman@reman:~/cs6008-dns-security$ cd ~/cs6008-dns-security
+git pull origin main
+
+# helper: full teardown of every phase + remove leftover lab networks
+teardown() {
+  for p in phase1 phase2 phase3 phase4 phase5 phase6 phase7; do
+    (cd ~/cs6008-dns-security/$p && sudo docker compose down 2>/dev/null)
+  done
+  sudo docker network ls --format '{{.Name}}' | grep -E '^cs6008-p' | xargs -r sudo docker network rm 2>/dev/null
+}
+teardown
+
+# build the shared image once (this also runs the BIND 9.20.x version check)
+cd ~/cs6008-dns-security/phase1
+sudo docker build -t cs6008-dns-lab:local -f ../common/Dockerfile ..
+sudo docker run --rm cs6008-dns-lab:local named -v     # expect: BIND 9.20.x
+From https://github.com/reman-krishnan/dns_security
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[sudo] password for reman: 
+[+] Building 3.5s (12/12) FINISHED                                                                                                                                       docker:default
+ => [internal] load build definition from Dockerfile                                                                                                                               0.0s
+ => => transferring dockerfile: 1.66kB                                                                                                                                             0.0s
+ => [internal] load metadata for docker.io/library/debian:bookworm-slim                                                                                                            2.8s
+ => [internal] load .dockerignore                                                                                                                                                  0.0s
+ => => transferring context: 2B                                                                                                                                                    0.0s
+ => [1/7] FROM docker.io/library/debian:bookworm-slim@sha256:7ff6ba31527b9e336162fa061746c366c4b2032f4d2cff2078bea43f78efe3f8                                                      0.0s
+ => => resolve docker.io/library/debian:bookworm-slim@sha256:7ff6ba31527b9e336162fa061746c366c4b2032f4d2cff2078bea43f78efe3f8                                                      0.0s
+ => [internal] load build context                                                                                                                                                  0.0s
+ => => transferring context: 68B                                                                                                                                                   0.0s
+ => CACHED [2/7] RUN set -eux;     echo "deb http://deb.debian.org/debian bookworm-backports main"         > /etc/apt/sources.list.d/backports.list;     apt-get update;     apt-  0.0s
+ => [3/7] RUN named -v | grep -E 'BIND 9\.20\.'                                                                                                                                    0.1s
+ => [4/7] RUN mkdir -p /var/cache/bind /var/log/named /run/named &&     chown -R bind:bind /var/cache/bind /var/log/named /run/named                                               0.1s
+ => [5/7] RUN mkdir -p /opt/attack                                                                                                                                                 0.1s
+ => [6/7] COPY common/node-start.sh /usr/local/bin/node-start.sh                                                                                                                   0.0s
+ => [7/7] RUN chmod +x /usr/local/bin/node-start.sh                                                                                                                                0.1s
+ => exporting to image                                                                                                                                                             0.1s
+ => => exporting layers                                                                                                                                                            0.0s
+ => => exporting manifest sha256:00cb2a103d2a114a334d2185c9d41de887fe6bc02cd9d29f71cc2fb68f65ab79                                                                                  0.0s
+ => => exporting config sha256:bc89f3d2564f7186328cf93005057e0ad98c7a5801c611450c7acfcb9901deeb                                                                                    0.0s
+ => => exporting attestation manifest sha256:c2451d355666708ede3f19b5173fc47d3f6536aadff77fe30eee53d4f76162d1                                                                      0.0s
+ => => exporting manifest list sha256:cad0684166b1e2bac2fa00dfe7902087b42d368b4f866e75727b44cf98e5751f                                                                             0.0s
+ => => naming to docker.io/library/cs6008-dns-lab:local                                                                                                                            0.0s
+ => => unpacking to docker.io/library/cs6008-dns-lab:local                                                                                                                         0.0s
+/usr/local/bin/node-start.sh: 4: ROLE: ROLE must be set
+reman@reman:~/cs6008-dns-security/phase1$ cd ~/cs6008-dns-security/phase1
+mkdir -p evidence && chmod 777 evidence
+sudo docker compose up -d --no-build
+sudo docker compose ps -a
+
+# --- resolution (Figure 2) ---
+sudo docker compose exec -T client dig example.com A +time=3 +tries=1     | tee evidence/example-com.txt
+sudo docker compose exec -T client dig www.example.com A +time=3 +tries=1 | tee evidence/www-example-com.txt
+sudo docker compose exec -T client curl --noproxy '*' --fail --show-error --max-time 10 http://example.com/ | tee evidence/legitimate-page.html
+[+] up 11/11
+ ✔ Network cs6008-p1_client-net      Created                                                                                                                                        0.0s
+ ✔ Network cs6008-p1_auth-net        Created                                                                                                                                        0.0s
+ ✔ Network cs6008-p1_resolver-net    Created                                                                                                                                        0.0s
+ ✔ Container cs6008-p1-webserver-1   Started                                                                                                                                        0.4s
+ ✔ Container cs6008-p1-client-1      Started                                                                                                                                        0.2s
+ ✔ Container cs6008-p1-resolver-1    Started                                                                                                                                        0.3s
+ ✔ Container cs6008-p1-edge-router-1 Started                                                                                                                                        0.7s
+ ✔ Container cs6008-p1-root-ns-1     Started                                                                                                                                        0.5s
+ ✔ Container cs6008-p1-core-router-1 Started                                                                                                                                        0.1s
+ ✔ Container cs6008-p1-domain-ns-1   Started                                                                                                                                        0.3s
+ ✔ Container cs6008-p1-tld-ns-1      Started                                                                                                                                        0.6s
+NAME                      IMAGE                  COMMAND                  SERVICE       CREATED                  STATUS                  PORTS
+cs6008-p1-client-1        cs6008-dns-lab:local   "/usr/local/bin/node…"   client        Less than a second ago   Up Less than a second   
+cs6008-p1-core-router-1   cs6008-dns-lab:local   "/usr/local/bin/node…"   core-router   Less than a second ago   Up Less than a second   
+cs6008-p1-domain-ns-1     cs6008-dns-lab:local   "/usr/local/bin/node…"   domain-ns     Less than a second ago   Up Less than a second   
+cs6008-p1-edge-router-1   cs6008-dns-lab:local   "/usr/local/bin/node…"   edge-router   Less than a second ago   Up Less than a second   
+cs6008-p1-resolver-1      cs6008-dns-lab:local   "/usr/local/bin/node…"   resolver      Less than a second ago   Up Less than a second   
+cs6008-p1-root-ns-1       cs6008-dns-lab:local   "/usr/local/bin/node…"   root-ns       Less than a second ago   Up Less than a second   
+cs6008-p1-tld-ns-1        cs6008-dns-lab:local   "/usr/local/bin/node…"   tld-ns        Less than a second ago   Up Less than a second   
+cs6008-p1-webserver-1     cs6008-dns-lab:local   "/usr/local/bin/node…"   webserver     Less than a second ago   Up Less than a second   
+
+; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> example.com A +time=3 +tries=1
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 32384
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 1, ADDITIONAL: 2
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: 4388aaf771fd73f8010000006adb7b6f23362bb8e8ac9b28 (good)
+;; QUESTION SECTION:
+;example.com.			IN	A
+
+;; ANSWER SECTION:
+example.com.		300	IN	A	172.16.1.20
+
+;; AUTHORITY SECTION:
+example.com.		300	IN	NS	ns.example.com.
+
+;; ADDITIONAL SECTION:
+ns.example.com.		300	IN	A	172.16.3.30
+
+;; Query time: 2 msec
+;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
+;; WHEN: Fri Oct 23 15:21:19 UTC 2026
+;; MSG SIZE  rcvd: 117
+
+
+; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> www.example.com A +time=3 +tries=1
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 19664
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 1, ADDITIONAL: 2
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: e48f5d6507c047ce010000006adb7b707566d1381508ee8d (good)
+;; QUESTION SECTION:
+;www.example.com.		IN	A
+
+;; ANSWER SECTION:
+www.example.com.	300	IN	A	172.16.1.20
+
+;; AUTHORITY SECTION:
+example.com.		299	IN	NS	ns.example.com.
+
+;; ADDITIONAL SECTION:
+ns.example.com.		299	IN	A	172.16.3.30
+
+;; Query time: 1 msec
+;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
+;; WHEN: Fri Oct 23 15:21:20 UTC 2026
+;; MSG SIZE  rcvd: 121
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   279  100   279    0     0   193k      0 --:--:-- --:--:-- --:--:--  272k
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CS6008 Legitimate Website</title>
+</head>
+<body>
+  <h1>LEGITIMATE EXAMPLE.COM WEBSITE</h1>
+  <p>CS6008 DNS Security Assignment — Phase 1</p>
+  <p>Expected server address: 172.16.1.20</p>
+</body>
+</html>
+reman@reman:~/cs6008-dns-security/phase1$ # --- isolation (Figure 3) ---
+sudo docker compose exec -T client dig @172.16.3.10 example.com A +time=2 +tries=1 | tee evidence/direct-root-query.txt
+;; UDP setup with 172.16.3.10#53(172.16.3.10) for example.com failed: network unreachable.
+;; no servers could be reached
+reman@reman:~/cs6008-dns-security/phase1$ # --- referral capture (Figure 4) ---
+sudo docker compose exec -d core-router sh -c '
+  iface=$(ip -o -4 address show | awk '\''$4 == "172.16.2.3/24" { print $2 }'\'')
+  test -n "$iface" || exit 1
+  exec tcpdump -i "$iface" -nn -s 0 -U -Z root -w /evidence/core-dns.pcap "udp port 53 or tcp port 53" > /evidence/tcpdump.log 2>&1'
+sleep 2
+sudo docker compose exec -T resolver rndc -k /run/named/rndc.key -s 127.0.0.1 flush
+sudo docker compose exec -T client dig example.com A +time=3 +tries=1
+sleep 2
+sudo docker compose exec -T core-router pkill -INT -x tcpdump
+sleep 2
+# decode it as text and SCREENSHOT this (this is the Figure 4 placeholder you still need):
+sudo docker compose exec -T core-router tshark -r /evidence/core-dns.pcap -Y dns | tee evidence/dns-packet-summary.txt
+sudo docker compose exec -T core-router tshark -r /evidence/core-dns.pcap -Y dns -V > evidence/dns-packet-details.txt
+
+; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> example.com A +time=3 +tries=1
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 54455
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 1, ADDITIONAL: 2
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: a9857cf96cbffe9d010000006adb7b7f0c5ae9c1292dc851 (good)
+;; QUESTION SECTION:
+;example.com.			IN	A
+
+;; ANSWER SECTION:
+example.com.		300	IN	A	172.16.1.20
+
+;; AUTHORITY SECTION:
+example.com.		300	IN	NS	ns.example.com.
+
+;; ADDITIONAL SECTION:
+ns.example.com.		300	IN	A	172.16.3.30
+
+;; Query time: 1 msec
+;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
+;; WHEN: Fri Oct 23 15:21:35 UTC 2026
+;; MSG SIZE  rcvd: 117
+
+Running as user "root" and group "root". This could be dangerous.
+    1   0.000000  172.16.2.10 → 172.16.3.10  DNS 94 Standard query 0x963c A example.com OPT
+    2   0.000064  172.16.2.10 → 172.16.3.10  DNS 82 Standard query 0x29ec NS <Root> OPT
+    3   0.000105  172.16.3.10 → 172.16.2.10  DNS 143 Standard query response 0x963c A example.com NS ns.com A 172.16.3.20 OPT
+    4   0.000141  172.16.3.10 → 172.16.2.10  DNS 118 Standard query response 0x29ec NS <Root> NS ns.root OPT
+    5   0.000271  172.16.2.10 → 172.16.3.20  DNS 94 Standard query 0xd51b A example.com OPT
+    6   0.000356  172.16.3.20 → 172.16.2.10  DNS 143 Standard query response 0xd51b A example.com NS ns.example.com A 172.16.3.30 OPT
+    7   0.000411  172.16.2.10 → 172.16.3.30  DNS 94 Standard query 0xc690 A example.com OPT
+    8   0.000463  172.16.3.30 → 172.16.2.10  DNS 159 Standard query response 0xc690 A example.com A 172.16.1.20 NS ns.example.com A 172.16.3.30 OPT
+Running as user "root" and group "root". This could be dangerous.
+reman@reman:~/cs6008-dns-security/phase1$ sudo docker compose down
+[+] down 11/11
+ ✔ Container cs6008-p1-client-1      Removed                                                                                                                                        0.3s
+ ✔ Container cs6008-p1-webserver-1   Removed                                                                                                                                        0.1s
+ ✔ Container cs6008-p1-root-ns-1     Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p1-tld-ns-1      Removed                                                                                                                                        0.3s
+ ✔ Container cs6008-p1-domain-ns-1   Removed                                                                                                                                        0.3s
+ ✔ Container cs6008-p1-resolver-1    Removed                                                                                                                                        0.3s
+ ✔ Container cs6008-p1-edge-router-1 Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p1-core-router-1 Removed                                                                                                                                        0.4s
+ ✔ Network cs6008-p1_client-net      Removed                                                                                                                                        0.1s
+ ✔ Network cs6008-p1_auth-net        Removed                                                                                                                                        0.2s
+ ✔ Network cs6008-p1_resolver-net    Removed                                                                                                                                        0.2s
+reman@reman:~/cs6008-dns-security/phase1$ cd ~/cs6008-dns-security/phase2
+mkdir -p evidence && chmod 777 evidence
+sudo docker compose up -d
+sudo docker compose exec -T attacker /scripts/build-attacker.sh
+
+# --- transparent relay (Figure 5) ---
+sudo docker compose exec -T core-router /scripts/divert-on.sh
+sudo docker compose exec -d attacker sh -c 'exec /usr/local/bin/interceptor > /evidence/relay.log 2>&1'
+sudo docker compose exec -T resolver rndc -k /run/named/rndc.key -s 127.0.0.1 flush
+sudo docker compose exec -T client dig example.com A +time=3 +tries=1 | tee evidence/p2-relay-dig.txt
+sudo docker compose exec -T client curl --noproxy '*' --fail --show-error --max-time 10 http://example.com/ | tee evidence/p2-relay-curl.txt
+sudo docker compose exec -T attacker pkill -x interceptor || true
+[+] up 13/13
+ ✔ Network cs6008-p2_client-net      Created                                                                                                                                        0.0s
+ ✔ Network cs6008-p2_auth-net        Created                                                                                                                                        0.0s
+ ✔ Network cs6008-p2_resolver-net    Created                                                                                                                                        0.0s
+ ✔ Container cs6008-p2-webserver-1   Started                                                                                                                                        0.5s
+ ✔ Container cs6008-p2-rogue-web-1   Started                                                                                                                                        0.4s
+ ✔ Container cs6008-p2-client-1      Started                                                                                                                                        0.6s
+ ✔ Container cs6008-p2-resolver-1    Started                                                                                                                                        0.7s
+ ✔ Container cs6008-p2-edge-router-1 Started                                                                                                                                        0.2s
+ ✔ Container cs6008-p2-attacker-1    Started                                                                                                                                        0.1s
+ ✔ Container cs6008-p2-core-router-1 Started                                                                                                                                        0.7s
+ ✔ Container cs6008-p2-tld-ns-1      Started                                                                                                                                        0.8s
+ ✔ Container cs6008-p2-root-ns-1     Started                                                                                                                                        0.3s
+ ✔ Container cs6008-p2-domain-ns-1   Started                                                                                                                                        0.5s
+Build complete: /usr/local/bin/interceptor
+[CORE-ROUTER] Installing diversion route for resolver traffic via attacker 172.16.2.100 on eth1...
+172.16.2.0/24 dev eth1 proto kernel scope link src 172.16.2.3 
+172.16.2.10 via 172.16.2.100 dev eth1 
+172.16.3.0/24 dev eth0 proto kernel scope link src 172.16.3.3 
+
+; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> example.com A +time=3 +tries=1
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 31136
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 1, ADDITIONAL: 2
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: dbba00454a846ade010000006adb7b939dce9d7ef5f75fe5 (good)
+;; QUESTION SECTION:
+;example.com.			IN	A
+
+;; ANSWER SECTION:
+example.com.		300	IN	A	172.16.1.20
+
+;; AUTHORITY SECTION:
+example.com.		300	IN	NS	ns.example.com.
+
+;; ADDITIONAL SECTION:
+ns.example.com.		300	IN	A	172.16.3.30
+
+;; Query time: 3 msec
+;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
+;; WHEN: Fri Oct 23 15:21:55 UTC 2026
+;; MSG SIZE  rcvd: 117
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   279  100   279    0     0   118k      0 --:--:-- --:--:-- --:--:--  136k
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CS6008 Legitimate Website</title>
+</head>
+<body>
+  <h1>LEGITIMATE EXAMPLE.COM WEBSITE</h1>
+  <p>CS6008 DNS Security Assignment — Phase 1</p>
+  <p>Expected server address: 172.16.1.20</p>
+</body>
+</html>
+reman@reman:~/cs6008-dns-security/phase2$ # --- the attack (Figures 6 and 7) ---
+IFACE=$(sudo docker compose exec -T core-router sh -c 'ip -o -4 addr show' | grep -oE 'eth[0-9]+ +inet 172\.16\.2\.' | grep -oE 'eth[0-9]+' | head -1)
+sudo docker compose exec -d core-router sh -c "exec tcpdump -i $IFACE -nn -s0 -c 300 -w /evidence/p2-attack.pcap 'udp port 53' > /evidence/p2-tcpdump.log 2>&1"
+sleep 1
+sudo docker compose exec -T core-router /scripts/divert-on.sh
+sudo docker compose exec -d attacker sh -c 'exec /usr/local/bin/interceptor --forge > /evidence/interceptor-forge.log 2>&1'
+sudo docker compose exec -T resolver rndc -k /run/named/rndc.key -s 127.0.0.1 flush
+
+sudo docker compose exec -T client dig example.com A +time=3 +tries=1          | tee evidence/p2-attack-dig.txt
+sudo docker compose exec -T client curl --noproxy '*' --fail --show-error --max-time 10 http://example.com/ | tee evidence/p2-attack-curl.html
+sudo docker compose exec -T client dig www.example.com A +time=3 +tries=1      | tee evidence/p2-nontarget-dig.txt
+
+sudo docker compose exec -T attacker pkill -x interceptor || true
+sudo docker compose exec -T core-router pkill -INT -x tcpdump || true
+sudo docker compose exec -T core-router /scripts/divert-off.sh
+sudo docker compose exec -T attacker cat /evidence/interceptor-forge.log | tee evidence/interceptor-forge.log
+sudo docker compose exec -T core-router tshark -r /evidence/p2-attack.pcap -Y dns
+[CORE-ROUTER] Installing diversion route for resolver traffic via attacker 172.16.2.100 on eth1...
+172.16.2.0/24 dev eth1 proto kernel scope link src 172.16.2.3 
+172.16.2.10 via 172.16.2.100 dev eth1 
+172.16.3.0/24 dev eth0 proto kernel scope link src 172.16.3.3 
+
+; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> example.com A +time=3 +tries=1
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 29447
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 1, ADDITIONAL: 2
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: 9e2e15eff49f6206010000006adb7b9b1935072340584eee (good)
+;; QUESTION SECTION:
+;example.com.			IN	A
+
+;; ANSWER SECTION:
+example.com.		300	IN	A	172.16.1.30
+
+;; AUTHORITY SECTION:
+example.com.		300	IN	NS	ns.example.com.
+
+;; ADDITIONAL SECTION:
+ns.example.com.		300	IN	A	172.16.3.30
+
+;; Query time: 3 msec
+;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
+;; WHEN: Fri Oct 23 15:22:03 UTC 2026
+;; MSG SIZE  rcvd: 117
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   300  100   300    0     0   188k      0 --:--:-- --:--:-- --:--:--  292k
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CS6008 Compromised Site</title>
+</head>
+<body>
+  <h1>DEFACED / HIJACKED EXAMPLE.COM WEBSITE</h1>
+  <p>CS6008 DNS Security Assignment — Phase 2 On-Path Poisoning</p>
+  <p>Rogue server address: 172.16.1.30</p>
+</body>
+</html>
+
+; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> www.example.com A +time=3 +tries=1
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 46794
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 1, ADDITIONAL: 2
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: 78eaba4ea8dc5811010000006adb7b9bdb15b69b2537306a (good)
+;; QUESTION SECTION:
+;www.example.com.		IN	A
+
+;; ANSWER SECTION:
+www.example.com.	300	IN	A	172.16.1.20
+
+;; AUTHORITY SECTION:
+example.com.		300	IN	NS	ns.example.com.
+
+;; ADDITIONAL SECTION:
+ns.example.com.		300	IN	A	172.16.3.30
+
+;; Query time: 1 msec
+;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
+;; WHEN: Fri Oct 23 15:22:03 UTC 2026
+;; MSG SIZE  rcvd: 121
+
+[CORE-ROUTER] Removing diversion route, restoring direct delivery...
+172.16.2.0/24 dev eth1 proto kernel scope link src 172.16.2.3 
+172.16.3.0/24 dev eth0 proto kernel scope link src 172.16.3.3 
+tee: evidence/interceptor-forge.log: Permission denied
+Starting DNS Interceptor [FORGE mode] on eth0...
+Attacker MAC: 92:51:56:4c:6a:2e
+Target Resolver MAC: 0a:24:95:17:9d:24 (resolved via ARP)
+[RELAY] Relaying message for example.com (ID 0x9b85)
+[RELAY] Relaying message for <non-query> (ID 0x4f5e)
+[RELAY] Relaying message for example.com (ID 0x48c5)
+[FORGE] Poisoning A record for example.com (ID 0x936c) -> 172.16.1.30
+[RELAY] Relaying message for example.com (ID 0x7342)
+[RELAY] Relaying message for www.example.com (ID 0xb4aa)
+Running as user "root" and group "root". This could be dangerous.
+reman@reman:~/cs6008-dns-security/phase2$ sudo docker compose down
+sudo docker network ls --format '{{.Name}}' | grep -E '^cs6008-p' | xargs -r sudo docker network rm
+[+] down 13/13
+ ✔ Container cs6008-p2-webserver-1   Removed                                                                                                                                        0.3s
+ ✔ Container cs6008-p2-resolver-1    Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p2-root-ns-1     Removed                                                                                                                                        0.5s
+ ✔ Container cs6008-p2-client-1      Removed                                                                                                                                        0.1s
+ ✔ Container cs6008-p2-rogue-web-1   Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p2-tld-ns-1      Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p2-edge-router-1 Removed                                                                                                                                        0.5s
+ ✔ Container cs6008-p2-core-router-1 Removed                                                                                                                                        0.5s
+ ✔ Container cs6008-p2-domain-ns-1   Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p2-attacker-1    Removed                                                                                                                                        0.3s
+ ✔ Network cs6008-p2_auth-net        Removed                                                                                                                                        0.1s
+ ✔ Network cs6008-p2_resolver-net    Removed                                                                                                                                        0.2s
+ ✔ Network cs6008-p2_client-net      Removed                                                                                                                                        0.1s
+reman@reman:~/cs6008-dns-security/phase2$ cd ~/cs6008-dns-security/phase3
+mkdir -p evidence && chmod 777 evidence
+sudo docker run --rm -v "$PWD:/lab" --entrypoint /bin/bash cs6008-dns-lab:local /lab/scripts/sign-zones.sh
+sudo docker compose up -d
+sudo docker compose exec -T attacker /scripts/build-attacker.sh
+
+# --- healthy validation (Figure 9) ---
+sudo docker compose exec -T resolver rndc -k /run/named/rndc.key -s 127.0.0.1 flush
+sudo docker compose exec -T client dig +dnssec example.com A +time=3 +tries=1 | tee evidence/p3-valid-dig.txt
+sudo docker compose exec -T client delv @172.16.2.10 -a /lab/configs/trust-anchors.conf example.com A 2>&1 | tee evidence/p3-valid-delv.txt
+=== 1. Generating Keys for example.com ===
+=== 2. Generating Keys for com ===
+=== 3. Generating Keys for root (.) ===
+=== 4. Signing example.com ===
+Verifying the zone using the following algorithms:
+- ECDSAP256SHA256
+Zone fully signed:
+Algorithm: ECDSAP256SHA256: KSKs: 1 active, 0 stand-by, 0 revoked
+                            ZSKs: 1 active, 0 stand-by, 0 revoked
+/lab/zones/db.example.com.signed
+=== 5. Publishing example.com DS into com and signing com ===
+Verifying the zone using the following algorithms:
+- ECDSAP256SHA256
+Zone fully signed:
+Algorithm: ECDSAP256SHA256: KSKs: 1 active, 0 stand-by, 0 revoked
+                            ZSKs: 1 active, 0 stand-by, 0 revoked
+/lab/zones/db.com.signed
+=== 6. Publishing com DS into root and signing root (.) ===
+Verifying the zone using the following algorithms:
+- ECDSAP256SHA256
+Zone fully signed:
+Algorithm: ECDSAP256SHA256: KSKs: 1 active, 0 stand-by, 0 revoked
+                            ZSKs: 1 active, 0 stand-by, 0 revoked
+/lab/zones/db.root.signed
+=== 7. Creating Resolver Trust Anchor and delv anchor file ===
+Extracted Root Key: Flags=257 Proto=3 Alg=13 PubKey=ReMDqeNHAQgwkPBAk7uQpHOUssV4cNcFSFoe+5+jn3lDkHsv1Bs0CVWrpwn8qNo+NB2T7UcUlPlRQvIEydLUKg==
+Done! Formatted trust anchor written to /lab/configs/trust-anchors.conf
+[+] up 13/13
+ ✔ Network cs6008-p3_resolver-net    Created                                                                                                                                        0.0s
+ ✔ Network cs6008-p3_auth-net        Created                                                                                                                                        0.0s
+ ✔ Network cs6008-p3_client-net      Created                                                                                                                                        0.0s
+ ✔ Container cs6008-p3-attacker-1    Started                                                                                                                                        0.6s
+ ✔ Container cs6008-p3-resolver-1    Started                                                                                                                                        0.5s
+ ✔ Container cs6008-p3-core-router-1 Started                                                                                                                                        0.4s
+ ✔ Container cs6008-p3-tld-ns-1      Started                                                                                                                                        0.7s
+ ✔ Container cs6008-p3-root-ns-1     Started                                                                                                                                        0.1s
+ ✔ Container cs6008-p3-domain-ns-1   Started                                                                                                                                        0.7s
+ ✔ Container cs6008-p3-webserver-1   Started                                                                                                                                        0.3s
+ ✔ Container cs6008-p3-rogue-web-1   Started                                                                                                                                        0.4s
+ ✔ Container cs6008-p3-edge-router-1 Started                                                                                                                                        0.8s
+ ✔ Container cs6008-p3-client-1      Started                                                                                                                                        0.2s
+Build complete: /usr/local/bin/interceptor
+
+; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> +dnssec example.com A +time=3 +tries=1
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 46624
+;; flags: qr rd ra ad; QUERY: 1, ANSWER: 2, AUTHORITY: 2, ADDITIONAL: 3
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags: do; udp: 1232
+; COOKIE: 8555c9f210e79b97010000006adb7baa8a21876a376a4d7d (good)
+;; QUESTION SECTION:
+;example.com.			IN	A
+
+;; ANSWER SECTION:
+example.com.		300	IN	A	172.16.1.20
+example.com.		300	IN	RRSIG	A 13 2 300 20261122142217 20261023142217 25557 example.com. 3ghGK6TN22ekfwBPoZZ2B0baLe9bPnVA+1Gb+yec1b4W//OZcGTR8n/g X2MastRPPncoP7wEwpx+/nAzn94v/g==
+
+;; AUTHORITY SECTION:
+example.com.		300	IN	NS	ns.example.com.
+example.com.		300	IN	RRSIG	NS 13 2 300 20261122142217 20261023142217 25557 example.com. WQqUjF1uAzpXJSmWJ3amKf3gWG2OWmQiGcGnhhxFHr/8wXI9YXa4DBp2 G+bO+hPJ9KGjrMZwFgWeWMh0Pfn15A==
+
+;; ADDITIONAL SECTION:
+ns.example.com.		300	IN	A	172.16.3.30
+ns.example.com.		300	IN	RRSIG	A 13 3 300 20261122142217 20261023142217 25557 example.com. 537HmWfV4ULocS+lgdJPoSHQzIEfBP+a3yQGwlAOwdXvLs3cWA4CChUp m2i8l0eEjNKlHOcOFe0m7pn/F+1AEA==
+
+;; Query time: 3 msec
+;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
+;; WHEN: Fri Oct 23 15:22:18 UTC 2026
+;; MSG SIZE  rcvd: 438
+
+; fully validated
+example.com.		299	IN	A	172.16.1.20
+example.com.		299	IN	RRSIG	A 13 2 300 20261122142217 20261023142217 25557 example.com. 3ghGK6TN22ekfwBPoZZ2B0baLe9bPnVA+1Gb+yec1b4W//OZcGTR8n/g X2MastRPPncoP7wEwpx+/nAzn94v/g==
+reman@reman:~/cs6008-dns-security/phase3$ # --- attack under DNSSEC (Figure 10) ---
+sudo docker compose exec -T core-router /scripts/divert-on.sh
+sudo docker compose exec -d attacker sh -c 'exec /usr/local/bin/interceptor --forge > /evidence/interceptor-p3.log 2>&1'
+sudo docker compose exec -T resolver rndc -k /run/named/rndc.key -s 127.0.0.1 flush
+sudo docker compose exec -T client dig example.com A +time=6 +tries=2 | tee evidence/p3-attack-dig-servfail.txt
+sudo docker compose exec -T client sh -c "curl --noproxy '*' --fail --show-error --max-time 5 http://example.com/ ; echo curl-exit=\$?" | tee evidence/p3-attack-curl.txt
+sudo docker compose exec -T attacker pkill -x interceptor || true
+sudo docker compose exec -T core-router /scripts/divert-off.sh
+[CORE-ROUTER] Installing diversion route for resolver traffic via attacker 172.16.2.100 on eth1...
+172.16.2.0/24 dev eth1 proto kernel scope link src 172.16.2.3 
+172.16.2.10 via 172.16.2.100 dev eth1 
+172.16.3.0/24 dev eth0 proto kernel scope link src 172.16.3.3 
+
+; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> example.com A +time=6 +tries=2
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: SERVFAIL, id: 5520
+;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: e89f23078367d20e010000006adb7bb12d26889f26bfdf42 (good)
+;; QUESTION SECTION:
+;example.com.			IN	A
+
+;; Query time: 4 msec
+;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
+;; WHEN: Fri Oct 23 15:22:25 UTC 2026
+;; MSG SIZE  rcvd: 68
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0curl: (6) Could not resolve host: example.com
+curl-exit=6
+[CORE-ROUTER] Removing diversion route, restoring direct delivery...
+172.16.2.0/24 dev eth1 proto kernel scope link src 172.16.2.3 
+172.16.3.0/24 dev eth0 proto kernel scope link src 172.16.3.3 
+reman@reman:~/cs6008-dns-security/phase3$ sudo docker compose down
+sudo docker network ls --format '{{.Name}}' | grep -E '^cs6008-p' | xargs -r sudo docker network rm
+[+] down 13/13
+ ✔ Container cs6008-p3-resolver-1    Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p3-root-ns-1     Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p3-tld-ns-1      Removed                                                                                                                                        0.5s
+ ✔ Container cs6008-p3-client-1      Removed                                                                                                                                        0.3s
+ ✔ Container cs6008-p3-rogue-web-1   Removed                                                                                                                                        0.3s
+ ✔ Container cs6008-p3-webserver-1   Removed                                                                                                                                        0.2s
+ ✔ Container cs6008-p3-domain-ns-1   Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p3-core-router-1 Removed                                                                                                                                        0.5s
+ ✔ Container cs6008-p3-attacker-1    Removed                                                                                                                                        0.3s
+ ✔ Container cs6008-p3-edge-router-1 Removed                                                                                                                                        0.5s
+ ✔ Network cs6008-p3_resolver-net    Removed                                                                                                                                        0.1s
+ ✔ Network cs6008-p3_client-net      Removed                                                                                                                                        0.2s
+ ✔ Network cs6008-p3_auth-net        Removed                                                                                                                                        0.1s
+reman@reman:~/cs6008-dns-security/phase3$ cd ~/cs6008-dns-security/phase4
+mkdir -p evidence && chmod 777 evidence
+sudo docker run --rm -v "$PWD:/lab" --entrypoint /bin/bash cs6008-dns-lab:local /lab/scripts/sign-zones.sh
+sudo docker compose up -d
+sudo docker compose exec -T attacker /scripts/build-attacker.sh
+
+# --- verify through relay (Figure 11) ---
+sudo docker compose exec -T core-router /scripts/divert-on.sh
+sudo docker compose exec -d attacker sh -c 'exec /usr/local/bin/stripper --relay > /evidence/stripper-relay.log 2>&1'
+sudo docker compose exec -T resolver rndc -k /run/named/rndc.key -s 127.0.0.1 flush
+sudo docker compose exec -T client dig +dnssec example.com A +time=6 +tries=2 | tee evidence/a-verify-dig.txt
+sudo docker compose exec -T client curl --noproxy '*' --fail --max-time 5 http://example.com/ | tee evidence/a-verify-curl.html
+sudo docker compose exec -T attacker pkill -x stripper || true
+chmod: changing permissions of 'evidence': Operation not permitted
+=== 1. Keys for example.com ===
+=== 2. Keys for com ===
+=== 3. Keys for root (.) ===
+=== 4. Sign example.com ===
+Verifying the zone using the following algorithms:
+- ECDSAP256SHA256
+Zone fully signed:
+Algorithm: ECDSAP256SHA256: KSKs: 1 active, 0 stand-by, 0 revoked
+                            ZSKs: 1 active, 0 stand-by, 0 revoked
+/lab/zones/db.example.com.signed
+=== 5. Publish example.com DS into com and sign com ===
+Verifying the zone using the following algorithms:
+- ECDSAP256SHA256
+Zone fully signed:
+Algorithm: ECDSAP256SHA256: KSKs: 1 active, 0 stand-by, 0 revoked
+                            ZSKs: 1 active, 0 stand-by, 0 revoked
+/lab/zones/db.com.signed
+=== 6. Publish com DS into root and sign root (.) ===
+Verifying the zone using the following algorithms:
+- ECDSAP256SHA256
+Zone fully signed:
+Algorithm: ECDSAP256SHA256: KSKs: 1 active, 0 stand-by, 0 revoked
+                            ZSKs: 1 active, 0 stand-by, 0 revoked
+/lab/zones/db.root.signed
+=== 7. Resolver trust anchor (root KSK) ===
+Run A chain signed. Trust anchor -> /lab/configs/trust-anchors.conf
+[+] up 13/13
+ ✔ Network cs6008-p4_resolver-net    Created                                                                                                                                        0.0s
+ ✔ Network cs6008-p4_auth-net        Created                                                                                                                                        0.0s
+ ✔ Network cs6008-p4_client-net      Created                                                                                                                                        0.0s
+ ✔ Container cs6008-p4-webserver-1   Started                                                                                                                                        0.5s
+ ✔ Container cs6008-p4-client-1      Started                                                                                                                                        0.3s
+ ✔ Container cs6008-p4-rogue-web-1   Started                                                                                                                                        0.9s
+ ✔ Container cs6008-p4-resolver-1    Started                                                                                                                                        0.2s
+ ✔ Container cs6008-p4-edge-router-1 Started                                                                                                                                        0.2s
+ ✔ Container cs6008-p4-attacker-1    Started                                                                                                                                        0.4s
+ ✔ Container cs6008-p4-root-ns-1     Started                                                                                                                                        0.7s
+ ✔ Container cs6008-p4-core-router-1 Started                                                                                                                                        0.4s
+ ✔ Container cs6008-p4-domain-ns-1   Started                                                                                                                                        0.6s
+ ✔ Container cs6008-p4-tld-ns-1      Started                                                                                                                                        0.8s
+Build complete: /usr/local/bin/stripper
+[CORE-ROUTER] Diverting resolver-bound replies via attacker 172.16.2.100 on eth0...
+172.16.2.0/24 dev eth0 proto kernel scope link src 172.16.2.3 
+172.16.2.10 via 172.16.2.100 dev eth0 
+172.16.3.0/24 dev eth1 proto kernel scope link src 172.16.3.3 
+
+; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> +dnssec example.com A +time=6 +tries=2
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 33961
+;; flags: qr rd ra ad; QUERY: 1, ANSWER: 2, AUTHORITY: 2, ADDITIONAL: 3
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags: do; udp: 1232
+; COOKIE: e6e57df9db63b284010000006adb7bc2ffb52ed6d13c743e (good)
+;; QUESTION SECTION:
+;example.com.			IN	A
+
+;; ANSWER SECTION:
+example.com.		300	IN	A	172.16.1.20
+example.com.		300	IN	RRSIG	A 13 2 300 20261122142240 20261023142240 10687 example.com. v7jRppXcucGtSp+Th0knPQIPeHDpqVJ9c/u5K4aEocAlNomdmgmRqfNm QFF/oDOB3GHWITqESoI7/BuRF4jbvQ==
+
+;; AUTHORITY SECTION:
+example.com.		300	IN	NS	ns.example.com.
+example.com.		300	IN	RRSIG	NS 13 2 300 20261122142240 20261023142240 10687 example.com. yZ8ocMtLGBZYLyoqSdi4xN+WibzupAT6iyNWicdeZnZUuyJRAoiPOtIQ rznQlQLvbn/oQLpkAgTIvgwCww7MIw==
+
+;; ADDITIONAL SECTION:
+ns.example.com.		300	IN	A	172.16.3.30
+ns.example.com.		300	IN	RRSIG	A 13 3 300 20261122142240 20261023142240 10687 example.com. KLEEaAhmhUIos1Xgp+YRJXX2PavIzrD31wEpZimmUk6tAZRfOYKMJWTD 1L4obsA9nibU1Xbrf9UcuMq/HfM7CA==
+
+;; Query time: 43 msec
+;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
+;; WHEN: Fri Oct 23 15:22:42 UTC 2026
+;; MSG SIZE  rcvd: 438
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   279  100   279    0     0   159k      0 --:--:-- --:--:-- --:--:--  272k
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CS6008 Legitimate Website</title>
+</head>
+<body>
+  <h1>LEGITIMATE EXAMPLE.COM WEBSITE</h1>
+  <p>CS6008 DNS Security Assignment — Phase 1</p>
+  <p>Expected server address: 172.16.1.20</p>
+</body>
+</html>
+reman@reman:~/cs6008-dns-security/phase4$ # --- Run A attack: fails (Figure 12) ---
+IFACE=$(sudo docker compose exec -T core-router sh -c 'ip -o -4 addr show' | grep -oE 'eth[0-9]+ +inet 172\.16\.2\.' | grep -oE 'eth[0-9]+' | head -1)
+sudo docker compose exec -d core-router sh -c "exec tcpdump -i $IFACE -nn -s0 -U -Z root -w /evidence/p4-runA.pcap 'udp port 53' > /evidence/p4-runA-tcpdump.log 2>&1"
+sleep 1
+sudo docker compose exec -T core-router /scripts/divert-on.sh
+sudo docker compose exec -d attacker sh -c 'exec /usr/local/bin/stripper --strip-runA > /evidence/stripper-runA.log 2>&1'
+sudo docker compose exec -T resolver rndc -k /run/named/rndc.key -s 127.0.0.1 flush
+sudo docker compose exec -T client dig example.com A +time=6 +tries=2 | tee evidence/a-attack-dig.txt
+sudo docker compose exec -T client sh -c "curl --noproxy '*' --fail --show-error --max-time 5 http://example.com/ ; echo curl-exit=\$?" | tee evidence/a-attack-curl.txt
+sudo docker compose exec -T attacker pkill -x stripper || true
+sudo docker compose exec -T core-router pkill -INT -x tcpdump || true
+sudo docker compose exec -T core-router /scripts/divert-off.sh
+sudo docker compose exec -T attacker cat /evidence/stripper-runA.log | tee evidence/stripper-runA.log
+sudo docker compose logs resolver --since 2m | grep -Ei 'bogus|no valid|RRSIG|insecur|broken|DS ' | tee evidence/a-resolver-log.txt
+[CORE-ROUTER] Diverting resolver-bound replies via attacker 172.16.2.100 on eth0...
+172.16.2.0/24 dev eth0 proto kernel scope link src 172.16.2.3 
+172.16.2.10 via 172.16.2.100 dev eth0 
+172.16.3.0/24 dev eth1 proto kernel scope link src 172.16.3.3 
+
+; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> example.com A +time=6 +tries=2
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: SERVFAIL, id: 32225
+;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: 335c776f06ce30a3010000006adb7bc9ec77c65cb68f838c (good)
+;; QUESTION SECTION:
+;example.com.			IN	A
+
+;; Query time: 33 msec
+;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
+;; WHEN: Fri Oct 23 15:22:49 UTC 2026
+;; MSG SIZE  rcvd: 68
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0curl: (6) Could not resolve host: example.com
+curl-exit=6
+[CORE-ROUTER] Removing diversion, restoring direct delivery...
+172.16.2.0/24 dev eth0 proto kernel scope link src 172.16.2.3 
+172.16.3.0/24 dev eth1 proto kernel scope link src 172.16.3.3 
+tee: evidence/stripper-runA.log: Permission denied
+stripper: mode=--strip-runA dev=eth0 attacker=e6:b6:af:a5:f5:0a
+stripper: resolver 172.16.2.10 is at b6:c4:be:c8:b1:1f
+stripper: running
+[STRIP] removed example.com DNSSEC RRs from reply (qname=example.com qtype=1) 248->101 bytes
+[FORGE] example.com A (id 0x53f4) -> 172.16.1.30  [runA]
+[STRIP] removed example.com DNSSEC RRs from reply (qname=example.com qtype=43) 215->68 bytes
+[STRIP] removed example.com DNSSEC RRs from reply (qname=example.com qtype=28) 369->118 bytes
+[STRIP] removed example.com DNSSEC RRs from reply (qname=example.com qtype=43) 215->68 bytes
+resolver-1  | /lab/configs/trust-anchors.conf:1: static entry for the root zone WILL FAIL after key rollover - use trust-anchors with initial-key or initial-ds instead.
+resolver-1  | 23-Oct-2026 15:22:41.508 DS algorithms: SHA-1 SHA-256 SHA-384
+resolver-1  | 23-Oct-2026 15:22:41.509 /lab/configs/trust-anchors.conf:1: static entry for the root zone WILL FAIL after key rollover - use trust-anchors with initial-key or initial-ds instead.
+resolver-1  | 23-Oct-2026 15:22:49.967 broken trust chain resolving 'example.com/A/IN': 172.16.3.30#53
+resolver-1  | 23-Oct-2026 15:22:50.077 broken trust chain resolving 'example.com/AAAA/IN': 172.16.3.30#53
+reman@reman:~/cs6008-dns-security/phase4$ # --- Run B: re-sign com WITHOUT the DS, attack succeeds (Figure 13) ---
+sudo docker run --rm -v "$PWD:/lab" --entrypoint /bin/bash cs6008-dns-lab:local /lab/scripts/sign-zones-runB.sh
+sudo docker compose restart tld-ns
+sudo docker compose exec -T resolver rndc -k /run/named/rndc.key -s 127.0.0.1 flush
+sudo docker compose exec -T client delv @172.16.2.10 -a /lab/configs/trust-anchors.conf example.com A 2>&1 | tee evidence/b-delv-insecure.txt
+sudo docker compose exec -T client dig example.com DS +dnssec | tee evidence/b-ds-nodata.txt
+
+IFACE=$(sudo docker compose exec -T core-router sh -c 'ip -o -4 addr show' | grep -oE 'eth[0-9]+ +inet 172\.16\.2\.' | grep -oE 'eth[0-9]+' | head -1)
+sudo docker compose exec -d core-router sh -c "exec tcpdump -i $IFACE -nn -s0 -U -Z root -w /evidence/p4-runB.pcap 'udp port 53' > /evidence/p4-runB-tcpdump.log 2>&1"
+sleep 1
+sudo docker compose exec -T core-router /scripts/divert-on.sh
+sudo docker compose exec -d attacker sh -c 'exec /usr/local/bin/stripper --strip-runB > /evidence/stripper-runB.log 2>&1'
+sudo docker compose exec -T resolver rndc -k /run/named/rndc.key -s 127.0.0.1 flush
+sudo docker compose exec -T client dig example.com A +time=6 +tries=2 | tee evidence/b-attack-dig.txt
+sudo docker compose exec -T client curl --noproxy '*' --fail --show-error --max-time 5 http://example.com/ | tee evidence/b-attack-curl.html
+sudo docker compose exec -T attacker pkill -x stripper || true
+sudo docker compose exec -T core-router pkill -INT -x tcpdump || true
+sudo docker compose exec -T core-router /scripts/divert-off.sh
+Verifying the zone using the following algorithms:
+- ECDSAP256SHA256
+Zone fully signed:
+Algorithm: ECDSAP256SHA256: KSKs: 1 active, 0 stand-by, 0 revoked
+                            ZSKs: 1 active, 0 stand-by, 0 revoked
+/lab/zones/db.com.signed
+Run B: com re-signed WITHOUT example.com DS.
+example.com.signed and db.root.signed are unchanged; trust anchor unchanged.
+Now: docker compose restart tld-ns && flush the resolver cache.
+[+] restart 0/1
+ ⠹ Container cs6008-p4-tld-ns-1 Restarting                                                                                                                                          0.2s
+;; validating example.com/A: no valid signature found
+; unsigned answer
+example.com.		300	IN	A	172.16.1.20
+example.com.		300	IN	RRSIG	A 13 2 300 20261122142240 20261023142240 10687 example.com. v7jRppXcucGtSp+Th0knPQIPeHDpqVJ9c/u5K4aEocAlNomdmgmRqfNm QFF/oDOB3GHWITqESoI7/BuRF4jbvQ==
+
+; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> example.com DS +dnssec
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 26734
+;; flags: qr rd ra ad; QUERY: 1, ANSWER: 0, AUTHORITY: 4, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags: do; udp: 1232
+; COOKIE: f88cd5294e0b5997010000006adb7bd01971c09565f987f1 (good)
+;; QUESTION SECTION:
+;example.com.			IN	DS
+
+;; AUTHORITY SECTION:
+com.			300	IN	SOA	ns.com. hostmaster.com. 2026102202 3600 600 86400 300
+com.			300	IN	RRSIG	SOA 13 1 300 20261122142256 20261023142256 3241 com. VlNI8s0Osiy3+v/70aW+6kZySiLYGDqvlm2rhS4waFGOF438PhTckrfr suQQa2zjCDegXT1fE9nTLrCsqtK0MQ==
+example.com.		300	IN	RRSIG	NSEC 13 2 300 20261122142256 20261023142256 3241 com. pQActjsBs+nUlidqFAQ0HLQnJVKgzHBu/OECNc86y1BsEuPWnnyhOAMO w3cECx/5QPSwyvXiEAVdBEw3XNw6eA==
+example.com.		300	IN	NSEC	ns.com. NS RRSIG NSEC
+
+;; Query time: 1 msec
+;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
+;; WHEN: Fri Oct 23 15:22:56 UTC 2026
+;; MSG SIZE  rcvd: 344
+
+[CORE-ROUTER] Diverting resolver-bound replies via attacker 172.16.2.100 on eth0...
+172.16.2.0/24 dev eth0 proto kernel scope link src 172.16.2.3 
+172.16.2.10 via 172.16.2.100 dev eth0 
+172.16.3.0/24 dev eth1 proto kernel scope link src 172.16.3.3 
+
+; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> example.com A +time=6 +tries=2
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 26383
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 1, ADDITIONAL: 2
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: b6c5b406863eb27e010000006adb7bd24c85e886a49a9892 (good)
+;; QUESTION SECTION:
+;example.com.			IN	A
+
+;; ANSWER SECTION:
+example.com.		300	IN	A	172.16.1.30
+
+;; AUTHORITY SECTION:
+example.com.		300	IN	NS	ns.example.com.
+
+;; ADDITIONAL SECTION:
+ns.example.com.		300	IN	A	172.16.3.30
+
+;; Query time: 51 msec
+;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
+;; WHEN: Fri Oct 23 15:22:58 UTC 2026
+;; MSG SIZE  rcvd: 117
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   300  100   300    0     0  23474      0 --:--:-- --:--:-- --:--:-- 25000
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CS6008 Compromised Site</title>
+</head>
+<body>
+  <h1>DEFACED / HIJACKED EXAMPLE.COM WEBSITE</h1>
+  <p>CS6008 DNS Security Assignment — Phase 2 On-Path Poisoning</p>
+  <p>Rogue server address: 172.16.1.30</p>
+</body>
+</html>
+[CORE-ROUTER] Removing diversion, restoring direct delivery...
+172.16.2.0/24 dev eth0 proto kernel scope link src 172.16.2.3 
+172.16.3.0/24 dev eth1 proto kernel scope link src 172.16.3.3 
+reman@reman:~/cs6008-dns-security/phase4$ sudo docker compose down
+sudo docker network ls --format '{{.Name}}' | grep -E '^cs6008-p' | xargs -r sudo docker network rm
+[+] down 13/13
+ ✔ Container cs6008-p4-client-1      Removed                                                                                                                                        0.3s
+ ✔ Container cs6008-p4-edge-router-1 Removed                                                                                                                                        0.5s
+ ✔ Container cs6008-p4-rogue-web-1   Removed                                                                                                                                        0.3s
+ ✔ Container cs6008-p4-core-router-1 Removed                                                                                                                                        0.5s
+ ✔ Container cs6008-p4-resolver-1    Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p4-webserver-1   Removed                                                                                                                                        0.3s
+ ✔ Container cs6008-p4-tld-ns-1      Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p4-domain-ns-1   Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p4-root-ns-1     Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p4-attacker-1    Removed                                                                                                                                        0.3s
+ ✔ Network cs6008-p4_resolver-net    Removed                                                                                                                                        0.1s
+ ✔ Network cs6008-p4_client-net      Removed                                                                                                                                        0.1s
+ ✔ Network cs6008-p4_auth-net        Removed                                                                                                                                        0.2s
+reman@reman:~/cs6008-dns-security/phase4$ cd ~/cs6008-dns-security/phase5
+mkdir -p evidence && chmod 777 evidence
+sudo docker run --rm -v "$PWD:/lab" --entrypoint /bin/bash cs6008-dns-lab:local /lab/scripts/sign-zones.sh
+sudo docker compose up -d
+sudo docker compose exec -T attacker /scripts/build-attacker.sh
+
+# --- NSEC signed denial (Figure 16) ---
+sudo docker compose exec -T resolver rndc -k /run/named/rndc.key -s 127.0.0.1 flush
+sudo docker compose exec -T client dig +dnssec doesnotexist.example.com A +time=6 +tries=2 | tee evidence/p5-nxdomain.txt
+=== 1. Keys for example.com ===
+=== 2. Keys for com ===
+=== 3. Keys for root (.) ===
+=== 4. Sign example.com ===
+Verifying the zone using the following algorithms:
+- ECDSAP256SHA256
+Zone fully signed:
+Algorithm: ECDSAP256SHA256: KSKs: 1 active, 0 stand-by, 0 revoked
+                            ZSKs: 1 active, 0 stand-by, 0 revoked
+/lab/zones/db.example.com.signed
+=== 5. Publish example.com DS into com and sign com ===
+Verifying the zone using the following algorithms:
+- ECDSAP256SHA256
+Zone fully signed:
+Algorithm: ECDSAP256SHA256: KSKs: 1 active, 0 stand-by, 0 revoked
+                            ZSKs: 1 active, 0 stand-by, 0 revoked
+/lab/zones/db.com.signed
+=== 6. Publish com DS into root and sign root (.) ===
+Verifying the zone using the following algorithms:
+- ECDSAP256SHA256
+Zone fully signed:
+Algorithm: ECDSAP256SHA256: KSKs: 1 active, 0 stand-by, 0 revoked
+                            ZSKs: 1 active, 0 stand-by, 0 revoked
+/lab/zones/db.root.signed
+=== 7. Resolver trust anchor (root KSK) ===
+Run A chain signed. Trust anchor -> /lab/configs/trust-anchors.conf
+[+] up 13/13
+ ✔ Network cs6008-p5_auth-net        Created                                                                                                                                        0.0s
+ ✔ Network cs6008-p5_client-net      Created                                                                                                                                        0.0s
+ ✔ Network cs6008-p5_resolver-net    Created                                                                                                                                        0.0s
+ ✔ Container cs6008-p5-webserver-1   Started                                                                                                                                        0.1s
+ ✔ Container cs6008-p5-rogue-web-1   Started                                                                                                                                        0.7s
+ ✔ Container cs6008-p5-client-1      Started                                                                                                                                        0.4s
+ ✔ Container cs6008-p5-tld-ns-1      Started                                                                                                                                        0.7s
+ ✔ Container cs6008-p5-domain-ns-1   Started                                                                                                                                        0.8s
+ ✔ Container cs6008-p5-root-ns-1     Started                                                                                                                                        0.3s
+ ✔ Container cs6008-p5-resolver-1    Started                                                                                                                                        0.4s
+ ✔ Container cs6008-p5-core-router-1 Started                                                                                                                                        0.6s
+ ✔ Container cs6008-p5-edge-router-1 Started                                                                                                                                        0.2s
+ ✔ Container cs6008-p5-attacker-1    Started                                                                                                                                        0.5s
+Build complete: /usr/local/bin/walker
+
+; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> +dnssec doesnotexist.example.com A +time=6 +tries=2
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 18921
+;; flags: qr rd ra ad; QUERY: 1, ANSWER: 0, AUTHORITY: 6, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags: do; udp: 1232
+; COOKIE: fb2160233baf3b75010000006adb7be392e37f9453206186 (good)
+;; QUESTION SECTION:
+;doesnotexist.example.com.	IN	A
+
+;; AUTHORITY SECTION:
+dev.example.com.	300	IN	RRSIG	NSEC 13 3 300 20261122142313 20261023142313 48509 example.com. sZdYUBrmwebppEA56s6sXzKREAKLfkqJCJRsB41cFIfWh0BWiPiGMrTp /fozwpiTm69ykDbLgABProBTffUSJQ==
+dev.example.com.	300	IN	NSEC	git.example.com. A RRSIG NSEC
+example.com.		300	IN	SOA	ns.example.com. hostmaster.example.com. 2026102201 3600 600 86400 300
+example.com.		300	IN	RRSIG	SOA 13 2 300 20261122142313 20261023142313 48509 example.com. uC91Q7lQrCkCWVZnvjiWHc+lZTBK9F8Kkyoun62sxgY3Vis5YesCyqMd uCW2VRcHVYHq4GPxuvrc/Rzl8r4Pcg==
+example.com.		300	IN	RRSIG	NSEC 13 2 300 20261122142313 20261023142313 48509 example.com. J2JWHSg7JVcWBfzgt3UIhji+CodjIZq6qW39N6LNYWDz0+VlR5hTgzNX D9RMzfseuBxoTGTYnj5fisfxaYlfhA==
+example.com.		300	IN	NSEC	backup.example.com. A NS SOA RRSIG NSEC DNSKEY
+
+;; Query time: 3 msec
+;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
+;; WHEN: Fri Oct 23 15:23:15 UTC 2026
+;; MSG SIZE  rcvd: 534
+
+reman@reman:~/cs6008-dns-security/phase5$ # --- the walk (Figure 17) ---
+sudo docker compose exec -T attacker /usr/local/bin/walker | tee evidence/p5-walk-nsec.txt
+[walker] resolver 172.16.2.10 at 7e:3e:20:05:61:74
+[walker] starting NSEC walk of example.com via resolver
+
+  found: example.com           next -> backup.example.com
+  found: backup.example.com    next -> dev.example.com
+  found: dev.example.com       next -> git.example.com
+  found: git.example.com       next -> mail.example.com
+  found: mail.example.com      next -> ns.example.com
+  found: ns.example.com        next -> vpn.example.com
+  found: vpn.example.com       next -> www.example.com
+  found: www.example.com       next -> example.com
+
+[walker] chain wrapped to apex — zone complete.
+
+[walker] recovered 8 owner name(s) in 8 queries:
+    example.com
+    backup.example.com
+    dev.example.com
+    git.example.com
+    mail.example.com
+    ns.example.com
+    vpn.example.com
+    www.example.com
+reman@reman:~/cs6008-dns-security/phase5$ # --- the walk (Figure 17) ---
+sudo docker compose exec -T attacker /usr/local/bin/walker | tee evidence/p5-walk-nsec.txt
+[walker] resolver 172.16.2.10 at 7e:3e:20:05:61:74
+[walker] starting NSEC walk of example.com via resolver
+
+  found: example.com           next -> backup.example.com
+  found: backup.example.com    next -> dev.example.com
+  found: dev.example.com       next -> git.example.com
+  found: git.example.com       next -> mail.example.com
+  found: mail.example.com      next -> ns.example.com
+  found: ns.example.com        next -> vpn.example.com
+  found: vpn.example.com       next -> www.example.com
+  found: www.example.com       next -> example.com
+
+[walker] chain wrapped to apex — zone complete.
+
+[walker] recovered 8 owner name(s) in 8 queries:
+    example.com
+    backup.example.com
+    dev.example.com
+    git.example.com
+    mail.example.com
+    ns.example.com
+    vpn.example.com
+    www.example.com
+reman@reman:~/cs6008-dns-security/phase5$ # --- the walk (Figure 17) ---
+sudo docker compose exec -T attacker /usr/local/bin/walker | tee evidence/p5-walk-nsec.txt
+[walker] resolver 172.16.2.10 at 7e:3e:20:05:61:74
+[walker] starting NSEC walk of example.com via resolver
+
+  found: example.com           next -> backup.example.com
+  found: backup.example.com    next -> dev.example.com
+  found: dev.example.com       next -> git.example.com
+  found: git.example.com       next -> mail.example.com
+  found: mail.example.com      next -> ns.example.com
+  found: ns.example.com        next -> vpn.example.com
+  found: vpn.example.com       next -> www.example.com
+  found: www.example.com       next -> example.com
+
+[walker] chain wrapped to apex — zone complete.
+
+[walker] recovered 8 owner name(s) in 8 queries:
+    example.com
+    backup.example.com
+    dev.example.com
+    git.example.com
+    mail.example.com
+    ns.example.com
+    vpn.example.com
+    www.example.com
+reman@reman:~/cs6008-dns-security/phase5$ # --- NSEC3 fix + re-walk (Figure 18) ---
+sudo docker run --rm -v "$PWD:/lab" --entrypoint /bin/bash cs6008-dns-lab:local /lab/scripts/sign-zones-nsec3.sh
+sudo docker compose restart domain-ns
+sudo docker compose exec -T resolver rndc -k /run/named/rndc.key -s 127.0.0.1 flush
+sudo docker compose exec -T client dig +dnssec doesnotexist.example.com A +time=6 +tries=2 | tee evidence/p5-nxdomain-nsec3.txt
+sudo docker compose exec -T attacker /usr/local/bin/walker | tee evidence/p5-walk-nsec3.txt
+Verifying the zone using the following algorithms:
+- ECDSAP256SHA256
+Zone fully signed:
+Algorithm: ECDSAP256SHA256: KSKs: 1 active, 0 stand-by, 0 revoked
+                            ZSKs: 1 active, 0 stand-by, 0 revoked
+/lab/zones/db.example.com.signed
+example.com re-signed with NSEC3 (salt=724176c18401d197). DNSKEY/DS unchanged.
+Now: docker compose restart domain-ns && flush the resolver.
+[+] restart 0/1
+ ⠹ Container cs6008-p5-domain-ns-1 Restarting                                                                                                                                       0.2s
+
+; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> +dnssec doesnotexist.example.com A +time=6 +tries=2
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 57979
+;; flags: qr rd ra ad; QUERY: 1, ANSWER: 0, AUTHORITY: 8, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags: do; udp: 1232
+; COOKIE: 10f03ad849f1fb62010000006adb7c148cf3bff6c61290c1 (good)
+;; QUESTION SECTION:
+;doesnotexist.example.com.	IN	A
+
+;; AUTHORITY SECTION:
+example.com.		300	IN	SOA	ns.example.com. hostmaster.example.com. 2026102202 3600 600 86400 300
+example.com.		300	IN	RRSIG	SOA 13 2 300 20261122142403 20261023142403 48509 example.com. 0/KDgVSikBZJAR4X5kJfkwAwwAxseEx5H+WkKKnGjxLc5OUJz2wob5jV 4wVWz8xUIhFngDou9V1/sf2BP1gwYA==
+17BOB6T99QMR4CT9POCU46FI8IOSF8DV.example.com. 300 IN RRSIG NSEC3 13 3 300 20261122142403 20261023142403 48509 example.com. HvGQ3GiCx3c0et7/FXRzyIrVi/PmZqOc5ncPRFCJAHfkpBkqTO0c48+A fazhWZ/8qkl1ZGOzAvG+LwdyY8Ud2Q==
+17BOB6T99QMR4CT9POCU46FI8IOSF8DV.example.com. 300 IN NSEC3 1 0 10 724176C18401D197 5V42NPPJ09J3E2RJD7PSSMTB99MNUQJD A RRSIG
+96MGSLDKT16RJJA3JREK3SSJQRD467O8.example.com. 300 IN RRSIG NSEC3 13 3 300 20261122142403 20261023142403 48509 example.com. paH2zwqHk1E0HpGQnQSrWBWx1XlrqwXaT6qfsRGgRJr2zD+CIqiIxME4 eo3MChaVybuWYJJdUAwHjm+Y2NdgIQ==
+96MGSLDKT16RJJA3JREK3SSJQRD467O8.example.com. 300 IN NSEC3 1 0 10 724176C18401D197 GHTIUM8H5MTRO1DCO3EDQL0JI06FB1BN A NS SOA RRSIG DNSKEY NSEC3PARAM
+RH3KAT3K3LKVT39UN6KGDCG3PRB7DHKJ.example.com. 300 IN RRSIG NSEC3 13 3 300 20261122142403 20261023142403 48509 example.com. SOKbQfcSWbwIb+Qvb9ZAXpRIGcRT5T0Mx6mv/LHitEBIrOtJ3lfjDyBl 2VFiWOv/syCT2EhdQf2iLdxUQBwyeA==
+RH3KAT3K3LKVT39UN6KGDCG3PRB7DHKJ.example.com. 300 IN NSEC3 1 0 10 724176C18401D197 17BOB6T99QMR4CT9POCU46FI8IOSF8DV A RRSIG
+
+;; Query time: 2 msec
+;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
+;; WHEN: Fri Oct 23 15:24:04 UTC 2026
+;; MSG SIZE  rcvd: 821
+
+[walker] resolver 172.16.2.10 at 7e:3e:20:05:61:74
+[walker] starting NSEC walk of example.com via resolver
+
+[walker] example.com: signed denial carries NO NSEC next-name (NSEC3 or no DNSSEC) -> walk cannot continue
+
+[walker] recovered 0 owner name(s) in 1 queries:
+reman@reman:~/cs6008-dns-security/phase5$ sudo docker compose down
+sudo docker network ls --format '{{.Name}}' | grep -E '^cs6008-p' | xargs -r sudo docker network rm
+[+] down 13/13
+ ✔ Container cs6008-p5-edge-router-1 Removed                                                                                                                                        0.5s
+ ✔ Container cs6008-p5-resolver-1    Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p5-domain-ns-1   Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p5-root-ns-1     Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p5-webserver-1   Removed                                                                                                                                        0.1s
+ ✔ Container cs6008-p5-client-1      Removed                                                                                                                                        0.3s
+ ✔ Container cs6008-p5-rogue-web-1   Removed                                                                                                                                        0.3s
+ ✔ Container cs6008-p5-core-router-1 Removed                                                                                                                                        0.5s
+ ✔ Container cs6008-p5-tld-ns-1      Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p5-attacker-1    Removed                                                                                                                                        0.3s
+ ✔ Network cs6008-p5_auth-net        Removed                                                                                                                                        0.1s
+ ✔ Network cs6008-p5_resolver-net    Removed                                                                                                                                        0.2s
+ ✔ Network cs6008-p5_client-net      Removed                                                                                                                                        0.1s
+reman@reman:~/cs6008-dns-security/phase5$ cd ~/cs6008-dns-security/phase6
+mkdir -p evidence && chmod 777 evidence
+sudo docker run --rm -v "$PWD:/lab" --entrypoint /bin/bash cs6008-dns-lab:local /lab/scripts/sign-zones.sh
+sudo docker compose up -d
+sudo docker compose exec -T attacker /scripts/build-attacker.sh
+
+# --- verify relay (Figure 20) ---
+sudo docker compose exec -T edge-router /scripts/divert-on.sh
+sudo docker compose exec -d attacker sh -c 'exec /usr/local/bin/forge --relay > /evidence/forge-relay.log 2>&1'
+sudo docker compose exec -T resolver rndc -k /run/named/rndc.key -s 127.0.0.1 flush
+sudo docker compose exec -T client dig +dnssec example.com A +time=6 +tries=2 | tee evidence/p6-verify-dig.txt
+sudo docker compose exec -T client curl --noproxy '*' --fail --max-time 5 http://example.com/ | tee evidence/p6-verify-curl.html
+sudo docker compose exec -T attacker pkill -x forge || true
+=== 1. Keys for example.com ===
+=== 2. Keys for com ===
+=== 3. Keys for root (.) ===
+=== 4. Sign example.com ===
+Verifying the zone using the following algorithms:
+- ECDSAP256SHA256
+Zone fully signed:
+Algorithm: ECDSAP256SHA256: KSKs: 1 active, 0 stand-by, 0 revoked
+                            ZSKs: 1 active, 0 stand-by, 0 revoked
+/lab/zones/db.example.com.signed
+=== 5. Publish example.com DS into com and sign com ===
+Verifying the zone using the following algorithms:
+- ECDSAP256SHA256
+Zone fully signed:
+Algorithm: ECDSAP256SHA256: KSKs: 1 active, 0 stand-by, 0 revoked
+                            ZSKs: 1 active, 0 stand-by, 0 revoked
+/lab/zones/db.com.signed
+=== 6. Publish com DS into root and sign root (.) ===
+Verifying the zone using the following algorithms:
+- ECDSAP256SHA256
+Zone fully signed:
+Algorithm: ECDSAP256SHA256: KSKs: 1 active, 0 stand-by, 0 revoked
+                            ZSKs: 1 active, 0 stand-by, 0 revoked
+/lab/zones/db.root.signed
+=== 7. Resolver trust anchor (root KSK) ===
+Run A chain signed. Trust anchor -> /lab/configs/trust-anchors.conf
+[+] up 13/13
+ ✔ Network cs6008-p6_auth-net        Created                                                                                                                                        0.0s
+ ✔ Network cs6008-p6_client-net      Created                                                                                                                                        0.0s
+ ✔ Network cs6008-p6_resolver-net    Created                                                                                                                                        0.0s
+ ✔ Container cs6008-p6-attacker-1    Started                                                                                                                                        0.3s
+ ✔ Container cs6008-p6-rogue-web-1   Started                                                                                                                                        0.8s
+ ✔ Container cs6008-p6-client-1      Started                                                                                                                                        0.4s
+ ✔ Container cs6008-p6-webserver-1   Started                                                                                                                                        0.5s
+ ✔ Container cs6008-p6-resolver-1    Started                                                                                                                                        0.6s
+ ✔ Container cs6008-p6-edge-router-1 Started                                                                                                                                        0.1s
+ ✔ Container cs6008-p6-core-router-1 Started                                                                                                                                        0.2s
+ ✔ Container cs6008-p6-tld-ns-1      Started                                                                                                                                        0.4s
+ ✔ Container cs6008-p6-root-ns-1     Started                                                                                                                                        0.7s
+ ✔ Container cs6008-p6-domain-ns-1   Started                                                                                                                                        0.7s
+Build complete: /usr/local/bin/forge
+[EDGE-ROUTER] Diverting client-bound replies via attacker 172.16.1.100 on eth1...
+172.16.1.0/24 dev eth1 proto kernel scope link src 172.16.1.2 
+172.16.1.10 via 172.16.1.100 dev eth1 
+172.16.2.0/24 dev eth0 proto kernel scope link src 172.16.2.2 
+
+; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> +dnssec example.com A +time=6 +tries=2
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 61416
+;; flags: qr rd ra ad; QUERY: 1, ANSWER: 2, AUTHORITY: 2, ADDITIONAL: 3
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags: do; udp: 1232
+; COOKIE: ca933aa7499ac313010000006adb7c22061046bf844e5959 (good)
+;; QUESTION SECTION:
+;example.com.			IN	A
+
+;; ANSWER SECTION:
+example.com.		300	IN	A	172.16.1.20
+example.com.		300	IN	RRSIG	A 13 2 300 20261122142417 20261023142417 11532 example.com. Ix5uLpUrpS8Ij/+JqQOOnD65siN9Ga+N/IqgHCax6knUt4jI1E3DX0H7 Idupxu4t+OSD5NrblffHqzeZjY7odg==
+
+;; AUTHORITY SECTION:
+example.com.		300	IN	NS	ns.example.com.
+example.com.		300	IN	RRSIG	NS 13 2 300 20261122142417 20261023142417 11532 example.com. AESnZgu76JCqCYCak58pxBbQmcMkq2CmpYc5hvGRoLPxLCtIN4Mdkqyx IUxga4VLXxNraPWg2Cmxt62nXqrtqw==
+
+;; ADDITIONAL SECTION:
+ns.example.com.		300	IN	A	172.16.3.30
+ns.example.com.		300	IN	RRSIG	A 13 3 300 20261122142417 20261023142417 11532 example.com. gCeLt0BCoKTXEHYnk90RTLyXa8Z+yZNEqwsCwl5tOSiizjf46ohxuFxs 1ghLyegOpxx4sYjRljM4/r8stK3i2A==
+
+;; Query time: 8 msec
+;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
+;; WHEN: Fri Oct 23 15:24:18 UTC 2026
+;; MSG SIZE  rcvd: 438
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   279  100   279    0     0  26969      0 --:--:-- --:--:-- --:--:-- 27900
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CS6008 Legitimate Website</title>
+</head>
+<body>
+  <h1>LEGITIMATE EXAMPLE.COM WEBSITE</h1>
+  <p>CS6008 DNS Security Assignment — Phase 1</p>
+  <p>Expected server address: 172.16.1.20</p>
+</body>
+</html>
+reman@reman:~/cs6008-dns-security/phase6$ # --- the attack vs both clients (Figures 21 and 22) ---
+IFACE=$(sudo docker compose exec -T edge-router sh -c 'ip -o -4 addr show' | grep -oE 'eth[0-9]+ +inet 172\.16\.1\.' | grep -oE 'eth[0-9]+' | head -1)
+sudo docker compose exec -d edge-router sh -c "exec tcpdump -i $IFACE -nn -s0 -U -Z root -w /evidence/p6-attack.pcap 'udp port 53' > /evidence/p6-tcpdump.log 2>&1"
+sleep 1
+sudo docker compose exec -d attacker sh -c 'exec /usr/local/bin/forge --forge > /evidence/forge-attack.log 2>&1'
+sudo docker compose exec -T resolver rndc -k /run/named/rndc.key -s 127.0.0.1 flush
+
+sudo docker compose exec -T client dig example.com A +time=6 +tries=2 | tee evidence/p6-clientA-dig.txt
+sudo docker compose exec -T client curl --noproxy '*' --fail --show-error --max-time 5 http://example.com/ | tee evidence/p6-clientA-curl.html
+sudo docker compose exec -T client delv @172.16.2.10 -a /lab/configs/trust-anchors.conf example.com A 2>&1 | tee evidence/p6-clientB-delv.txt
+
+sudo docker compose exec -T attacker pkill -x forge || true
+sudo docker compose exec -T edge-router pkill -INT -x tcpdump || true
+sudo docker compose exec -T edge-router /scripts/divert-off.sh
+
+; <<>> DiG 9.20.23-1~deb13u1~bpo12+1-Debian <<>> example.com A +time=6 +tries=2
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 3468
+;; flags: qr rd ra ad; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 0
+
+;; QUESTION SECTION:
+;example.com.			IN	A
+
+;; ANSWER SECTION:
+example.com.		300	IN	A	172.16.1.30
+
+;; Query time: 13 msec
+;; SERVER: 172.16.2.10#53(172.16.2.10) (UDP)
+;; WHEN: Fri Oct 23 15:24:26 UTC 2026
+;; MSG SIZE  rcvd: 45
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   300  100   300    0     0  56327      0 --:--:-- --:--:-- --:--:-- 60000
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CS6008 Compromised Site</title>
+</head>
+<body>
+  <h1>DEFACED / HIJACKED EXAMPLE.COM WEBSITE</h1>
+  <p>CS6008 DNS Security Assignment — Phase 2 On-Path Poisoning</p>
+  <p>Rogue server address: 172.16.1.30</p>
+</body>
+</html>
+;; insecurity proof failed resolving 'example.com/A/IN': 172.16.2.10#53
+;; resolution failed: insecurity proof failed
+[EDGE-ROUTER] Removing diversion, restoring direct delivery...
+172.16.1.0/24 dev eth1 proto kernel scope link src 172.16.1.2 
+172.16.2.0/24 dev eth0 proto kernel scope link src 172.16.2.2 
+reman@reman:~/cs6008-dns-security/phase6$ sudo docker compose down
+sudo docker network ls --format '{{.Name}}' | grep -E '^cs6008-p' | xargs -r sudo docker network rm
+[+] down 13/13
+ ✔ Container cs6008-p6-tld-ns-1      Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p6-resolver-1    Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p6-client-1      Removed                                                                                                                                        0.3s
+ ✔ Container cs6008-p6-domain-ns-1   Removed                                                                                                                                        0.3s
+ ✔ Container cs6008-p6-rogue-web-1   Removed                                                                                                                                        0.2s
+ ✔ Container cs6008-p6-core-router-1 Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p6-edge-router-1 Removed                                                                                                                                        0.5s
+ ✔ Container cs6008-p6-attacker-1    Removed                                                                                                                                        0.1s
+ ✔ Container cs6008-p6-webserver-1   Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p6-root-ns-1     Removed                                                                                                                                        0.4s
+ ✔ Network cs6008-p6_auth-net        Removed                                                                                                                                        0.1s
+ ✔ Network cs6008-p6_resolver-net    Removed                                                                                                                                        0.1s
+ ✔ Network cs6008-p6_client-net      Removed                                                                                                                                        0.2s
+reman@reman:~/cs6008-dns-security/phase6$ cd ~/cs6008-dns-security/phase7
+mkdir -p evidence && chmod 777 evidence
+sudo docker run --rm -v "$PWD:/lab" --entrypoint /bin/bash cs6008-dns-lab:local /lab/scripts/make-pki.sh
+sudo docker run --rm -v "$PWD:/lab" --entrypoint /bin/bash cs6008-dns-lab:local /lab/scripts/sign-zones.sh
+sudo docker compose up -d
+sudo docker compose exec -T attacker /scripts/build-attacker.sh
+sudo docker compose ps -a      # confirm resolver is Up (not Exited)
+
+# --- verified encrypted resolution (Figure 23) ---
+IFACE=$(sudo docker compose exec -T edge-router sh -c 'ip -o -4 addr show' | grep -oE 'eth[0-9]+ +inet 172\.16\.1\.' | grep -oE 'eth[0-9]+' | head -1)
+sudo docker compose exec -d edge-router sh -c "exec tcpdump -i $IFACE -nn -s0 -U -Z root -w /evidence/p7-verify.pcap 'host 172.16.1.10 and (port 53 or port 853 or port 443)' > /evidence/p7-verify-tcpdump.log 2>&1"
+sleep 1
+sudo docker compose exec -T resolver rndc -k /run/named/rndc.key -s 127.0.0.1 flush
+sudo docker compose exec -T client /scripts/resolve-strict.sh | tee evidence/p7-verify-strict.txt
+sudo docker compose exec -T edge-router pkill -INT -x tcpdump || true
+sudo docker compose exec -T edge-router sh -c "tcpdump -nn -r /evidence/p7-verify.pcap 'port 53' | head" | tee evidence/p7-verify-no-cleartext.txt
+=== 1. Lab CA ===
+=== 2. Resolver key + CSR (SAN = resolver.cs6008.local, no IP SAN) ===
+Certificate request self-signature ok
+subject=O = CS6008 Lab, CN = resolver.cs6008.local
+=== 3. Rogue CA + rogue resolver cert (same name, untrusted issuer) ===
+Certificate request self-signature ok
+subject=O = Evil Corp, CN = resolver.cs6008.local
+PKI written to /lab/pki:
+ca.crt
+ca.key
+ca.srl
+resolver.crt
+resolver.ext
+resolver.fullchain.crt
+resolver.key
+rogue-ca.crt
+rogue-ca.key
+rogue-ca.srl
+rogue.crt
+rogue.fullchain.crt
+rogue.key
+--- resolver.crt SAN ---
+            X509v3 Subject Alternative Name: 
+                DNS:resolver.cs6008.local
+=== 1. Keys for example.com ===
+=== 2. Keys for com ===
+=== 3. Keys for root (.) ===
+=== 4. Sign example.com ===
+Verifying the zone using the following algorithms:
+- ECDSAP256SHA256
+Zone fully signed:
+Algorithm: ECDSAP256SHA256: KSKs: 1 active, 0 stand-by, 0 revoked
+                            ZSKs: 1 active, 0 stand-by, 0 revoked
+/lab/zones/db.example.com.signed
+=== 5. Publish example.com DS into com and sign com ===
+Verifying the zone using the following algorithms:
+- ECDSAP256SHA256
+Zone fully signed:
+Algorithm: ECDSAP256SHA256: KSKs: 1 active, 0 stand-by, 0 revoked
+                            ZSKs: 1 active, 0 stand-by, 0 revoked
+/lab/zones/db.com.signed
+=== 6. Publish com DS into root and sign root (.) ===
+Verifying the zone using the following algorithms:
+- ECDSAP256SHA256
+Zone fully signed:
+Algorithm: ECDSAP256SHA256: KSKs: 1 active, 0 stand-by, 0 revoked
+                            ZSKs: 1 active, 0 stand-by, 0 revoked
+/lab/zones/db.root.signed
+=== 7. Resolver trust anchor (root KSK) ===
+Run A chain signed. Trust anchor -> /lab/configs/trust-anchors.conf
+[+] up 13/13
+ ✔ Network cs6008-p7_auth-net        Created                                                                                                                                        0.0s
+ ✔ Network cs6008-p7_resolver-net    Created                                                                                                                                        0.0s
+ ✔ Network cs6008-p7_client-net      Created                                                                                                                                        0.0s
+ ✔ Container cs6008-p7-webserver-1   Started                                                                                                                                        0.5s
+ ✔ Container cs6008-p7-attacker-1    Started                                                                                                                                        0.2s
+ ✔ Container cs6008-p7-rogue-web-1   Started                                                                                                                                        0.2s
+ ✔ Container cs6008-p7-client-1      Started                                                                                                                                        0.6s
+ ✔ Container cs6008-p7-resolver-1    Started                                                                                                                                        0.4s
+ ✔ Container cs6008-p7-edge-router-1 Started                                                                                                                                        0.7s
+ ✔ Container cs6008-p7-core-router-1 Started                                                                                                                                        0.9s
+ ✔ Container cs6008-p7-tld-ns-1      Started                                                                                                                                        0.5s
+ ✔ Container cs6008-p7-root-ns-1     Started                                                                                                                                        0.8s
+ ✔ Container cs6008-p7-domain-ns-1   Started                                                                                                                                        0.3s
+Build complete: /usr/local/bin/mitm
+NAME                      IMAGE                  COMMAND                  SERVICE       CREATED         STATUS                  PORTS
+cs6008-p7-attacker-1      cs6008-dns-lab:local   "/usr/local/bin/node…"   attacker      2 seconds ago   Up 1 second             
+cs6008-p7-client-1        cs6008-dns-lab:local   "/usr/local/bin/node…"   client        2 seconds ago   Up Less than a second   
+cs6008-p7-core-router-1   cs6008-dns-lab:local   "/usr/local/bin/node…"   core-router   2 seconds ago   Up Less than a second   
+cs6008-p7-domain-ns-1     cs6008-dns-lab:local   "/usr/local/bin/node…"   domain-ns     2 seconds ago   Up Less than a second   
+cs6008-p7-edge-router-1   cs6008-dns-lab:local   "/usr/local/bin/node…"   edge-router   2 seconds ago   Up Less than a second   
+cs6008-p7-resolver-1      cs6008-dns-lab:local   "/usr/local/bin/node…"   resolver      2 seconds ago   Up Less than a second   
+cs6008-p7-rogue-web-1     cs6008-dns-lab:local   "/usr/local/bin/node…"   rogue-web     2 seconds ago   Up Less than a second   
+cs6008-p7-root-ns-1       cs6008-dns-lab:local   "/usr/local/bin/node…"   root-ns       2 seconds ago   Up Less than a second   
+cs6008-p7-tld-ns-1        cs6008-dns-lab:local   "/usr/local/bin/node…"   tld-ns        2 seconds ago   Up Less than a second   
+cs6008-p7-webserver-1     cs6008-dns-lab:local   "/usr/local/bin/node…"   webserver     2 seconds ago   Up Less than a second   
+[strict] DoT @resolver.cs6008.local (validating cert against lab CA)...
+;; TLS session (TLS1.3)-(ECDHE-SECP256R1)-(ECDSA-SECP256R1-SHA256)-(AES-256-GCM)
+;; ->>HEADER<<- opcode: QUERY; status: NOERROR; id: 54650
+;; Flags: qr rd ra ad; QUERY: 1; ANSWER: 1; AUTHORITY: 1; ADDITIONAL: 2
+
+;; EDNS PSEUDOSECTION:
+;; Version: 0; flags: ; UDP size: 1232 B; ext-rcode: NOERROR
+
+;; QUESTION SECTION:
+;; example.com.        		IN	A
+
+;; ANSWER SECTION:
+example.com.        	300	IN	A	172.16.1.20
+
+;; AUTHORITY SECTION:
+example.com.        	300	IN	NS	ns.example.com.
+
+;; ADDITIONAL SECTION:
+ns.example.com.     	300	IN	A	172.16.3.30
+
+;; Received 89 B
+;; Time 2026-10-23 15:24:43 UTC
+;; From 172.16.2.10@853(TCP) in 4.0 ms
+reading from file /evidence/p7-verify.pcap, link-type EN10MB (Ethernet), snapshot length 262144
+reman@reman:~/cs6008-dns-security/phase7$ # --- put diversion + cleartext forger in place ---
+sudo docker compose exec -T edge-router /scripts/divert-on.sh
+sudo docker compose exec -d attacker sh -c 'exec /usr/local/bin/mitm --forge-cleartext > /evidence/mitm.log 2>&1'
+
+# attempt (i) alter in transit
+sudo docker compose exec -T attacker pkill -x mitm || true
+sudo docker compose exec -d attacker sh -c 'exec /usr/local/bin/mitm --forge-cleartext --break-dot > /evidence/mitm-i.log 2>&1'
+sudo docker compose exec -T client /scripts/resolve-strict.sh      | tee evidence/p7-i-strict.txt
+sudo docker compose exec -T client /scripts/resolve-permissive.sh  | tee evidence/p7-i-permissive.txt
+sudo docker compose exec -T attacker pkill -x mitm || true
+sudo docker compose exec -d attacker sh -c 'exec /usr/local/bin/mitm --forge-cleartext > /evidence/mitm.log 2>&1'
+
+# attempt (ii) rogue certificate
+sudo docker compose exec -T edge-router /scripts/attack-rogue-on.sh
+sudo docker compose exec -T client /scripts/resolve-strict.sh      | tee evidence/p7-ii-strict.txt
+sudo docker compose exec -T client /scripts/resolve-permissive.sh  | tee evidence/p7-ii-permissive.txt
+sudo docker compose exec -T edge-router /scripts/attack-rogue-off.sh
+
+# attempt (iii) deny transport
+sudo docker compose exec -T edge-router /scripts/attack-block-on.sh
+sudo docker compose exec -T client /scripts/resolve-strict.sh      | tee evidence/p7-iii-strict.txt
+sudo docker compose exec -T client /scripts/resolve-permissive.sh  | tee evidence/p7-iii-permissive.txt
+sudo docker compose exec -T edge-router /scripts/attack-block-off.sh
+
+sudo docker compose exec -T attacker pkill -x mitm || true
+sudo docker compose exec -T edge-router /scripts/divert-off.sh
+[EDGE-ROUTER] Diverting client-bound replies via attacker 172.16.1.100 on eth0...
+172.16.1.0/24 dev eth0 proto kernel scope link src 172.16.1.2 
+172.16.1.10 via 172.16.1.100 dev eth0 
+172.16.2.0/24 dev eth1 proto kernel scope link src 172.16.2.2 
+[strict] DoT @resolver.cs6008.local (validating cert against lab CA)...
+;; WARNING: TLS, failed to receive reply (Decryption has failed.)
+;; WARNING: can't receive reply from 172.16.2.10@853(TCP)
+;; ERROR: failed to query server resolver.cs6008.local@853(TCP)
+[strict] DoT failed (rc=1) -> refusing cleartext; NO answer.
+[strict] TLS diagnostic probe (openssl s_client) ...
+[strict] TLS probe: certificate verification SUCCEEDED (unexpected for an attack run)
+[strict] --- raw openssl s_client output ---
+CONNECTION ESTABLISHED
+Protocol version: TLSv1.3
+Ciphersuite: TLS_AES_256_GCM_SHA384
+Peer certificate: O = CS6008 Lab, CN = resolver.cs6008.local
+Hash used: SHA256
+Signature type: ECDSA
+Verification: OK
+Server Temp Key: X25519, 253 bits
+DONE
+[strict] --- end probe output ---
+[permissive] trying DoT @resolver.cs6008.local...
+;; WARNING: TLS, failed to receive reply (Decryption has failed.)
+;; WARNING: can't receive reply from 172.16.2.10@853(TCP)
+;; ERROR: failed to query server resolver.cs6008.local@853(TCP)
+[permissive] DoT failed -> FALLING BACK TO CLEARTEXT (insecure).
+example.com.		300	IN	A	172.16.1.30
+[edge-router] starting rogue DoT responder (untrusted cert) on :8853...
+[edge-router] REDIRECT 172.16.2.10:853 -> local :8853 (rogue), pid 56
+[strict] DoT @resolver.cs6008.local (validating cert against lab CA)...
+;; WARNING: TLS, handshake failed (The TLS connection was non-properly terminated.)
+[strict] DoT failed (rc=141) -> refusing cleartext; NO answer.
+[strict] TLS diagnostic probe (openssl s_client) ...
+[strict] TLS probe: NO TLS SESSION ESTABLISHED -- transport unreachable, not a certificate issue
+[strict] --- raw openssl s_client output ---
+40975025697D0000:error:8000006F:system library:BIO_connect:Connection refused:../crypto/bio/bio_sock2.c:117:calling connect()
+40975025697D0000:error:10000067:BIO routines:BIO_connect:connect error:../crypto/bio/bio_sock2.c:119:
+connect:errno=111
+[strict] --- end probe output ---
+[permissive] trying DoT @resolver.cs6008.local...
+;; WARNING: can't connect to 172.16.2.10@853(TCP)
+;; ERROR: failed to query server resolver.cs6008.local@853(TCP)
+[permissive] DoT failed -> FALLING BACK TO CLEARTEXT (insecure).
+example.com.		300	IN	A	172.16.1.30
+[edge-router] rogue responder removed.
+[edge-router] blocking DoT/DoH (TCP 853,443 -> 172.16.2.10)...
+-A FORWARD -d 172.16.2.10/32 -p tcp -m multiport --dports 853,443 -j REJECT --reject-with tcp-reset
+[strict] DoT @resolver.cs6008.local (validating cert against lab CA)...
+;; WARNING: can't connect to 172.16.2.10@853(TCP)
+;; ERROR: failed to query server resolver.cs6008.local@853(TCP)
+[strict] DoT failed (rc=1) -> refusing cleartext; NO answer.
+[strict] TLS diagnostic probe (openssl s_client) ...
+[strict] TLS probe: NO TLS SESSION ESTABLISHED -- transport unreachable, not a certificate issue
+[strict] --- raw openssl s_client output ---
+40370659147F0000:error:8000006F:system library:BIO_connect:Connection refused:../crypto/bio/bio_sock2.c:117:calling connect()
+40370659147F0000:error:10000067:BIO routines:BIO_connect:connect error:../crypto/bio/bio_sock2.c:119:
+connect:errno=111
+[strict] --- end probe output ---
+[permissive] trying DoT @resolver.cs6008.local...
+;; WARNING: can't connect to 172.16.2.10@853(TCP)
+;; ERROR: failed to query server resolver.cs6008.local@853(TCP)
+[permissive] DoT failed -> FALLING BACK TO CLEARTEXT (insecure).
+example.com.		300	IN	A	172.16.1.30
+[edge-router] transport block removed.
+[EDGE-ROUTER] Removing diversion, restoring direct delivery...
+172.16.1.0/24 dev eth0 proto kernel scope link src 172.16.1.2 
+172.16.2.0/24 dev eth1 proto kernel scope link src 172.16.2.2 
+reman@reman:~/cs6008-dns-security/phase7$ sudo docker compose down
+sudo docker network ls --format '{{.Name}}' | grep -E '^cs6008-p' | xargs -r sudo docker network rm
+[+] down 13/13
+ ✔ Container cs6008-p7-tld-ns-1      Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p7-resolver-1    Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p7-webserver-1   Removed                                                                                                                                        0.2s
+ ✔ Container cs6008-p7-rogue-web-1   Removed                                                                                                                                        0.3s
+ ✔ Container cs6008-p7-client-1      Removed                                                                                                                                        0.3s
+ ✔ Container cs6008-p7-edge-router-1 Removed                                                                                                                                        0.4s
+ ✔ Container cs6008-p7-attacker-1    Removed                                                                                                                                        0.2s
+ ✔ Container cs6008-p7-core-router-1 Removed                                                                                                                                        0.5s
+ ✔ Container cs6008-p7-domain-ns-1   Removed                                                                                                                                        0.3s
+ ✔ Container cs6008-p7-root-ns-1     Removed                                                                                                                                        0.4s
+ ✔ Network cs6008-p7_auth-net        Removed                                                                                                                                        0.1s
+ ✔ Network cs6008-p7_resolver-net    Removed                                                                                                                                        0.2s
+ ✔ Network cs6008-p7_client-net      Removed                                                                                                                                        0.1s
+reman@reman:~/cs6008-dns-security/phase7$ cd ~/cs6008-dns-security
+git add phase*/evidence
+git commit -m "Regenerate all evidence in one consistent run"
+git push origin main
+[main c6962ec] Regenerate all evidence in one consistent run
+ 47 files changed, 357 insertions(+), 360 deletions(-)
+ create mode 100644 phase1/evidence/dns-packet-summary.txt
+Username for 'https://github.com': reman-krishnan
+Password for 'https://reman-krishnan@github.com': 
+To https://github.com/reman-krishnan/dns_security.git
+ ! [rejected]        main -> main (fetch first)
+error: failed to push some refs to 'https://github.com/reman-krishnan/dns_security.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+reman@reman:~/cs6008-dns-security$ cd ~/cs6008-dns-security
+git pull origin main --no-edit
+git push origin main
+remote: Enumerating objects: 5, done.
+remote: Counting objects: 100% (5/5), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 3 (delta 2), reused 3 (delta 2), pack-reused 0 (from 0)
+Unpacking objects: 100% (3/3), 566 bytes | 566.00 KiB/s, done.
+From https://github.com/reman-krishnan/dns_security
+ * branch            main       -> FETCH_HEAD
+   124a6b2..1e348e1  main       -> origin/main
+hint: You have divergent branches and need to specify how to reconcile them.
+hint: You can do so by running one of the following commands sometime before
+hint: your next pull:
+hint: 
+hint:   git config pull.rebase false  # merge
+hint:   git config pull.rebase true   # rebase
+hint:   git config pull.ff only       # fast-forward only
+hint: 
+hint: You can replace "git config" with "git config --global" to set a default
+hint: preference for all repositories. You can also pass --rebase, --no-rebase,
+hint: or --ff-only on the command line to override the configured default per
+hint: invocation.
+fatal: Need to specify how to reconcile divergent branches.
+Username for 'https://github.com': reman-krishnan
+Password for 'https://reman-krishnan@github.com': 
+To https://github.com/reman-krishnan/dns_security.git
+ ! [rejected]        main -> main (non-fast-forward)
+error: failed to push some refs to 'https://github.com/reman-krishnan/dns_security.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. If you want to integrate the remote changes,
+hint: use 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+reman@reman:~/cs6008-dns-security$ 
